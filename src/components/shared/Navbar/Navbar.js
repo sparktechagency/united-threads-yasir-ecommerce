@@ -19,6 +19,7 @@ import { User } from "lucide-react";
 import { Shirt } from "lucide-react";
 import { History } from "lucide-react";
 import { LogOut } from "lucide-react";
+import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
 
 // Links
 const LINKS = [
@@ -34,8 +35,8 @@ const LINKS = [
     route: "/products",
   },
   {
-    key: "shopNow",
-    label: "Shop Now",
+    key: "shop",
+    label: "Shop",
     route: "/shop",
   },
   {
@@ -70,7 +71,7 @@ export default function Navbar() {
               href={link.route}
               className="font-medium text-primary-black"
             >
-              {link.label}
+              <AnimateTextOnHover>{link.label}</AnimateTextOnHover>
             </Link>
           ))}
         </div>
@@ -122,8 +123,22 @@ export default function Navbar() {
             </div>
           ) : (
             <Button size="lg" className="primary-button" asChild>
-              <Link href="/login">
-                Sign Up <ArrowRight size={18} strokeWidth={1.5} />
+              <Link
+                href="/login"
+                className="group flex flex-shrink-0 items-center gap-x-1 transition-all duration-200"
+              >
+                Sign Up
+                {/* <ArrowRight size={18} strokeWidth={1.5} /> */}
+                <div className="relative overflow-hidden">
+                  <ArrowRight
+                    className="transition-all duration-500 ease-in-out-circ group-hover:translate-x-5"
+                    size={18}
+                  />
+                  <ArrowRight
+                    className="absolute top-0 -translate-x-5 transition-all duration-500 ease-in-out-circ group-hover:translate-x-0"
+                    size={18}
+                  />
+                </div>
               </Link>
             </Button>
           )}
