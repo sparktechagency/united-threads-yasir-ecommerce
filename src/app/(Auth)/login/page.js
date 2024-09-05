@@ -1,0 +1,31 @@
+import Image from "next/image";
+import LoginForm from "./_components/LoginForm";
+import loginGraphic from "/public/images/login/Edit photo-rafiki 1.png";
+import logo from "/public/images/login/logo.png";
+
+export const metadata = {
+  title: "Login",
+  description: "Login page",
+};
+
+export default function page() {
+  return (
+    <div className="flex-center min-h-[80vh]">
+      <div className="flex-center rounded-xl border border-gray-200 shadow-[0px_0px_2px_lightGray]">
+        {/* Left */}
+        <Image src={loginGraphic} alt="login graphic" />
+
+        {/* Right */}
+        <div>
+          <Image src={logo} alt="logo" className="mx-auto w-1/2" />
+
+          <h5 className="my-6 text-center text-2xl font-semibold">
+            Great to have you back!
+          </h5>
+
+          <LoginForm />
+        </div>
+      </div>
+    </div>
+  );
+}
