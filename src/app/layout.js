@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import Footer from "@/components/shared/Footer/Footer";
 import NextTopLoader from "nextjs-toploader";
 import TopLoader from "@/components/TopLoader/TopLoader";
+import ScrollToTop from "@/components/ScrollToTop/ScrollToTop";
 
 // Custom font
 const uncutSans = localFont({
@@ -35,10 +36,13 @@ export default function RootLayout({ children }) {
 
       <body className="font-uncut-sans antialiased">
         <TopLoader />
+        <ScrollToTop />
 
         <Navbar />
 
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen border border-gray-100 lg:mx-auto lg:w-3/4">
+          {children}
+        </main>
 
         <Footer />
       </body>

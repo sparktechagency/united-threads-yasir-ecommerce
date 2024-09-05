@@ -9,20 +9,18 @@ export const metadata = {
 
 export default function UpdatePasswordPage() {
   return (
-    <div className="flex-center min-h-[80vh]">
-      <div className="flex-center gap-x-24 rounded-xl border border-gray-200 p-16 shadow-[0px_0px_2px_lightGray]">
-        <div className="lg:w-1/2">
-          <Image
-            src={updatePassGraphic}
-            alt="update password graphic"
-            className="mx-auto block"
-          />
-        </div>
+    <div className="flex-center gap-x-24 rounded-xl border border-gray-200 p-16 shadow-[0px_0px_2px_lightGray]">
+      <div className="lg:w-1/2">
+        <Image
+          src={updatePassGraphic}
+          alt="update password graphic"
+          className="mx-auto block"
+        />
+      </div>
 
-        <div className="w-full lg:w-1/2">
-          <h2 className="mb-10 text-4xl font-semibold">Update Password</h2>
-          <UpdatePassForm />
-        </div>
+      <div className="w-full lg:w-1/2">
+        <h2 className="mb-10 text-4xl font-semibold">Update Password</h2>
+        <UpdatePassForm />
       </div>
     </div>
   );

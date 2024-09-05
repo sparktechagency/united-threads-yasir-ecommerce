@@ -4,7 +4,7 @@ import bgFlowers from "/public/images/floating-flowers.png";
 
 export default function AuthLayout({ children }) {
   return (
-    <div className="relative">
+    <div className="relative lg:mx-auto lg:w-3/4">
       {/* Background flowers */}
       <Image
         src={bgFlowers}
@@ -14,7 +14,7 @@ export default function AuthLayout({ children }) {
         width={700}
       />
 
-      {children}
+      <div>{children}</div>
     </div>
   );
 }

@@ -10,17 +10,15 @@ export const metadata = {
 
 export default function SignUpPage() {
   return (
-    <div className="flex-center min-h-[80vh]">
-      <div className="flex-center gap-x-20 rounded-xl border border-gray-200 p-10 shadow-[0px_0px_2px_lightGray]">
-        {/* Left */}
-        <Image src={signUpGraphic} alt="sign up graphic" />
+    <div className="flex-center gap-x-20 rounded-xl border border-gray-200 p-10 shadow-[0px_0px_2px_lightGray]">
+      {/* Left */}
+      <Image src={signUpGraphic} alt="sign up graphic" />
 
-        {/* Right */}
-        <div>
-          <Image src={logo} alt="logo" className="mx-auto mb-10 w-1/2" />
+      {/* Right */}
+      <div>
+        <Image src={logo} alt="logo" className="mx-auto mb-10 w-1/2" />
 
-          <SignUpForm />
-        </div>
+        <SignUpForm />
       </div>
     </div>
   );

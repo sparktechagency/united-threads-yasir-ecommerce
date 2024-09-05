@@ -10,21 +10,19 @@ export const metadata = {
 
 export default function page() {
   return (
-    <div className="flex-center min-h-[80vh]">
-      <div className="flex-center rounded-xl border border-gray-200 shadow-[0px_0px_2px_lightGray]">
-        {/* Left */}
-        <Image src={loginGraphic} alt="login graphic" />
+    <div className="flex-center rounded-xl border border-gray-200 shadow-[0px_0px_2px_lightGray]">
+      {/* Left */}
+      <Image src={loginGraphic} alt="login graphic" />
 
-        {/* Right */}
-        <div>
-          <Image src={logo} alt="logo" className="mx-auto w-1/2" />
+      {/* Right */}
+      <div>
+        <Image src={logo} alt="logo" className="mx-auto w-1/2" />
 
-          <h5 className="my-6 text-center text-2xl font-semibold">
-            Great to have you back!
-          </h5>
+        <h5 className="my-6 text-center text-2xl font-semibold">
+          Great to have you back!
+        </h5>
 
-          <LoginForm />
-        </div>
+        <LoginForm />
       </div>
     </div>
   );

@@ -121,11 +121,7 @@ export default function Navbar() {
               </div>
             </div>
           ) : (
-            <Button
-              size="lg"
-              className="flex items-center justify-center gap-x-2 rounded-xl px-8 py-[23px] text-base"
-              asChild
-            >
+            <Button size="lg" className="primary-button" asChild>
               <Link href="/login">
                 Sign Up <ArrowRight size={18} strokeWidth={1.5} />
               </Link>
