@@ -11,11 +11,8 @@ import "yet-another-react-lightbox/styles.css";
 
 // Custom font
 const uncutSans = localFont({
-  src: [
-    {
-      path: "../../public/fonts/UncutSans-Variable.woff2",
-    },
-  ],
+  src: "../../public/fonts/UncutSans-Variable.woff2",
+
   display: "block",
   variable: "--font-uncut-sans",
   weight: "200 800",

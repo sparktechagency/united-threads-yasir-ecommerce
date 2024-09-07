@@ -28,7 +28,6 @@ export default function CheckoutPage() {
        * Step 1: Billing Information
        * Step 2: Payment
        */}
-
       <div className="my-10">
         <Stepper />
       </div>

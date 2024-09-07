@@ -75,8 +75,7 @@ export default function Stepper() {
       {/* Step Forms */}
       <div className="flex items-center justify-center">
         {currentStep === 1 && (
-          <div className="mt-10 lg:w-1/2">
-            <h3 className="section-title mb-10">Billing Form</h3>
+          <div className="mt-16 lg:w-1/2">
             <BillingForm goToNextStep={goToNextStep} />
           </div>
         )}

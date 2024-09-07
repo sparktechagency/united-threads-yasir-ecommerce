@@ -74,6 +74,10 @@ body {
   @apply flex items-center justify-start;
 }
 
+.flex-start-start {
+  @apply flex items-start justify-start;
+}
+
 /* Button Bubble on Hover */
 .hover-bubble {
   z-index: 1;

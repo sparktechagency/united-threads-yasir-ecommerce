@@ -23,6 +23,7 @@ import { LogOut } from "lucide-react";
 import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
 import { usePathname } from "next/navigation";
+import { MessageCircleMore } from "lucide-react";
 
 // Links
 const LINKS = [
@@ -87,16 +88,23 @@ export default function Navbar() {
         {/* Right -------- User sign up */}
         <div className="flex w-[20%] items-center justify-center">
           {userId ? (
-            <div className="flex-center gap-x-6">
-              <div className="relative" title="notifications">
+            <div className="flex items-center gap-x-6">
+              <Link
+                href="/notification"
+                className="relative"
+                title="notifications"
+              >
                 <Bell size={24} />
-                <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-500 text-xs">
+                <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
                   4
                 </Badge>
-              </div>
+              </Link>
 
-              <div className="chat">
-                <MessageSquareDot size={24} />
+              <div className="relative" title="notifications">
+                <MessageCircleMore size={24} />
+                <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
+                  2
+                </Badge>
               </div>
 
               {/* ---------- User profile --------------- */}

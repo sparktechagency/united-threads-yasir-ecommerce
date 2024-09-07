@@ -122,7 +122,7 @@ export default function SignUpForm() {
         {/* new password */}
         <div className="mt-6 grid w-full items-center gap-2">
           <Label
-            htmlFor="newPassword"
+            htmlFor="password"
             className="font-semibold text-primary-black"
           >
             Password

@@ -35,7 +35,7 @@ export default function TestimonialsSlider() {
           duration: 55,
         }}
       >
-        <CarouselContent className="-ml-6 py-10">
+        <CarouselContent className="-ml-8 py-10">
           {Array.from({ length: 6 }).map((_, idx) => (
             <CarouselItem
               key={idx}
