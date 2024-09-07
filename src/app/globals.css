@@ -2,10 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Font */
+@font-face {
+  font-family: "Uncut Sans";
+  src: url("../../public/fonts/UncutSans-Variable.woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  --font-uncut-sans: "Uncut Sans", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +36,10 @@
   :root {
     --radius: 0.5rem;
   }
+
+  .primary-button {
+    @apply flex items-center justify-center gap-x-2 rounded-xl bg-primary-black px-8 py-[23px] text-base text-primary-white;
+  }
 }
 
 html {
@@ -36,10 +50,6 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-.primary-button {
-  @apply flex items-center justify-center gap-x-2 rounded-xl bg-primary-black px-8 py-[23px] text-base text-primary-white;
 }
 
 /* --------- Custom Utilities ----------- */
@@ -54,6 +64,14 @@ body {
 
 .flex-center-between {
   @apply flex items-center justify-between;
+}
+
+.flex-start-between {
+  @apply flex items-start justify-between;
+}
+
+.flex-center-start {
+  @apply flex items-center justify-start;
 }
 
 /* Button Bubble on Hover */

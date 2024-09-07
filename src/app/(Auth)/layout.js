@@ -14,7 +14,7 @@ export default function AuthLayout({ children }) {
         width={700}
       />
 
-      <div>{children}</div>
+      <div className="mx-auto max-w-max">{children}</div>
     </div>
   );
 }

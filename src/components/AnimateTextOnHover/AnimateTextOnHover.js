@@ -1,24 +1,38 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export default function AnimateTextOnHover({ children, route }) {
-  if (route) {
+export default function AnimateTextOnHover({ children, link, path }) {
+  const currentPathname = usePathname();
+
+  if (link) {
     return (
-      <Link href={route} className="block">
+      <Link
+        href={link}
+        className={cn("block", currentPathname === path && "font-bold")}
+      >
         <Container>{children}</Container>
       </Link>
     );
   }
 
-  return <Container>{children}</Container>;
+  return (
+    <Container path={path} currentPathname={currentPathname}>
+      {children}
+    </Container>
+  );
 }
 
-function Container({ children }) {
+function Container({ children, path, currentPathname }) {
   return (
     <motion.div
-      className="relative max-h-max max-w-max overflow-hidden"
+      className={cn(
+        "relative max-h-max max-w-max overflow-hidden",
+        currentPathname === path && "font-bold",
+      )}
       initial="initial"
       whileHover="hovered"
       style={{ lineHeight: 1.2 }}

@@ -13,6 +13,16 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
+
+// Static category images
+import tshirt from "/public/images/home/categories/tshirt.png";
+import hoodie from "/public/images/home/categories/hoodie.png";
+import hoodie2 from "/public/images/home/categories/hoodie-2.png";
+import sweatshirt from "/public/images/home/categories/sweatshirt2.png";
+import pant from "/public/images/home/categories/pants.jpg";
+import fullSleeve from "/public/images/home/categories/long-sleeve.png";
+import trousers from "/public/images/home/categories/Trouser-Leg-Logo.jpg";
 
 const CATEGORIES = [
   "T-Shirt",
@@ -39,9 +49,9 @@ export default function Categories() {
         />
       </div>
 
-      <div className="flex-center-between my-20 max-h-[500px] lg:gap-x-10">
+      <div className="flex-center-between my-20 max-h-[600px] lg:gap-x-16">
         {/* Category filter */}
-        <div className="relative lg:w-[20%]">
+        <div className="relative lg:w-[23%]">
           <div className="relative mb-8">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2"
@@ -60,7 +70,7 @@ export default function Categories() {
             }}
             className="relative"
           >
-            <CarouselContent className="h-[400px]">
+            <CarouselContent className="h-[500px]">
               {/* !Slice category to 11 items for fixed height of category-scrollbar */}
               {CATEGORIES.slice(0, 11).map((category) => (
                 <CarouselItem key={category} className="md:basis-1/6">
@@ -74,49 +84,168 @@ export default function Categories() {
               ))}
             </CarouselContent>
 
-            <div className="absolute bottom-10 right-0">
+            <div className="absolute bottom-16 right-2">
               <CarouselPrevious className="h-8 w-8" />
               <CarouselNext className="-top-2 h-8 w-8" />
             </div>
-
-            {/* <div className="absolute -left-0 top-32 rotate-90"> */}
-            <CarouselDots
-              btnClass="w-[30px] h-[2px]"
-              activeClass="bg-gray-500"
-              className="absolute -right-[133px] top-32 rotate-90 bg-gray-300"
-            />
-            {/* </div> */}
           </Carousel>
 
           <Button
             variant="lg"
-            className="primary-button mt-5"
+            className="primary-button group mt-5"
             style={{
               borderRadius: "50px",
             }}
             asChild
           >
             <Link href="/categories">
-              All Categories <ArrowRight size={20} strokeWidth={1.5} />
+              All Categories
+              <AnimatedArrow />
             </Link>
           </Button>
         </div>
 
         {/* Category images */}
-        <div className="border-red flex-center-between flex h-[500px] gap-x-5 lg:flex-grow">
-          {/* Row 1 */}
-          <div className="flex h-full flex-col gap-y-5 lg:w-1/3">
-            <div className="border-red h-[75%] w-full">asdfasdf</div>
-            <div className="border-red h-[25%] w-full">asdfasdf</div>
+        <div className="flex-center-between flex h-[600px] gap-x-5 lg:flex-grow">
+          {/* Column 1 */}
+          <div className="flex h-full flex-col gap-y-3 lg:w-1/3">
+            {/* Tshirt */}
+            <div
+              className="group relative h-[60%] w-full overflow-hidden rounded-xl transition-all duration-500 ease-in-out hover:scale-105"
+              style={{
+                background: `url('${tshirt.src}')`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              }}
+            >
+              <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
+                <Link
+                  href="/categories?c=tshirt"
+                  className="hover-underline text-5xl font-bold text-white"
+                >
+                  T-Shirt
+                </Link>
+              </div>
+            </div>
+
+            <div
+              className="group relative h-[40%] w-full overflow-hidden rounded-xl transition-all duration-500 ease-in-out hover:scale-105"
+              style={{
+                backgroundImage: `url('${fullSleeve.src}')`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              }}
+            >
+              <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
+                <Link
+                  href="/categories?c=fullSleeve"
+                  className="hover-underline text-5xl font-bold text-white"
+                >
+                  Full Sleeve
+                </Link>
+              </div>
+            </div>
           </div>
-          <div className="flex h-full flex-col gap-y-5 lg:w-1/3">
-            <div className="border-red h-[25%] w-full">wertrt</div>
-            <div className="border-red h-[50%] w-full">wertewrte</div>
-            <div className="border-red h-[25%] w-full">wertrt</div>
+
+          {/* Column 2 */}
+          <div className="flex h-full flex-col gap-y-3 lg:w-1/3">
+            {/* Sweatshirt */}
+            <div
+              className="group relative h-[25%] w-full overflow-hidden rounded-xl transition-all duration-500 ease-in-out hover:scale-105"
+              style={{
+                backgroundImage: `url('${sweatshirt.src}')`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              }}
+            >
+              <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
+                <Link
+                  href="/categories?c=sweatshirt"
+                  className="hover-underline text-5xl font-bold text-white"
+                >
+                  Sweatshirt
+                </Link>
+              </div>
+            </div>
+
+            {/* Hoodie 1 */}
+            <div
+              className="group relative h-[50%] w-full overflow-hidden rounded-xl transition-all duration-500 ease-in-out hover:scale-105"
+              style={{
+                backgroundImage: `url('${hoodie.src}')`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              }}
+            >
+              <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
+                <Link
+                  href="/categories?c=hoodie"
+                  className="hover-underline text-5xl font-bold text-white"
+                >
+                  Hoodie
+                </Link>
+              </div>
+            </div>
+
+            {/* Pant */}
+            <div
+              className="group relative h-[25%] w-full overflow-hidden rounded-xl transition-all duration-500 ease-in-out hover:scale-105"
+              style={{
+                backgroundImage: `url('${pant.src}')`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              }}
+            >
+              <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
+                <Link
+                  href="/categories?c=pant"
+                  className="hover-underline text-5xl font-bold text-white"
+                >
+                  Pant
+                </Link>
+              </div>
+            </div>
           </div>
-          <div className="flex h-full flex-col gap-y-5 lg:w-1/3">
-            <div className="border-red h-[75%] w-full">cxvzxcz</div>
-            <div className="border-red h-[25%] w-full">zxcvzxcv</div>
+
+          {/* Column 3 */}
+          <div className="flex h-full flex-col gap-y-3 lg:w-1/3">
+            {/* Hoodie */}
+            <div
+              className="group relative h-[60%] w-full overflow-hidden rounded-xl transition-all duration-500 ease-in-out hover:scale-105"
+              style={{
+                backgroundImage: `url('${hoodie2.src}')`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              }}
+            >
+              <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
+                <Link
+                  href="/categories?c=hoodie"
+                  className="hover-underline text-5xl font-bold text-white"
+                >
+                  Hoodie
+                </Link>
+              </div>
+            </div>
+
+            {/* Trousers */}
+            <div
+              className="group relative h-[40%] w-full overflow-hidden rounded-xl transition-all duration-500 ease-in-out hover:scale-105"
+              style={{
+                backgroundImage: `url('${trousers.src}')`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              }}
+            >
+              <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
+                <Link
+                  href="/categories?c=trousers"
+                  className="hover-underline text-5xl font-bold text-white"
+                >
+                  Trousers
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

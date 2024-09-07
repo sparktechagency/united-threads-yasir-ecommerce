@@ -25,6 +25,7 @@ module.exports = {
         "secondary-1": "#334A55",
         "secondary-2": "#758888",
         "foundation-primary-white-darker": "#575858",
+        "foundation-white-hover": "#dfe1e3",
         lightGray: "rgba(0, 0, 0, 0.05)",
         footerBg: "rgba(38, 50, 56, 0.06)",
         danger: "#DC4C64",

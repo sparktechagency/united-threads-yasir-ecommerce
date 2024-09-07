@@ -2,6 +2,8 @@ import Hero from "@/components/homeSections/Hero/Hero";
 import Image from "next/image";
 import bgFlowers from "/public/images/home/bg-flowers.png";
 import Categories from "@/components/homeSections/Categories/Categories";
+import Features from "@/components/homeSections/Features/Features";
+import Testimonials from "@/components/homeSections/Testimonials/Testimonials";
 
 export const metadata = {
   title: "Home",
@@ -10,9 +12,11 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <div className="relative z-10 space-y-32">
+    <div className="relative z-10 space-y-40 lg:mx-auto lg:w-3/4">
       <Hero />
       <Categories />
+      <Features />
+      <Testimonials />
 
       {/* --------- Background Flowers ------------- */}
       <div>

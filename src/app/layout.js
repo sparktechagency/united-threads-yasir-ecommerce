@@ -2,9 +2,12 @@ import Navbar from "@/components/shared/Navbar/Navbar";
 import "./globals.css";
 import localFont from "next/font/local";
 import Footer from "@/components/shared/Footer/Footer";
-import NextTopLoader from "nextjs-toploader";
 import TopLoader from "@/components/TopLoader/TopLoader";
 import ScrollToTop from "@/components/ScrollToTop/ScrollToTop";
+import "react-pagination-bar/dist/index.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "yet-another-react-lightbox/styles.css";
 
 // Custom font
 const uncutSans = localFont({
@@ -40,9 +43,7 @@ export default function RootLayout({ children }) {
 
         <Navbar />
 
-        <main className="min-h-screen border border-gray-100 lg:mx-auto lg:w-3/4">
-          {children}
-        </main>
+        <main className="min-h-screen">{children}</main>
 
         <Footer />
       </body>

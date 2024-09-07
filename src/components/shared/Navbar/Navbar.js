@@ -1,9 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import React from "react";
 import logo from "/public/logos/logo-normal.svg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { Bell } from "lucide-react";
 import { MessageSquareDot } from "lucide-react";
 import userImg from "/public/images/navbar/user.png";
@@ -20,6 +21,8 @@ import { Shirt } from "lucide-react";
 import { History } from "lucide-react";
 import { LogOut } from "lucide-react";
 import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
+import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
+import { usePathname } from "next/navigation";
 
 // Links
 const LINKS = [
@@ -52,12 +55,15 @@ const LINKS = [
 ];
 
 export default function Navbar() {
-  const userId = null;
+  const userId = true;
+
+  const currentPathname = usePathname();
+  console.log(currentPathname);
 
   return (
     <header className="mb-12 mt-8">
       {/* -------------- Desktop Version ------------- */}
-      <div className="bg-lightGray mx-auto flex w-3/4 items-center justify-between rounded-2xl px-4 py-5">
+      <div className="mx-auto flex w-3/4 items-center justify-between rounded-2xl bg-lightGray px-4 py-5">
         {/* Left ----- Logo */}
         <Link href="/" className="w-1/4">
           <Image src={logo} alt="Logo" className="mx-auto w-[70%]" />
@@ -71,7 +77,9 @@ export default function Navbar() {
               href={link.route}
               className="font-medium text-primary-black"
             >
-              <AnimateTextOnHover>{link.label}</AnimateTextOnHover>
+              <AnimateTextOnHover path={link.route}>
+                {link.label}
+              </AnimateTextOnHover>
             </Link>
           ))}
         </div>
@@ -100,18 +108,24 @@ export default function Navbar() {
                       <AvatarFallback>AK</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="space-y-1 rounded-xl p-2">
-                    <DropdownMenuItem>
-                      <User size={20} strokeWidth={1.5} className="mr-2" />
-                      Personal Details
+                  <DropdownMenuContent className="space-y-1 rounded-xl p-2 lg:mr-20">
+                    <DropdownMenuItem asChild>
+                      <Link href="/user/profile">
+                        <User size={20} strokeWidth={1.5} className="mr-2" />
+                        Personal Details
+                      </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Shirt size={20} strokeWidth={1.5} className="mr-2" />
-                      Shop History
+                    <DropdownMenuItem asChild>
+                      <Link href="/user/shop-history">
+                        <Shirt size={20} strokeWidth={1.5} className="mr-2" />
+                        Shop History
+                      </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <History size={20} strokeWidth={1.5} className="mr-2" />
-                      Quote History
+                    <DropdownMenuItem asChild>
+                      <Link href="/user/order-history">
+                        <History size={20} strokeWidth={1.5} className="mr-2" />
+                        Quote History
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <LogOut size={20} strokeWidth={1.5} className="mr-2" />
@@ -125,20 +139,10 @@ export default function Navbar() {
             <Button size="lg" className="primary-button" asChild>
               <Link
                 href="/login"
-                className="group flex flex-shrink-0 items-center gap-x-1 transition-all duration-200"
+                className="group flex items-center gap-x-1 transition-all duration-200"
               >
                 Sign Up
-                {/* <ArrowRight size={18} strokeWidth={1.5} /> */}
-                <div className="relative overflow-hidden">
-                  <ArrowRight
-                    className="transition-all duration-500 ease-in-out-circ group-hover:translate-x-5"
-                    size={18}
-                  />
-                  <ArrowRight
-                    className="absolute top-0 -translate-x-5 transition-all duration-500 ease-in-out-circ group-hover:translate-x-0"
-                    size={18}
-                  />
-                </div>
+                <AnimatedArrow />
               </Link>
             </Button>
           )}
