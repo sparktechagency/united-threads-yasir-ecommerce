@@ -34,12 +34,12 @@ const ScrollToTopBtn = () => {
   return (
     <button
       className={cn(
-        "fixed bottom-10 right-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary-black text-white transition-all duration-300 ease-in-out hover:bg-primary-black/75",
+        "fixed bottom-10 right-10 flex h-10 w-10 -rotate-90 items-center justify-center rounded-full bg-primary-black text-xl font-bold text-white transition-all duration-300 ease-in-out hover:bg-primary-black/75",
         isVisible ? "visible opacity-100" : "invisible opacity-0",
       )}
       onClick={scrollToTop}
     >
-      <ArrowUp size={18} />
+      →
     </button>
   );
 };

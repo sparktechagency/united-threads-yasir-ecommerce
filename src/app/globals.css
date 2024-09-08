@@ -16,6 +16,8 @@
   --background-end-rgb: 255, 255, 255;
 
   --font-uncut-sans: "Uncut Sans", sans-serif;
+  --primary-black: #232323;
+  --primary-white: #f8fafc;
 }
 
 @media (prefers-color-scheme: dark) {

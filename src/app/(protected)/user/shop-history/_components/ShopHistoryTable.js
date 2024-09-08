@@ -8,31 +8,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import OrderApprovedModal from "./OrderApprovedModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EyeIcon } from "lucide-react";
-import { MessageSquareText } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import ModalWrapper from "@/components/shared/ModalWrapper/ModalWrapper";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
 
 const TABLE_HEADERS = [
   "Order ID",
   "Product",
   "Category",
   "Quantity",
-  "Date",
+  "Order Created",
   "Total Amount",
   "Status",
   "Action",
 ];
 
-const ORDER_STATUS = ["Pending", "Shipped", "Delivered"];
+const ORDER_STATUS = ["All", "Pending", "Shipped", "Delivered"];
 
 const DATA = [
   {
@@ -100,27 +101,40 @@ const DATA = [
   },
 ];
 
-export default function ShadeApprovedTable() {
-  const [showOrderModal, setShowOrderModal] = useState(false);
+export default function ShopHistoryTable() {
+  const [selectedStatus, setSelectedStatus] = useState("All");
 
   return (
     <Table>
       <TableHeader>
-        <TableRow className="bg-lightGray">
+        <TableRow className="bg-lightGray hover:bg-lightGray">
           {TABLE_HEADERS.map((header) => (
             <TableHead
               key={header}
               className="text-lg font-semibold text-primary-black"
-              style={{ padding: "14px" }}
+              style={{ paddingBlock: "14px" }}
             >
               {header !== "Status" && header}
 
               {header === "Status" && (
                 <DropdownMenu>
-                  <DropdownMenuTrigger>Status</DropdownMenuTrigger>
+                  <DropdownMenuTrigger className="flex-center-start gap-x-3">
+                    Status <ChevronsUpDown size={16} />
+                  </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {ORDER_STATUS.map((status) => (
-                      <button key={status}>{status}</button>
+                      <DropdownMenuItem
+                        key={status}
+                        onClick={() => setSelectedStatus(status)}
+                      >
+                        {selectedStatus === status && (
+                          <Check className="mr-1" size={16} />
+                        )}
+
+                        <button className={selectedStatus !== status && "ml-4"}>
+                          {status}
+                        </button>
+                      </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -129,7 +143,7 @@ export default function ShadeApprovedTable() {
           ))}
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody style={{ padding: "14px" }}>
         {DATA.map((order) => (
           <TableRow
             key={order?.orderId}
@@ -161,27 +175,13 @@ export default function ShadeApprovedTable() {
             >
               {order?.status}
             </TableCell>
-            <TableCell className="py-5 font-medium">
-              <div className="flex-center-start gap-x-4">
-                <div>
-                  <button onClick={() => setShowOrderModal(!showOrderModal)}>
-                    <EyeIcon size={20} color="#292929" />
-                  </button>
 
-                  {/* Order Modal */}
-                  <OrderApprovedModal
-                    orderId={order.orderId}
-                    open={showOrderModal}
-                    setOpen={setShowOrderModal}
-                  />
-                </div>
-                <button className="relative">
-                  <Badge className="flex-center absolute -right-3 -top-2 h-4 w-[1px] rounded-full bg-danger py-0 text-[10px]">
-                    5
-                  </Badge>
-                  <MessageSquareText size={20} color="#292929" />
-                </button>
-              </div>
+            <TableCell>
+              <Button variant="outline" asChild className="group gap-x-2">
+                <Link href={`/user/shop-history/${order?.orderId}`}>
+                  View Details <AnimatedArrow />
+                </Link>
+              </Button>
             </TableCell>
           </TableRow>
         ))}

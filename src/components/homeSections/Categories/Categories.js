@@ -23,6 +23,7 @@ import sweatshirt from "/public/images/home/categories/sweatshirt2.png";
 import pant from "/public/images/home/categories/pants.jpg";
 import fullSleeve from "/public/images/home/categories/long-sleeve.png";
 import trousers from "/public/images/home/categories/Trouser-Leg-Logo.jpg";
+import AnimatedCategoryLink from "./_components/AnimatedCategoryLink";
 
 const CATEGORIES = [
   "T-Shirt",
@@ -74,8 +75,11 @@ export default function Categories() {
               {/* !Slice category to 11 items for fixed height of category-scrollbar */}
               {CATEGORIES.slice(0, 11).map((category) => (
                 <CarouselItem key={category} className="md:basis-1/6">
+                  {/* <AnimatedCategoryLink route={category}>
+                    {category}
+                  </AnimatedCategoryLink> */}
                   <Link
-                    href={`/categories?c=${category}`}
+                    href={`/products?c=${category}`}
                     className="font-medium transition-all duration-200 ease-in-out hover:text-primary-black/80"
                   >
                     {category}
@@ -120,8 +124,8 @@ export default function Categories() {
             >
               <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
                 <Link
-                  href="/categories?c=tshirt"
-                  className="hover-underline text-5xl font-bold text-white"
+                  href="/products?c=tshirt"
+                  className="text-5xl font-bold text-white hover:text-primary-white/75"
                 >
                   T-Shirt
                 </Link>
@@ -138,8 +142,8 @@ export default function Categories() {
             >
               <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
                 <Link
-                  href="/categories?c=fullSleeve"
-                  className="hover-underline text-5xl font-bold text-white"
+                  href="/products?c=fullSleeve"
+                  className="text-5xl font-bold text-white hover:text-primary-white/75"
                 >
                   Full Sleeve
                 </Link>
@@ -160,8 +164,8 @@ export default function Categories() {
             >
               <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
                 <Link
-                  href="/categories?c=sweatshirt"
-                  className="hover-underline text-5xl font-bold text-white"
+                  href="/products?c=sweatshirt"
+                  className="text-5xl font-bold text-white hover:text-primary-white/75"
                 >
                   Sweatshirt
                 </Link>
@@ -179,8 +183,8 @@ export default function Categories() {
             >
               <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
                 <Link
-                  href="/categories?c=hoodie"
-                  className="hover-underline text-5xl font-bold text-white"
+                  href="/products?c=hoodie"
+                  className="text-5xl font-bold text-white hover:text-primary-white/75"
                 >
                   Hoodie
                 </Link>
@@ -198,8 +202,8 @@ export default function Categories() {
             >
               <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
                 <Link
-                  href="/categories?c=pant"
-                  className="hover-underline text-5xl font-bold text-white"
+                  href="/products?c=pant"
+                  className="text-5xl font-bold text-white hover:text-primary-white/75"
                 >
                   Pant
                 </Link>
@@ -220,8 +224,8 @@ export default function Categories() {
             >
               <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
                 <Link
-                  href="/categories?c=hoodie"
-                  className="hover-underline text-5xl font-bold text-white"
+                  href="/products?c=hoodie"
+                  className="text-5xl font-bold text-white hover:text-primary-white/75"
                 >
                   Hoodie
                 </Link>
@@ -239,8 +243,8 @@ export default function Categories() {
             >
               <div className="flex-center invisible absolute inset-0 h-0 w-full rounded-xl bg-gradient-to-b from-black/75 to-black/50 opacity-0 transition-all duration-500 ease-in-out group-hover:visible group-hover:h-full group-hover:opacity-100">
                 <Link
-                  href="/categories?c=trousers"
-                  className="hover-underline text-5xl font-bold text-white"
+                  href="/products?c=trousers"
+                  className="text-5xl font-bold text-white hover:text-primary-white/75"
                 >
                   Trousers
                 </Link>

@@ -6,7 +6,6 @@ import logo from "/public/logos/logo-normal.svg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
-import { MessageSquareDot } from "lucide-react";
 import userImg from "/public/images/navbar/user.png";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -100,12 +99,12 @@ export default function Navbar() {
                 </Badge>
               </Link>
 
-              <div className="relative" title="notifications">
+              <Link href="/chat" className="relative" title="notifications">
                 <MessageCircleMore size={24} />
                 <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
                   2
                 </Badge>
-              </div>
+              </Link>
 
               {/* ---------- User profile --------------- */}
               <div>
@@ -130,7 +129,7 @@ export default function Navbar() {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/user/order-history">
+                      <Link href="/user/quote-history">
                         <History size={20} strokeWidth={1.5} className="mr-2" />
                         Quote History
                       </Link>

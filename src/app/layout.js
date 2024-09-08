@@ -31,7 +31,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${uncutSans.variable}`}>
       <head>
-        <link rel="shortcut icon" href="/favicon.svg" type="image/x-icon" />
+        <link
+          rel="shortcut icon"
+          href="/favicon-black.svg"
+          type="image/x-icon"
+          media="(prefers-color-scheme: light)"
+        />
+        <link
+          rel="shortcut icon"
+          href="/favicon-white.svg"
+          type="image/x-icon"
+          media="(prefers-color-scheme: dark)"
+        />
       </head>
 
       <body className="font-uncut-sans antialiased">
