@@ -1,3 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Lobster&family=Roboto&family=Pacifico&display=swap");
+
+@font-face {
+  font-family: "Maxcellent";
+  src: url("/fonts/Maxcellent.otf") format("truetype");
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,49 +1,86 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
-// import { fabric } from 'fabric';
 import tshirt from "./background_tshirt.png";
 import Image from "next/image";
+import { Type } from "lucide-react";
+import { Upload } from "lucide-react";
+import { Tooltip } from "antd";
+import { Label } from "../ui/label";
+import TextStylingWidget from "./_components/TextStylingWidget";
 
 const TShirtDesigner = () => {
   const canvasRef = useRef(null);
   const [color, setColor] = useState("");
   const [canvas, setCanvas] = useState(null);
+  const [activeObject, setActiveObject] = useState(null);
+  const activeObjectRef = useRef(null);
 
+  // Initialize the Fabric.js canvas on mount
   useEffect(() => {
-    const options = {};
-    const canvas = new fabric.Canvas(canvasRef.current, options);
-    // make the fabric.Canvas instance available to your app
-    setCanvas(canvas);
+    const canvasInstance = new fabric.Canvas(canvasRef.current, {
+      width: 500,
+      height: 500,
+      selection: true,
+    });
+
+    setCanvas(canvasInstance);
+
+    // Update activeObject on object selection
+    canvasInstance.on("selection:created", (event) => {
+      setActiveObject(canvasInstance.getActiveObject());
+    });
+
+    // Update activeObject on object selection update
+    canvasInstance.on("selection:updated", (event) => {
+      setActiveObject(canvasInstance.getActiveObject());
+    });
+
+    // Clear activeObject when selection is cleared
+    canvasInstance.on("selection:cleared", () => {
+      setActiveObject(null);
+    });
+
     return () => {
-      setCanvas(null);
-      canvas.dispose();
+      canvasInstance.dispose();
     };
   }, []);
 
-  const updateTshirtImage = (imageURL) => {
-    fabric.Image.fromURL(imageURL, function (img) {
-      img.scaleToHeight(300);
-      img.scaleToWidth(300);
-      canvas.centerObject(img);
-      canvas.add(img);
-      canvas.renderAll();
+  const handleAddText = () => {
+    const text = new fabric.IText("Double click to edit", {
+      left: 50,
+      top: 100,
+      fill: "#000000",
+      fontFamily: "Arial",
     });
+    canvas.add(text);
+    canvas.setActiveObject(text);
+    setActiveObject(text);
+    canvas.renderAll();
   };
 
-  const handleText = () => {
-    const text = prompt("Enter the text:");
-    if (text) {
-      const newText = new fabric.IText(text, {
-        left: 40,
-        top: 100,
-        fill: "#fff",
-      });
-      canvas.add(newText);
+  const handleStyleChange = (style, value) => {
+    if (activeObject && activeObject?.type === "i-text") {
+      activeObject?.set(style, value);
+      canvas.renderAll();
     }
   };
+
+  const handleDeleteObject = (e) => {
+    if (e.keyCode === 46 && activeObject) {
+      canvas.remove(activeObject);
+      setActiveObject(null);
+      canvas.renderAll();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleDeleteObject);
+    return () => {
+      document.removeEventListener("keydown", handleDeleteObject);
+    };
+  }, [activeObject, canvas]);
 
   const handleCustomPicture = (e) => {
     const reader = new FileReader();
@@ -56,6 +93,8 @@ const TShirtDesigner = () => {
         img.scaleToWidth(300);
         canvas.centerObject(img);
         canvas.add(img);
+        canvas.setActiveObject(img);
+        setActiveObject(img);
         canvas.renderAll();
       };
     };
@@ -64,121 +103,64 @@ const TShirtDesigner = () => {
     }
   };
 
-  const handleTShirtChange = (e) => {
-    const value = e.target.value;
-    updateTshirtImage(value);
-    setColor(value);
-  };
-
-  const handleDeleteObject = (e) => {
-    if (e.keyCode === 46) {
-      canvas.remove(canvas.getActiveObject());
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleDeleteObject);
-    return () => document.removeEventListener("keydown", handleDeleteObject);
-  }, [canvas]);
-
   return (
-    <div className="container mx-auto p-5">
-      <h4 className="mb-6 text-center text-2xl font-bold">
-        Custom T-Shirt Design Tool
-      </h4>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="col-span-1 flex justify-center">
-          <div id="tshirt-div" className="relative h-96 w-64 bg-white">
-            <div id="tshirt-backgroundpicture">
-              {/* <img
-                id="tshirt-backgroundpicture1"
+    <>
+      <div className="border-red flex-start-between">
+        {/* Design Options */}
+        <div className="border-red lg:w-[25%]">
+          <div className="flex w-max flex-col items-center gap-y-7 bg-lightGray p-3 text-primary-black">
+            <Tooltip placement="right" title="Add Text">
+              <button
+                className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
+                onClick={handleAddText}
+              >
+                <Type />
+                <p>Add Text</p>
+              </button>
+            </Tooltip>
+
+            <Tooltip placement="right" title="Upload Your Logo/Design">
+              <button className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80">
+                <Upload />
+                <p>Upload</p>
+              </button>
+            </Tooltip>
+          </div>
+
+          {/* {activeObject && (
+          )} */}
+          <TextStylingWidget
+            handleStyleChange={handleStyleChange}
+            activeObject={activeObject}
+          />
+        </div>
+
+        {/* Apparel Design */}
+        <div className="border-red lg:w-[50%]">
+          <div id="tshirt-div" className="relative mx-auto bg-white lg:w-max">
+            {/* Product Image */}
+            <div className="flex-center-center h-max w-full">
+              <Image
                 src={tshirt}
-                alt="background"
-              /> */}
-              <Image src={tshirt} alt="tshirt" />
-              <img
-                id="tshirt-backgroundpicture2"
-                src="./red.png"
-                style={{ display: "none" }}
-                alt="red"
-              />
-              <img
-                id="tshirt-backgroundpicture3"
-                src="./blue.png"
-                style={{ display: "none" }}
-                alt="blue"
-              />
-              <img
-                id="tshirt-backgroundpicture4"
-                src="./green.png"
-                style={{ display: "none" }}
-                alt="green"
+                alt="tshirt"
+                className="mx-auto block h-max w-max"
               />
             </div>
+
+            {/* Canvas */}
             <div className="absolute inset-0">
               <canvas
                 id="tshirt-canvas"
-                width="250"
-                height="400"
-                style={{ border: "2px solid red" }}
+                className="h-full w-full border-2 border-yellow-600"
                 ref={canvasRef}
               ></canvas>
             </div>
           </div>
         </div>
-        <div className="col-span-1">
-          <label htmlFor="tshirt-design" className="mb-2 block font-medium">
-            T-Shirt Logo:
-          </label>
-          <select
-            id="tshirt-design"
-            className="w-full rounded border p-2"
-            onChange={handleTShirtChange}
-          >
-            <option value="">Select One of Our Logos</option>
-            <option value="./batman.png">Batman</option>
-          </select>
-          <br />
-          <br />
-          <label htmlFor="tshirt-text" className="mb-2 block font-medium">
-            T-Shirt Text:
-          </label>
-          <button
-            id="tshirt-text"
-            className="btn btn-outline-dark rounded border bg-gray-200 px-4 py-2"
-            onClick={handleText}
-          >
-            Add Text
-          </button>
-          <br />
-          <br />
-          <label
-            htmlFor="tshirt-custompicture"
-            className="mb-2 block font-medium"
-          >
-            Upload Your Own Design:
-          </label>
-          <input
-            type="file"
-            id="tshirt-custompicture"
-            className="w-full rounded border p-2"
-            onChange={handleCustomPicture}
-          />
-        </div>
-        <div className="col-span-1">
-          <form>
-            <p className="mb-4 text-center font-bold">Size</p>
-            <div className="flex flex-col items-center">
-              <label className="mb-2 inline-flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="ml-2">S</span>
-              </label>
-              {/* Add more sizes as needed */}
-            </div>
-          </form>
-        </div>
+
+        <div className="h-full border-2 border-blue-400 lg:w-[30%]"></div>
       </div>
-    </div>
+    </>
   );
 };
 

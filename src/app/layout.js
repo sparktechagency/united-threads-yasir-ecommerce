@@ -8,6 +8,7 @@ import "react-pagination-bar/dist/index.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "yet-another-react-lightbox/styles.css";
+import Providers from "@/utils/Providers";
 
 // Custom font
 const uncutSans = localFont({
@@ -46,14 +47,16 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className="font-uncut-sans antialiased">
-        <TopLoader />
-        <ScrollToTop />
+        <Providers>
+          <TopLoader />
+          <ScrollToTop />
 
-        <Navbar />
+          <Navbar />
 
-        <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen">{children}</main>
 
-        <Footer />
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
