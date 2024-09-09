@@ -3,11 +3,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 import tshirt from "./background_tshirt.png";
+import alternateTshirt from "./orange.png";
 import Image from "next/image";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
 import { Tooltip } from "antd";
-import { Label } from "../ui/label";
 import TextStylingWidget from "./_components/TextStylingWidget";
 
 const TShirtDesigner = () => {
@@ -16,6 +16,8 @@ const TShirtDesigner = () => {
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
   const activeObjectRef = useRef(null);
+  const [imageUrl, setImageUrl] = useState(tshirt);
+  const [overlayColor, setOverlayColor] = useState("");
 
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
@@ -28,24 +30,48 @@ const TShirtDesigner = () => {
     setCanvas(canvasInstance);
 
     // Update activeObject on object selection
-    canvasInstance.on("selection:created", (event) => {
+    canvasInstance.on("selection:created", () => {
       setActiveObject(canvasInstance.getActiveObject());
     });
 
-    // Update activeObject on object selection update
-    canvasInstance.on("selection:updated", (event) => {
+    canvasInstance.on("selection:updated", () => {
       setActiveObject(canvasInstance.getActiveObject());
     });
 
-    // Clear activeObject when selection is cleared
     canvasInstance.on("selection:cleared", () => {
       setActiveObject(null);
+    });
+
+    canvasInstance.on("mouse:wheel", (opt) => {
+      opt.e.preventDefault();
+      opt.e.stopPropagation();
+
+      let delta = opt.e.deltaY;
+      let zoom = canvasInstance.getZoom();
+      zoom = zoom + delta / 200;
+
+      if (zoom > 3) zoom = 3;
+      if (zoom < 0.5) zoom = 0.5;
+
+      canvasInstance.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
     });
 
     return () => {
       canvasInstance.dispose();
     };
   }, []);
+
+  // Handle changing the image on button click
+  const handleChangeImage = () => {
+    if (canvas) {
+      canvas.clear();
+    }
+    setImageUrl((prev) => (prev === tshirt ? alternateTshirt : tshirt));
+  };
+
+  const handleColorChange = (e) => {
+    setOverlayColor(e.target.value); // Set the overlay color to the selected color
+  };
 
   const handleAddText = () => {
     const text = new fabric.IText("Double click to edit", {
@@ -106,7 +132,6 @@ const TShirtDesigner = () => {
   return (
     <>
       <div className="border-red flex-start-between">
-        {/* Design Options */}
         <div className="border-red lg:w-[25%]">
           <div className="flex w-max flex-col items-center gap-y-7 bg-lightGray p-3 text-primary-black">
             <Tooltip placement="right" title="Add Text">
@@ -120,34 +145,58 @@ const TShirtDesigner = () => {
             </Tooltip>
 
             <Tooltip placement="right" title="Upload Your Logo/Design">
-              <button className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80">
+              <button
+                className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
+                onClick={() =>
+                  document.getElementById("custom-image-upload-input").click()
+                }
+              >
                 <Upload />
                 <p>Upload</p>
               </button>
+
+              <button onClick={handleChangeImage}>Change Image</button>
+
+              <input
+                type="file"
+                id="custom-image-upload-input"
+                onChange={handleCustomPicture}
+                className="hidden"
+              />
             </Tooltip>
+
+            <input
+              type="color"
+              value={overlayColor}
+              onChange={handleColorChange}
+              title="Choose T-shirt color"
+            />
           </div>
 
-          {/* {activeObject && (
-          )} */}
           <TextStylingWidget
             handleStyleChange={handleStyleChange}
             activeObject={activeObject}
           />
         </div>
 
-        {/* Apparel Design */}
         <div className="border-red lg:w-[50%]">
           <div id="tshirt-div" className="relative mx-auto bg-white lg:w-max">
-            {/* Product Image */}
             <div className="flex-center-center h-max w-full">
               <Image
-                src={tshirt}
+                src={imageUrl}
                 alt="tshirt"
                 className="mx-auto block h-max w-max"
               />
             </div>
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundColor: overlayColor,
+                mixBlendMode: "overlay",
+                pointerEvents: "none",
+              }}
+            ></div>
 
-            {/* Canvas */}
             <div className="absolute inset-0">
               <canvas
                 id="tshirt-canvas"
