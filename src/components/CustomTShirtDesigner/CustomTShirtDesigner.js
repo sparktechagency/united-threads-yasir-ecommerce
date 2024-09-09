@@ -1,10 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 import tshirt from "./background_tshirt.png";
 import alternateTshirt from "./orange.png";
-import Image from "next/image";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
 import { Tooltip } from "antd";
@@ -18,6 +18,7 @@ const TShirtDesigner = () => {
   const activeObjectRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(tshirt);
   const [overlayColor, setOverlayColor] = useState("");
+  const [finalImage, setFinalImage] = useState("");
 
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
@@ -94,7 +95,7 @@ const TShirtDesigner = () => {
   };
 
   const handleDeleteObject = (e) => {
-    if (e.keyCode === 46 && activeObject) {
+    if (e.key === "Delete" && activeObject) {
       canvas.remove(activeObject);
       setActiveObject(null);
       canvas.renderAll();
@@ -127,6 +128,47 @@ const TShirtDesigner = () => {
     if (e.target.files[0]) {
       reader.readAsDataURL(e.target.files[0]);
     }
+  };
+
+  // Function to merge canvas content and export final image
+  const handleExportImage = () => {
+    // Create a temporary canvas element
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = canvas.getWidth();
+    tempCanvas.height = canvas.getHeight();
+    const context = tempCanvas.getContext("2d");
+
+    // Draw the T-shirt image
+    const imgElement = new window.Image();
+    imgElement.src = imageUrl?.src;
+
+    imgElement.onload = () => {
+      // Draw the T-shirt image on the canvas first
+      context.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
+
+      // Add overlay color, but clip it to the T-shirt's area
+      if (overlayColor) {
+        // Set the global composite operation to "source-atop" to draw within the image boundaries
+        context.globalCompositeOperation = "source-atop";
+        context.fillStyle = overlayColor;
+        context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+        // Reset the composite operation to the default
+        context.globalCompositeOperation = "source-over";
+      }
+
+      // Now draw the canvas content (text and custom images) on top of the T-shirt and overlay
+      const canvasDataUrl = canvas.toDataURL(); // Get the current canvas content (text, images, etc.)
+      const canvasImage = new window.Image();
+      canvasImage.src = canvasDataUrl;
+      canvasImage.onload = () => {
+        context.drawImage(canvasImage, 0, 0); // Draw the canvas content on top of the overlay
+
+        // Export the final merged image as data URL
+        const finalImageUrl = tempCanvas.toDataURL();
+        setFinalImage(finalImageUrl); // Save the final image URL
+      };
+    };
   };
 
   return (
@@ -182,17 +224,18 @@ const TShirtDesigner = () => {
         <div className="border-red lg:w-[50%]">
           <div id="tshirt-div" className="relative mx-auto bg-white lg:w-max">
             <div className="flex-center-center h-max w-full">
-              <Image
-                src={imageUrl}
+              <img
+                src={imageUrl?.src}
                 alt="tshirt"
                 className="mx-auto block h-max w-max"
               />
             </div>
+
             <div
               className="absolute inset-0"
               style={{
                 backgroundColor: overlayColor,
-                mixBlendMode: "overlay",
+                mixBlendMode: "lighten",
                 pointerEvents: "none",
               }}
             ></div>
@@ -207,7 +250,10 @@ const TShirtDesigner = () => {
           </div>
         </div>
 
-        <div className="h-full border-2 border-blue-400 lg:w-[30%]"></div>
+        <div className="h-full border-2 border-blue-400 lg:w-[30%]">
+          <button onClick={handleExportImage}>Get Final Image</button>
+          {finalImage && <img src={finalImage} alt="Final T-shirt Design" />}
+        </div>
       </div>
     </>
   );
