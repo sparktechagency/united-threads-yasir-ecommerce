@@ -3,7 +3,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
-import tshirt from "./white-tshirt.png";
+import front from "./front.jpg";
+import back from "./back.jpg";
 import alternateTshirt from "./orange.png";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
@@ -15,6 +16,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronsUpDown } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
+import Image from "next/image";
+import { Save } from "lucide-react";
+import Swal from "sweetalert2";
+import { toast } from "sonner";
 
 const SIZE_OPTIONS = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 const COLOR_VARIANTS = [
@@ -55,7 +60,6 @@ const TShirtDesigner = () => {
   const [color, setColor] = useState("");
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
-  const [imageUrl, setImageUrl] = useState(tshirt);
   const [overlayColor, setOverlayColor] = useState("");
   const [finalImage, setFinalImage] = useState("");
   const [selectedSizeOptions, setSelectedSizeOptions] = useState(null);
@@ -64,6 +68,9 @@ const TShirtDesigner = () => {
 
   // Currently active image side
   const [activeImageSide, setActiveImageSide] = useState("front");
+  const [activeImage, setActiveImage] = useState(front);
+  const [savedFrontImage, setSavedFrontImage] = useState("");
+  const [savedBackImage, setSavedBackImage] = useState("");
 
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
@@ -105,14 +112,35 @@ const TShirtDesigner = () => {
     return () => {
       canvasInstance.dispose();
     };
-  }, []);
+  }, [activeImage]);
 
-  // Handle changing the image on button click
-  const handleChangeImage = () => {
-    if (canvas) {
-      canvas.clear();
-    }
-    setImageUrl((prev) => (prev === tshirt ? alternateTshirt : tshirt));
+  //  // Handle changing the image side on button click
+  const handleChangeImageSide = (whichSide) => {
+    Swal.fire({
+      title: "Save Changes?",
+      text: "Save this before editing the other part or the progress will be lost!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Save",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await handleExportImage();
+        } catch (error) {
+          console.log(error);
+        }
+
+        if (activeImageSide !== whichSide) {
+          setActiveImageSide(activeImageSide === "front" ? "back" : "front");
+        }
+      } else {
+        if (activeImageSide !== whichSide) {
+          setActiveImageSide(activeImageSide === "front" ? "back" : "front");
+        }
+      }
+    });
   };
 
   const handleColorChange = (e) => {
@@ -120,7 +148,7 @@ const TShirtDesigner = () => {
       setOverlayColor(e);
       return;
     }
-    setOverlayColor(e.target.value); // Set the overlay color to the selected color
+    setOverlayColor(e.target.value);
   };
 
   const handleAddText = () => {
@@ -171,64 +199,105 @@ const TShirtDesigner = () => {
         canvas.centerObject(img);
         canvas.add(img);
         canvas.setActiveObject(img);
-        setActiveObject(img);
         canvas.renderAll();
       };
+
+      e.target.value = "";
     };
     if (e.target.files[0]) {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-
   // Function to merge canvas content and export final image
+  // const handleExportImage = () => {
+  //   const tempCanvas = document.createElement("canvas");
+  //   tempCanvas.width = canvas.getWidth();
+  //   tempCanvas.height = canvas.getHeight();
+  //   const context = tempCanvas.getContext("2d");
+
+  //   const imgElement = new window.Image();
+  //   imgElement.src = activeImage?.src;
+
+  //   imgElement.onload = () => {
+  //     context.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
+
+  //     if (overlayColor) {
+  //       context.globalCompositeOperation = "source-atop";
+  //       context.fillStyle = overlayColor;
+  //       context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+  //       context.globalCompositeOperation = "source-over";
+  //     }
+
+  //     const canvasDataUrl = canvas.toDataURL();
+  //     const canvasImage = new window.Image();
+  //     canvasImage.src = canvasDataUrl;
+  //     canvasImage.onload = () => {
+  //       context.drawImage(canvasImage, 0, 0);
+  //       const finalImageUrl = tempCanvas.toDataURL();
+
+  //       setFinalImage(finalImageUrl);
+  //       // console.log(activeImageSide);
+
+  //       if (activeImageSide === "front") {
+  //         setSavedFrontImage(finalImageUrl);
+  //         toast.success("Image saved successfully!");
+  //       } else {
+  //         setSavedBackImage(finalImageUrl);
+  //         toast.success("Image saved successfully!");
+  //       }
+
+  //       // Clear the canvas but retain functionality
+  //       canvas.clear();
+  //       // // Re-add the T-shirt background image after clearing
+  //       // const bgImg = new fabric.Image(imgElement, {
+  //       //   selectable: false,
+  //       // });
+  //       // canvas.setBackgroundImage(bgImg, canvas.renderAll.bind(canvas));
+  //       // canvas.renderAll(); // Render the canvas again to make it functional
+  //     };
+  //   };
+  // };
+
   const handleExportImage = () => {
-    // Create a temporary canvas element
     const tempCanvas = document.createElement("canvas");
     tempCanvas.width = canvas.getWidth();
     tempCanvas.height = canvas.getHeight();
     const context = tempCanvas.getContext("2d");
 
-    // Draw the T-shirt image
     const imgElement = new window.Image();
-    imgElement.src = imageUrl?.src;
+    imgElement.src = activeImage?.src;
 
     imgElement.onload = () => {
-      // Draw the T-shirt image on the canvas first
       context.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
 
-      // Add overlay color, but clip it to the T-shirt's area
       if (overlayColor) {
-        // Set the global composite operation to "source-atop" to draw within the image boundaries
-        context.globalCompositeOperation = "source-atop";
+        context.globalCompositeOperation = "lighten"; // Use multiply to blend the color and image
         context.fillStyle = overlayColor;
         context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-        // Reset the composite operation to the default
-        context.globalCompositeOperation = "source-over";
+        context.globalCompositeOperation = "source-over"; // Reset to default for further operations
       }
 
-      // Now draw the canvas content (text and custom images) on top of the T-shirt and overlay
-      const canvasDataUrl = canvas.toDataURL(); // Get the current canvas content (text, images, etc.)
+      const canvasDataUrl = canvas.toDataURL();
       const canvasImage = new window.Image();
       canvasImage.src = canvasDataUrl;
       canvasImage.onload = () => {
-        context.drawImage(canvasImage, 0, 0); // Draw the canvas content on top of the overlay
-
-        // Export the final merged image as data URL
+        context.drawImage(canvasImage, 0, 0);
         const finalImageUrl = tempCanvas.toDataURL();
-        setFinalImage(finalImageUrl); // Save the final image URL
+
+        setFinalImage(finalImageUrl);
+
+        if (activeImageSide === "front") {
+          setSavedFrontImage(finalImageUrl);
+          toast.success("Image saved successfully!");
+        } else {
+          setSavedBackImage(finalImageUrl);
+          toast.success("Image saved successfully!");
+        }
+
+        // Clear the canvas but retain functionality
+        canvas.clear();
       };
     };
-  };
-
-  // Function to change image side
-  const handleChangeImageSide = () => {
-    if (activeImageSide === "front") {
-      setActiveImageSide("back");
-      return;
-    }
-
-    setActiveImageSide("front");
   };
 
   return (
@@ -287,27 +356,39 @@ const TShirtDesigner = () => {
 
         {/* Center */}
         <div className="lg:w-[50%]">
-          <div id="tshirt-div" className="relative mx-auto w-[500px] bg-white">
-            <div className="flex-center-center h-max w-full">
-              <img
-                src={imageUrl?.src}
+          <div
+            id="tshirt-div"
+            className="group relative mx-auto w-[500px] bg-white"
+          >
+            <div className="relative">
+              <Image
+                src={activeImageSide === "front" ? front : back}
                 alt="tshirt"
-                className="mx-auto block w-full"
+                height={500}
+                width={500}
+                className="mx-auto block w-[95%]"
               />
-            </div>
 
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundColor: overlayColor,
-                mixBlendMode: "overlay",
-                pointerEvents: "none",
-              }}
-            ></div>
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundColor: overlayColor,
+                  mixBlendMode: "lighten",
+                  pointerEvents: "none",
+                }}
+              ></div>
+            </div>
 
             <div className="absolute inset-0 h-[500px] w-[500px] border border-dashed border-yellow-600">
               <canvas id="tshirt-canvas" ref={canvasRef}></canvas>
             </div>
+
+            <Button
+              className="absolute -right-10 -top-4 gap-x-2 rounded-full px-6 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100"
+              onClick={handleExportImage}
+            >
+              <Save size={16} /> Save
+            </Button>
           </div>
 
           {/* Change image side buttons */}
@@ -319,7 +400,7 @@ const TShirtDesigner = () => {
                 activeImageSide === "front" &&
                   "bg-primary-black text-primary-white",
               )}
-              onClick={handleChangeImageSide}
+              onClick={() => handleChangeImageSide("front")}
             >
               Front Side
             </Button>
@@ -330,7 +411,7 @@ const TShirtDesigner = () => {
                 activeImageSide === "back" &&
                   "bg-primary-black text-primary-white",
               )}
-              onClick={handleChangeImageSide}
+              onClick={() => handleChangeImageSide("back")}
             >
               Back Side
             </Button>
@@ -403,13 +484,46 @@ const TShirtDesigner = () => {
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="preview">
-              Change your password here.
+            <TabsContent
+              value="preview"
+              className="rounded-b-xl border border-dashed p-3"
+            >
+              <div>
+                <h4 className="text-lg font-semibold">Front Side</h4>
+                {savedFrontImage ? (
+                  <Image
+                    src={savedFrontImage}
+                    alt="front side image"
+                    height={300}
+                    width={300}
+                    className="mx-auto block"
+                  />
+                ) : (
+                  <p className="text-center">No saved image</p>
+                )}
+              </div>
+
+              <Separator className="my-10" />
+
+              <div>
+                <h4 className="text-lg font-semibold">Back Side</h4>
+                {savedBackImage ? (
+                  <Image
+                    src={savedBackImage}
+                    alt="back side image"
+                    height={300}
+                    width={300}
+                    className="mx-auto block"
+                  />
+                ) : (
+                  <p className="text-center">No saved image</p>
+                )}
+              </div>
             </TabsContent>
           </Tabs>
-
+          {/* 
           <button onClick={handleExportImage}>Get Final Image</button>
-          {finalImage && <img src={finalImage} alt="Final T-shirt Design" />}
+          {finalImage && <img src={finalImage} alt="Final T-shirt Design" />} */}
         </div>
       </div>
     </>
