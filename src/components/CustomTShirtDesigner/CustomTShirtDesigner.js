@@ -3,22 +3,67 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
-import tshirt from "./background_tshirt.png";
+import tshirt from "./white-tshirt.png";
 import alternateTshirt from "./orange.png";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
 import { Tooltip } from "antd";
+import { Button } from "@/components/ui/button";
 import TextStylingWidget from "./_components/TextStylingWidget";
+import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronsUpDown } from "lucide-react";
+import { Checkbox } from "../ui/checkbox";
+import { Separator } from "../ui/separator";
+
+const SIZE_OPTIONS = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+const COLOR_VARIANTS = [
+  {
+    name: "Black",
+    hex: "#000000",
+  },
+  {
+    name: "White",
+    hex: "#FFFFFF",
+  },
+  {
+    name: "Blue Spruce",
+    hex: "#536758",
+  },
+
+  {
+    name: "True Navy",
+    hex: "#183045",
+  },
+  {
+    name: "Seafoam",
+    hex: "#609A95",
+  },
+  {
+    name: "Coral",
+    hex: "#F9B9B9",
+  },
+
+  {
+    name: "Orange",
+    hex: "#FFA500",
+  },
+];
 
 const TShirtDesigner = () => {
   const canvasRef = useRef(null);
   const [color, setColor] = useState("");
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
-  const activeObjectRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(tshirt);
   const [overlayColor, setOverlayColor] = useState("");
   const [finalImage, setFinalImage] = useState("");
+  const [selectedSizeOptions, setSelectedSizeOptions] = useState(null);
+  const [sizeCollapsed, setSizeCollapsed] = useState(false);
+  const [colorCollapsed, setColorCollapsed] = useState(false);
+
+  // Currently active image side
+  const [activeImageSide, setActiveImageSide] = useState("front");
 
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
@@ -71,6 +116,10 @@ const TShirtDesigner = () => {
   };
 
   const handleColorChange = (e) => {
+    if (typeof e === "string") {
+      setOverlayColor(e);
+      return;
+    }
     setOverlayColor(e.target.value); // Set the overlay color to the selected color
   };
 
@@ -109,6 +158,7 @@ const TShirtDesigner = () => {
     };
   }, [activeObject, canvas]);
 
+  // Function to add custom picture
   const handleCustomPicture = (e) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -171,11 +221,22 @@ const TShirtDesigner = () => {
     };
   };
 
+  // Function to change image side
+  const handleChangeImageSide = () => {
+    if (activeImageSide === "front") {
+      setActiveImageSide("back");
+      return;
+    }
+
+    setActiveImageSide("front");
+  };
+
   return (
     <>
-      <div className="border-red flex-start-between">
-        <div className="border-red lg:w-[25%]">
-          <div className="flex w-max flex-col items-center gap-y-7 bg-lightGray p-3 text-primary-black">
+      <div className="flex-start-between">
+        {/* Left */}
+        <div className="lg:w-[25%]">
+          <div className="flex w-max flex-col items-center gap-y-7 rounded bg-lightGray p-3 text-primary-black">
             <Tooltip placement="right" title="Add Text">
               <button
                 className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
@@ -197,8 +258,6 @@ const TShirtDesigner = () => {
                 <p>Upload</p>
               </button>
 
-              <button onClick={handleChangeImage}>Change Image</button>
-
               <input
                 type="file"
                 id="custom-image-upload-input"
@@ -207,12 +266,17 @@ const TShirtDesigner = () => {
               />
             </Tooltip>
 
-            <input
-              type="color"
-              value={overlayColor}
-              onChange={handleColorChange}
-              title="Choose T-shirt color"
-            />
+            <Tooltip placement="right" title="Choose T-shirt color">
+              <button className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80">
+                <input
+                  type="color"
+                  value={overlayColor}
+                  onChange={handleColorChange}
+                  title="Choose T-shirt color"
+                />
+                <p>Color</p>
+              </button>
+            </Tooltip>
           </div>
 
           <TextStylingWidget
@@ -221,13 +285,14 @@ const TShirtDesigner = () => {
           />
         </div>
 
-        <div className="border-red lg:w-[50%]">
-          <div id="tshirt-div" className="relative mx-auto bg-white lg:w-max">
+        {/* Center */}
+        <div className="lg:w-[50%]">
+          <div id="tshirt-div" className="relative mx-auto w-[500px] bg-white">
             <div className="flex-center-center h-max w-full">
               <img
                 src={imageUrl?.src}
                 alt="tshirt"
-                className="mx-auto block h-max w-max"
+                className="mx-auto block w-full"
               />
             </div>
 
@@ -235,22 +300,114 @@ const TShirtDesigner = () => {
               className="absolute inset-0"
               style={{
                 backgroundColor: overlayColor,
-                mixBlendMode: "lighten",
+                mixBlendMode: "overlay",
                 pointerEvents: "none",
               }}
             ></div>
 
-            <div className="absolute inset-0">
-              <canvas
-                id="tshirt-canvas"
-                className="h-full w-full border-2 border-yellow-600"
-                ref={canvasRef}
-              ></canvas>
+            <div className="absolute inset-0 h-[500px] w-[500px] border border-dashed border-yellow-600">
+              <canvas id="tshirt-canvas" ref={canvasRef}></canvas>
             </div>
+          </div>
+
+          {/* Change image side buttons */}
+          <div className="my-10 flex items-center justify-center gap-x-5 text-primary-black">
+            <Button
+              variant="outline"
+              className={cn(
+                "group w-[22%] rounded-full border border-black transition-all duration-300 ease-in-out hover:bg-black hover:text-white",
+                activeImageSide === "front" &&
+                  "bg-primary-black text-primary-white",
+              )}
+              onClick={handleChangeImageSide}
+            >
+              Front Side
+            </Button>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-[22%] rounded-full border border-black transition-all duration-300 ease-in-out hover:bg-black hover:text-white",
+                activeImageSide === "back" &&
+                  "bg-primary-black text-primary-white",
+              )}
+              onClick={handleChangeImageSide}
+            >
+              Back Side
+            </Button>
           </div>
         </div>
 
-        <div className="h-full border-2 border-blue-400 lg:w-[30%]">
+        {/* Right */}
+        <div className="h-full lg:w-[30%]">
+          <Tabs defaultValue="options" className="w-full">
+            <TabsList className="w-full py-5">
+              <TabsTrigger
+                value="options"
+                className="w-1/2 px-10 py-2 font-medium data-[state=active]:font-extrabold"
+              >
+                Options
+              </TabsTrigger>
+              <TabsTrigger
+                value="preview"
+                className="w-1/2 px-10 py-2 font-medium"
+              >
+                Preview
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="options" className="py-4">
+              <div>
+                <div className="flex-center-between rounded-t-3xl bg-lightGray p-3">
+                  <h5 className="text-base font-semibold">Select Size</h5>
+                  <ChevronsUpDown size={20} />
+                </div>
+                <Separator className="bg-primary-black/50" />
+
+                <div className="mx-auto grid gap-2 rounded-b-3xl bg-lightGray px-6 py-4 lg:grid-cols-2">
+                  {SIZE_OPTIONS.map((size) => (
+                    <div
+                      key={size}
+                      className="flex-center-start gap-x-2 text-lg"
+                    >
+                      <Checkbox id={size} />
+                      <label htmlFor={size}>{size}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8">
+                <div className="flex-center-between rounded-t-3xl bg-lightGray p-3">
+                  <h5 className="text-base font-semibold">Color Variants</h5>
+                  <ChevronsUpDown size={20} />
+                </div>
+                <Separator className="bg-primary-black/50" />
+
+                <div className="mx-auto grid gap-2 rounded-b-3xl bg-lightGray px-6 py-4 lg:grid-cols-2">
+                  {COLOR_VARIANTS.map((color) => (
+                    <button
+                      key={color.hex}
+                      className="flex-center-start gap-x-2"
+                      onClick={() => handleColorChange(color.hex)}
+                    >
+                      <div
+                        style={{ backgroundColor: color.hex }}
+                        className={cn(
+                          "h-5 w-5 rounded-full",
+                          overlayColor === color.hex &&
+                            "border-2 border-yellow-500",
+                        )}
+                      />
+                      <h5 className="text-lg font-medium">{color.name}</h5>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+            <TabsContent value="preview">
+              Change your password here.
+            </TabsContent>
+          </Tabs>
+
           <button onClick={handleExportImage}>Get Final Image</button>
           {finalImage && <img src={finalImage} alt="Final T-shirt Design" />}
         </div>
