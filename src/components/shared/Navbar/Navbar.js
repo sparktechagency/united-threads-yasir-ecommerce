@@ -21,8 +21,9 @@ import { History } from "lucide-react";
 import { LogOut } from "lucide-react";
 import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { MessageCircleMore } from "lucide-react";
+import { toast } from "sonner";
 
 // Links
 const LINKS = [
@@ -55,10 +56,16 @@ const LINKS = [
 ];
 
 export default function Navbar() {
-  const userId = true;
+  const userId = localStorage.getItem("yasir-auth");
+  const router = useRouter();
 
   const currentPathname = usePathname();
-  console.log(currentPathname);
+
+  const handleLogout = () => {
+    localStorage.removeItem("yasir-auth");
+    toast.success("Logout successful");
+    router.push("/");
+  };
 
   return (
     <header className="mb-12 mt-8">
@@ -134,7 +141,7 @@ export default function Navbar() {
                         Quote History
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout}>
                       <LogOut size={20} strokeWidth={1.5} className="mr-2" />
                       Logout
                     </DropdownMenuItem>

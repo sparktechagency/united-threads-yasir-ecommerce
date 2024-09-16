@@ -8,8 +8,10 @@ import { cn } from "@/lib/utils";
 import { Loader } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const {
@@ -22,9 +24,19 @@ export default function LoginForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const onLoginSubmit = (data) => {
-    console.log(data);
+    const toastId = toast.loading("Logging in...");
+
+    localStorage.setItem("yasir-auth", JSON.stringify({ userId: true }));
+
+    setTimeout(() => {
+      toast.success("Login successful", {
+        id: toastId,
+      });
+      router.push("/");
+    }, 3000);
   };
 
   return (
