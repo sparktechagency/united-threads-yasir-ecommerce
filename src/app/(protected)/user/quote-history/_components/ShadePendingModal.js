@@ -1,29 +1,34 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from "@/components/ui/alert-dialog";
 import Image from "next/image";
-import uploadedDesign from "/public/images/order-history/Group 47486.png";
-import { X } from "lucide-react";
+import uploadedFrontDesign from "/public/images/quote-history/front.png";
+import uploadedBackDesign from "/public/images/quote-history/back.png";
 import ModalWrapper from "@/components/shared/ModalWrapper/ModalWrapper";
 
 export default function ShadePendingModal({ open, setOpen, orderId }) {
   return (
     <ModalWrapper open={open} setOpen={setOpen}>
       <div className="mb-10">
-        <Image
-          src={uploadedDesign}
-          alt="user uploaded design"
-          className="mx-auto block rounded-lg border border-primary-black/50 p-2"
-        />
-        <h3 className="text-center font-medium text-green-500/75">
-          Uploaded Design
-        </h3>
+        <div className="flex-center gap-x-5">
+          <div>
+            <Image
+              src={uploadedFrontDesign}
+              alt="user uploaded front design"
+              className="mx-auto block rounded-lg border border-primary-black/50 p-2"
+            />
+            <h3 className="text-center font-medium text-green-500/75">
+              Front Design
+            </h3>
+          </div>
+          <div>
+            <Image
+              src={uploadedBackDesign}
+              alt="user uploaded back design"
+              className="mx-auto block rounded-lg border border-primary-black/50 p-2"
+            />
+            <h3 className="text-center font-medium text-green-500/75">
+              Back Design
+            </h3>
+          </div>
+        </div>
       </div>
       <div className="mb-8 grid grid-cols-2 gap-6 gap-x-16">
         <div>

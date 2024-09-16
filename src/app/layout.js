@@ -58,7 +58,7 @@ export default function RootLayout({ children }) {
 
           <Footer />
 
-          <Toaster />
+          <Toaster position="top-right" richColors duration={1800} />
         </Providers>
       </body>
     </html>

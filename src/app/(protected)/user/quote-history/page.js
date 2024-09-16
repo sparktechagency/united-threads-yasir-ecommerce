@@ -2,7 +2,6 @@ import CommonPageHeader from "@/components/CommonPageHeader/CommonPageHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ShadeApprovedTable from "./_components/ShadeApprovedTable";
 import { Watch } from "lucide-react";
-import { Check } from "lucide-react";
 import { CheckCheck } from "lucide-react";
 import ShadePendingTable from "./_components/ShadePendingTable";
 

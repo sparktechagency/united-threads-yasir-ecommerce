@@ -1,5 +1,9 @@
 import CustomTShirtDesigner from "@/components/CustomTShirtDesigner/CustomTShirtDesigner";
-import React from "react";
+
+export const metadata = {
+  title: "Design Your Product",
+  description: "Custom apparel designer  page",
+};
 
 export default function DynamicProductPage() {
   return (
