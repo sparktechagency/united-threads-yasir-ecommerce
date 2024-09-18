@@ -35,6 +35,7 @@ import {
 } from "simple-color-converter/_components/_color_sanitizer";
 import { Info } from "lucide-react";
 import { Popover } from "antd";
+import { Tour } from "antd";
 
 // Motion variants
 const fadeVariants = {
@@ -96,12 +97,17 @@ export default function CustomTShirtDesigner() {
     formState: { errors },
   } = useForm();
 
+  const [showSteps, setShowSteps] = useState(true);
   const canvasRef = useRef(null);
   const [color, setColor] = useState("");
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
   const [overlayColor, setOverlayColor] = useState("");
-  const [pantoneColorObject, setPantoneColorObject] = useState(null);
+  const [pantoneColorObject, setPantoneColorObject] = useState({
+    pantone: "419C",
+    hex: "000000",
+    distance: "16",
+  });
   const [selectedSizeOptions, setSelectedSizeOptions] = useState(null);
   const [sizeCollapsed, setSizeCollapsed] = useState(false);
   const [colorCollapsed, setColorCollapsed] = useState(false);
@@ -327,7 +333,56 @@ export default function CustomTShirtDesigner() {
     }
   }, [overlayColor]);
 
-  console.log(pantoneColorObject);
+  // Ant design steps
+  const textBtnRef = useRef(null);
+  const textStyleBoxRef = useRef(null);
+  const uploadBtnRef = useRef(null);
+  const colorBtnRef = useRef(null);
+  const pantoneColorRef = useRef(null);
+  const saveBtnRef = useRef(null);
+  const previewRef = useRef(null);
+
+  const steps = [
+    {
+      title: "Add text",
+      description:
+        "Click add text button to add custom text to your apparel design.",
+      target: () => textBtnRef?.current,
+    },
+    {
+      title: "Style text",
+      description: "On the bottom you've a text styling widget to style text",
+      target: () => textStyleBoxRef?.current,
+    },
+    {
+      title: "Upload image",
+      description:
+        "Click upload button to upload logo or image for your design.",
+      target: () => uploadBtnRef?.current,
+    },
+    {
+      title: "Add color",
+      description: "Click color button to add color to your design.",
+      target: () => colorBtnRef?.current,
+    },
+    {
+      title: "Pantone color code",
+      description: "This pantone color code will be applied to your apparel",
+      target: () => pantoneColorRef?.current,
+    },
+    {
+      title: "Save",
+      description: "Click save button to save your design.",
+      target: () => saveBtnRef?.current,
+    },
+
+    {
+      title: "Preview",
+      description:
+        "Click preview button to preview front and back part your design.",
+      target: () => previewRef?.current,
+    },
+  ];
 
   return (
     <div>
@@ -341,6 +396,7 @@ export default function CustomTShirtDesigner() {
                   type="button"
                   className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
                   onClick={handleAddText}
+                  ref={textBtnRef}
                 >
                   <Type />
                   <p>Add Text</p>
@@ -354,6 +410,7 @@ export default function CustomTShirtDesigner() {
                   onClick={() =>
                     document.getElementById("custom-image-upload-input").click()
                   }
+                  ref={uploadBtnRef}
                 >
                   <Upload />
                   <p>Upload</p>
@@ -371,6 +428,7 @@ export default function CustomTShirtDesigner() {
                 <button
                   type="button"
                   className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
+                  ref={colorBtnRef}
                 >
                   <input
                     type="color"
@@ -386,6 +444,7 @@ export default function CustomTShirtDesigner() {
             <TextStylingWidget
               handleStyleChange={handleStyleChange}
               activeObject={activeObject}
+              ref={textStyleBoxRef}
             />
           </div>
 
@@ -420,8 +479,9 @@ export default function CustomTShirtDesigner() {
 
               <Button
                 type="button"
-                className="absolute -right-10 -top-4 gap-x-2 rounded-full px-6 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100"
+                className="absolute -right-10 -top-4 gap-x-2 rounded-full px-6 transition-all duration-300 ease-in-out"
                 onClick={handleExportImage}
+                ref={saveBtnRef}
               >
                 <Save size={16} /> Save
               </Button>
@@ -469,6 +529,8 @@ export default function CustomTShirtDesigner() {
                 <TabsTrigger
                   value="preview"
                   className="w-1/2 px-10 py-2 font-medium"
+                  // ref={previewBtnRef}
+                  ref={previewRef}
                 >
                   Preview
                 </TabsTrigger>
@@ -550,6 +612,7 @@ export default function CustomTShirtDesigner() {
                         <motion.div
                           variants={fadeVariants}
                           className="flex-center-start mx-auto gap-x-2 rounded-b-3xl bg-lightGray px-6 py-4"
+                          ref={pantoneColorRef}
                         >
                           <Tooltip
                             placement="top"
@@ -572,7 +635,7 @@ export default function CustomTShirtDesigner() {
                               type="button"
                               className="text-lg font-medium"
                               onClick={() =>
-                                setOverlayColor(pantoneColorObject?.hex)
+                                setOverlayColor("#" + pantoneColorObject?.hex)
                               }
                             >
                               Pantone {pantoneColorObject?.pantone}
@@ -741,6 +804,13 @@ export default function CustomTShirtDesigner() {
           Send Quote <AnimatedArrow />
         </Button>
       </form>
+
+      {/* Ant design step tour */}
+      <Tour
+        open={showSteps}
+        onClose={() => setShowSteps(false)}
+        steps={steps}
+      />
     </div>
   );
 }

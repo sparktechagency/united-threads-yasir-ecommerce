@@ -221,3 +221,9 @@ body {
     transform: translateX(-8px);
   }
 }
+
+/* Ant design custom styles */
+.ant-tour-inner * {
+  font-family: var(--font-uncut-sans) !important;
+  font-size: 1.07rem;
+}
