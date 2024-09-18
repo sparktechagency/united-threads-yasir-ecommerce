@@ -24,7 +24,7 @@ export default function OrderHistoryPage() {
         <Tabs defaultValue="shadeApprovalPending" className="w-full">
           <TabsList className="py-5 shadow">
             <TabsTrigger value="shadeApprovalPending" className="text-base">
-              <Watch size={18} className="mr-2" /> Shade Approval Pending...
+              <Watch size={18} className="mr-2" /> Design Approval Pending...
             </TabsTrigger>
             <TabsTrigger value="shadeApproved" className="text-base">
               <CheckCheck size={18} className="mr-2" /> Approved

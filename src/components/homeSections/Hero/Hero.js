@@ -1,19 +1,23 @@
 import { ArrowRight } from "lucide-react";
-import heroImage from "/public/images/hero/Group 47487.png";
 import Image from "next/image";
 import Link from "next/link";
 import "./Hero.css";
+import apparelDesignIllustration from "/public/images/hero/hero-illustration.png";
 
 export default function Hero() {
   return (
     <div className="flex-center-between">
       {/* Left */}
       <div className="text-primary-black lg:w-1/2">
-        <h1 className="font-extrabold lg:text-7xl lg:leading-[1.2]">
-          Design Your Own Apparel
+        <h1 className="font-extrabold lg:text-7xl lg:leading-[1.35]">
+          Design Your Own{" "}
+          <div className="relative z-10 w-max px-5 text-white">
+            <div className="absolute left-0 top-2 -z-10 h-full w-full -rotate-[1deg] bg-primary-black"></div>
+            Apparel
+          </div>
         </h1>
 
-        <h3 className="mb-6 mt-5 text-4xl font-medium">
+        <h3 className="mb-5 mt-8 text-4xl font-medium">
           Unleash Your Creativity
         </h3>
         <p className="text-lg font-medium text-secondary-1 lg:w-3/4">
@@ -37,9 +41,9 @@ export default function Hero() {
       {/* Right */}
       <div className="lg:w-1/2">
         <Image
-          src={heroImage}
+          src={apparelDesignIllustration}
           alt="Hero section banner image"
-          className="lg:mx-auto lg:w-[90%]"
+          className="lg:ml-auto lg:w-[90%]"
         />
       </div>
     </div>

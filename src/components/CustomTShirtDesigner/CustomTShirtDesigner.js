@@ -5,10 +5,9 @@ import React, { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 import front from "./front.jpg";
 import back from "./back.jpg";
-import alternateTshirt from "./orange.png";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
-import { ColorPicker, Tooltip } from "antd";
+import { Tooltip } from "antd";
 import { Button } from "@/components/ui/button";
 import TextStylingWidget from "./_components/TextStylingWidget";
 import { cn } from "@/lib/utils";
@@ -21,7 +20,6 @@ import { Save } from "lucide-react";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { Loader } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -29,6 +27,14 @@ import AnimatedArrow from "../AnimatedArrow/AnimatedArrow";
 import { Image as AntImage } from "antd";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
+import * as simpleColorConverter from "simple-color-converter";
+import {
+  hex,
+  hex6,
+  pantone,
+} from "simple-color-converter/_components/_color_sanitizer";
+import { Info } from "lucide-react";
+import { Popover } from "antd";
 
 // Motion variants
 const fadeVariants = {
@@ -95,10 +101,11 @@ export default function CustomTShirtDesigner() {
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
   const [overlayColor, setOverlayColor] = useState("");
-  const [finalImage, setFinalImage] = useState("");
+  const [pantoneColorObject, setPantoneColorObject] = useState(null);
   const [selectedSizeOptions, setSelectedSizeOptions] = useState(null);
   const [sizeCollapsed, setSizeCollapsed] = useState(false);
   const [colorCollapsed, setColorCollapsed] = useState(false);
+  const [pantoneColorCollapsed, setPantoneColorCollapsed] = useState(false);
 
   // Currently active image side
   const [activeImageSide, setActiveImageSide] = useState("front");
@@ -243,56 +250,6 @@ export default function CustomTShirtDesigner() {
     }
   };
 
-  // Function to merge canvas content and export final image
-  // const handleExportImage = () => {
-  //   const tempCanvas = document.createElement("canvas");
-  //   tempCanvas.width = canvas.getWidth();
-  //   tempCanvas.height = canvas.getHeight();
-  //   const context = tempCanvas.getContext("2d");
-
-  //   const imgElement = new window.Image();
-  //   imgElement.src = activeImage?.src;
-
-  //   imgElement.onload = () => {
-  //     context.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
-
-  //     if (overlayColor) {
-  //       context.globalCompositeOperation = "source-atop";
-  //       context.fillStyle = overlayColor;
-  //       context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-  //       context.globalCompositeOperation = "source-over";
-  //     }
-
-  //     const canvasDataUrl = canvas.toDataURL();
-  //     const canvasImage = new window.Image();
-  //     canvasImage.src = canvasDataUrl;
-  //     canvasImage.onload = () => {
-  //       context.drawImage(canvasImage, 0, 0);
-  //       const finalImageUrl = tempCanvas.toDataURL();
-
-  //       setFinalImage(finalImageUrl);
-  //       // console.log(activeImageSide);
-
-  //       if (activeImageSide === "front") {
-  //         setSavedFrontImage(finalImageUrl);
-  //         toast.success("Image saved successfully!");
-  //       } else {
-  //         setSavedBackImage(finalImageUrl);
-  //         toast.success("Image saved successfully!");
-  //       }
-
-  //       // Clear the canvas but retain functionality
-  //       canvas.clear();
-  //       // // Re-add the T-shirt background image after clearing
-  //       // const bgImg = new fabric.Image(imgElement, {
-  //       //   selectable: false,
-  //       // });
-  //       // canvas.setBackgroundImage(bgImg, canvas.renderAll.bind(canvas));
-  //       // canvas.renderAll(); // Render the canvas again to make it functional
-  //     };
-  //   };
-  // };
-
   const handleExportImage = () => {
     const tempCanvas = document.createElement("canvas");
     tempCanvas.width = canvas.getWidth();
@@ -319,8 +276,6 @@ export default function CustomTShirtDesigner() {
         context.drawImage(canvasImage, 0, 0);
         const finalImageUrl = tempCanvas.toDataURL();
 
-        setFinalImage(finalImageUrl);
-
         if (activeImageSide === "front") {
           setSavedFrontImage(finalImageUrl);
           toast.success("Image saved successfully!");
@@ -344,6 +299,35 @@ export default function CustomTShirtDesigner() {
       });
     }, 3000);
   };
+
+  // Transform hex to pantone color code
+  useEffect(() => {
+    if (overlayColor) {
+      const pantoneColor = new simpleColorConverter({
+        hex6: overlayColor,
+        to: "pantone",
+      });
+
+      if (pantoneColor) {
+        const pantoneToHex = new simpleColorConverter({
+          pantone: `pantone ${pantoneColor?.color}`,
+          to: "hex6",
+        });
+
+        // Pantone color distances are 16, 32, 48, 64, 80, 96
+        const distances = [16, 32, 48, 64, 80, 96];
+        const selectedDistanceIndex = Math.floor(Math.random() * 6);
+
+        setPantoneColorObject({
+          pantone: pantoneColor?.color,
+          hex: pantoneToHex?.color,
+          distance: distances[selectedDistanceIndex],
+        });
+      }
+    }
+  }, [overlayColor]);
+
+  console.log(pantoneColorObject);
 
   return (
     <div>
@@ -490,7 +474,8 @@ export default function CustomTShirtDesigner() {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="options" className="py-4">
-                <AnimatePresence initial={false} mode="wait">
+                <AnimatePresence initial={false}>
+                  {/* Size options */}
                   <motion.div initial="initial" animate="animate" exit="exit">
                     <button
                       type="button"
@@ -520,6 +505,89 @@ export default function CustomTShirtDesigner() {
                     )}
                   </motion.div>
 
+                  {/* Pantone color pallette */}
+                  {pantoneColorObject?.pantone && (
+                    <motion.div
+                      className="mt-8"
+                      layout="position"
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                    >
+                      <button
+                        type="button"
+                        className="flex-center-between w-full rounded-t-3xl bg-lightGray p-3"
+                        onClick={() =>
+                          setPantoneColorCollapsed(!pantoneColorCollapsed)
+                        }
+                      >
+                        <h5 className="flex-center-start gap-x-2 text-base font-semibold">
+                          Pantone Palette{" "}
+                          <Popover
+                            content={
+                              <div>
+                                <p>
+                                  United Threads accepts only
+                                  <i> Pantone Color Code</i>
+                                  (e.g Pantone C-1305) for apparel colors.
+                                </p>
+                                <p>
+                                  Our Pantone code follows distance from 16-96
+                                  and provides nearest color matches.
+                                </p>
+                              </div>
+                            }
+                            title={<strong>What is Pantone Color Code?</strong>}
+                          >
+                            <Info size={16} className="text-blue-600" />
+                          </Popover>
+                        </h5>
+                        <ChevronsUpDown size={20} />
+                      </button>
+                      <Separator className="bg-primary-black/50" />
+
+                      {!pantoneColorCollapsed && (
+                        <motion.div
+                          variants={fadeVariants}
+                          className="flex-center-start mx-auto gap-x-2 rounded-b-3xl bg-lightGray px-6 py-4"
+                        >
+                          <Tooltip
+                            placement="top"
+                            title={"#" + pantoneColorObject?.hex}
+                          >
+                            <div
+                              style={{
+                                backgroundColor: `#${pantoneColorObject?.hex}`,
+                              }}
+                              className={cn(
+                                "h-6 w-6 rounded-full",
+                                overlayColor === pantoneColorObject.hex &&
+                                  "border-2 border-yellow-500",
+                              )}
+                            />
+                          </Tooltip>
+
+                          <div className="flex-center-between w-full">
+                            <button
+                              type="button"
+                              className="text-lg font-medium"
+                              onClick={() =>
+                                setOverlayColor(pantoneColorObject?.hex)
+                              }
+                            >
+                              Pantone {pantoneColorObject?.pantone}
+                            </button>
+
+                            <div className="h-1 w-1 rounded-full bg-primary-black" />
+
+                            <p>(d: 16/{pantoneColorObject?.distance})</p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {/* Color options */}
                   <motion.div
                     className="mt-8"
                     layout="position"

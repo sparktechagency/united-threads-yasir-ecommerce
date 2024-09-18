@@ -1,5 +1,5 @@
 import Image from "next/image";
-import productImage from "/public/images/products/product-image.png";
+import productImage from "/public/images/products/blank-product-image.png";
 import { Button } from "@/components/ui/button";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
 import Link from "next/link";
@@ -7,8 +7,7 @@ import Link from "next/link";
 const product = {
   _id: 1,
   img: productImage,
-  name: "Rosemary",
-  price: 485,
+  name: "Unisex Short Sleeve Tee",
 };
 
 export default function QuoteProductCard() {
@@ -22,15 +21,14 @@ export default function QuoteProductCard() {
         className="mx-auto block"
       />
 
-      <div className="flex-center-between mb-4 mt-2 text-2xl font-bold">
+      <div className="flex-center-between mb-5 mt-5 text-xl font-bold">
         <h4>{product?.name}</h4>
-        <h4>${product?.price}</h4>
       </div>
 
       <Link href={`/products/${product._id}`}>
-        <Button size="lg" className="primary-button group rounded-full">
+        <Button className="primary-button group rounded-full">
           Request Quote
-          <AnimatedArrow />
+          <AnimatedArrow arrowSize={16} />
         </Button>
       </Link>
     </div>

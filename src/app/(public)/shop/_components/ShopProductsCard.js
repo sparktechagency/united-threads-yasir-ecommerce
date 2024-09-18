@@ -22,13 +22,13 @@ export default function ShopProductsCard() {
         className="mx-auto block"
       />
 
-      <div className="flex-center-between mb-4 mt-2 text-2xl font-bold">
+      <div className="flex-center-between mb-4 mt-2 text-xl font-bold">
         <h4>{product?.name}</h4>
         <h4>${product?.price}</h4>
       </div>
 
       <Link href={`/shop/product/1`}>
-        <Button size="lg" className="primary-button group rounded-full">
+        <Button className="primary-button group rounded-full">
           Buy Now
           <AnimatedArrow />
         </Button>

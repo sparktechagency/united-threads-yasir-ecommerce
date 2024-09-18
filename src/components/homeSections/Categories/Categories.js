@@ -42,13 +42,9 @@ const CATEGORIES = [
 export default function Categories() {
   return (
     <section className="text-primary-black">
-      <div className="relative z-10 mx-auto max-w-max">
-        <h2 className="px-10 py-1 text-7xl font-extrabold">Wear The Change</h2>
-        <Image
-          src={titleBg}
-          className="absolute -bottom-2 -z-10 h-full w-full opacity-75"
-        />
-      </div>
+      <h2 className="px-10 py-1 text-center text-7xl font-extrabold">
+        Wear The Change
+      </h2>
 
       <div className="flex-center-between my-20 max-h-[600px] lg:gap-x-16">
         {/* Category filter */}
