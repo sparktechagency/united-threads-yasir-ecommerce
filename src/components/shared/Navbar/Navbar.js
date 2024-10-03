@@ -24,6 +24,10 @@ import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
 import { useRouter } from "next/navigation";
 import { MessageCircleMore } from "lucide-react";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
+import { logout, selectUser } from "@/redux/features/authSlice";
+import { useDispatch } from "react-redux";
+import { MessageSquareText } from "lucide-react";
 
 // Links
 const LINKS = [
@@ -56,11 +60,12 @@ const LINKS = [
 ];
 
 export default function Navbar() {
-  const userId = true;
+  const userId = useSelector(selectUser)?._id;
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
-    localStorage.removeItem("yasir-auth");
+    dispatch(logout());
     toast.success("Logout successful");
     router.push("/");
   };
@@ -93,7 +98,7 @@ export default function Navbar() {
         <div className="flex w-[20%] items-center justify-center">
           {userId ? (
             <div className="flex items-center gap-x-6">
-              <Link
+              {/* <Link
                 href="/notification"
                 className="relative"
                 title="notifications"
@@ -102,10 +107,10 @@ export default function Navbar() {
                 <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
                   4
                 </Badge>
-              </Link>
+              </Link> */}
 
               <Link href="/chat" className="relative" title="notifications">
-                <MessageCircleMore size={24} />
+                <MessageSquareText size={24} />
                 <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
                   2
                 </Badge>
@@ -153,8 +158,8 @@ export default function Navbar() {
                 href="/login"
                 className="group flex items-center gap-x-1 transition-all duration-200"
               >
-                Sign Up
-                <AnimatedArrow />
+                Sign In
+                <AnimatedArrow arrowSize={17} />
               </Link>
             </Button>
           )}

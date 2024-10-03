@@ -9,8 +9,8 @@ export const metadata = {
 
 export default function UpdatePasswordPage() {
   return (
-    <div className="flex-center gap-x-24 rounded-xl border border-gray-200 p-16 shadow-[0px_0px_2px_lightGray]">
-      <div className="lg:w-1/2">
+    <div className="flex-center w-full gap-x-20 rounded-xl border border-gray-200 p-10 shadow-[0px_0px_2px_lightGray]">
+      <div className="w-full lg:w-1/2">
         <Image
           src={updatePassGraphic}
           alt="update password graphic"

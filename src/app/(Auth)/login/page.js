@@ -18,7 +18,13 @@ export default function page() {
 
       {/* Right */}
       <div className="lg:flex-grow">
-        <Image src={logo} alt="logo" className="mx-auto w-1/2" />
+        <Image
+          src={logo}
+          alt="logo"
+          height={1200}
+          width={1200}
+          className="mx-auto w-1/2"
+        />
 
         <h5 className="my-6 text-center text-2xl font-semibold">
           Great to have you back!

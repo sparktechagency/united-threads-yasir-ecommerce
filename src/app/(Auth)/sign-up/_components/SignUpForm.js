@@ -1,12 +1,18 @@
 "use client";
 
+import CustomFormError from "@/components/CustomFormError/CustomFormError";
+import CustomLoader from "@/components/CustomLoader/CustomLoader";
 import EyeIconInverse from "@/components/EyeIconInverse/EyeIconInverse";
 import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useSignUpMutation } from "@/redux/api/authApi";
+import { SuccessModal } from "@/utils/customModal";
+import { setToSessionStorage } from "@/utils/sessionStorage";
 import { Loader } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -19,12 +25,35 @@ export default function SignUpForm() {
     control,
   } = useForm();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState(null);
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const router = useRouter();
 
-  const onSignUpSubmit = (data) => {
-    console.log(data);
+  // Sign up api handler
+  const [signUp, { isLoading }] = useSignUpMutation();
+
+  const onSignUpSubmit = async (data) => {
+    // delete confirm password
+    delete data["confirmPassword"];
+
+    try {
+      const res = await signUp(data).unwrap();
+
+      if (res?.success) {
+        SuccessModal("Sign Up Successful", "Please verify your email");
+
+        // Set signUpToken in session storage
+        setToSessionStorage("signUpToken", res?.data?.token);
+
+        // Send to otp verification page
+        router.push("/verify-otp");
+
+        setFormError(null);
+      }
+    } catch (error) {
+      setFormError(error?.data?.message || error?.error);
+    }
   };
 
   return (
@@ -33,19 +62,19 @@ export default function SignUpForm() {
         {/* first name */}
         <div className="grid w-full items-center gap-2">
           <Label
-            htmlFor="fname"
+            htmlFor="firstName"
             className="mb-1 block font-semibold text-primary-black"
           >
             First Name
           </Label>
           <Input
             type="text"
-            id="fname"
+            id="firstName"
             placeholder="Enter your first name"
-            {...register("fname", { required: true })}
+            {...register("firstName", { required: true })}
             className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none focus:outline-none"
           />
-          {errors.fname && (
+          {errors.firstName && (
             <p className="mt-1 text-danger">First Name is required</p>
           )}
         </div>
@@ -53,34 +82,34 @@ export default function SignUpForm() {
         {/* last name */}
         <div className="grid w-full items-center gap-2">
           <Label
-            htmlFor="lname"
+            htmlFor="lastName"
             className="mb-1 block font-semibold text-primary-black"
           >
             Last Name
           </Label>
           <Input
             type="text"
-            id="lname"
+            id="lastName"
             placeholder="Enter your last name"
-            {...register("lname", { required: true })}
+            {...register("lastName", { required: true })}
             className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
           />
-          {errors.lname && (
+          {errors.lastName && (
             <p className="mt-1 text-danger">Last Name is required</p>
           )}
         </div>
 
-        {/* phone number */}
+        {/* Contact */}
         <div className="grid w-full items-center gap-2">
           <Label
-            htmlFor="phoneNumber"
+            htmlFor="contact"
             className="mb-1 block font-semibold text-primary-black"
           >
-            Phone Number
+            Contact
           </Label>
           <Controller
-            name="phoneNumber"
-            rules={{ required: "Phone number is required" }}
+            name="contact"
+            rules={{ required: "Contact is required" }}
             control={control}
             render={({ field }) => (
               <PhoneInput
@@ -92,8 +121,8 @@ export default function SignUpForm() {
             )}
           />
 
-          {errors.phoneNumber && (
-            <p className="mt-1 text-danger">Phone Number is required</p>
+          {errors.contact && (
+            <p className="mt-1 text-danger">Contact is required</p>
           )}
         </div>
 
@@ -199,8 +228,7 @@ export default function SignUpForm() {
         type="submit"
         className="mt-10 h-[2.8rem] w-full rounded-xl bg-primary-black font-semibold"
       >
-        Create Account
-        {isLoading && <Loader className="ml-3 animate-spin" size={20} />}
+        {isLoading ? <CustomLoader /> : "Create Account"}
       </Button>
 
       <div className="mt-5 flex items-center justify-center gap-2">
@@ -209,6 +237,8 @@ export default function SignUpForm() {
           Sign In
         </Link>
       </div>
+
+      {formError && <CustomFormError formError={formError} />}
     </form>
   );
 }

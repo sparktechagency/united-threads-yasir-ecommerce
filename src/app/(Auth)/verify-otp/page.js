@@ -20,7 +20,7 @@ export default function VerifyOtpPage() {
 
       <div className="w-full lg:w-1/2">
         <h2 className="mb-3 text-4xl font-semibold">Verify OTP</h2>
-        <p className="font-kumbh-sans mb-10 text-primary-black">
+        <p className="font-kumbh-sans mb-14 text-primary-black">
           We&apos;ll send a verification code to your email. Check your inbox
           and enter the code here:
         </p>
