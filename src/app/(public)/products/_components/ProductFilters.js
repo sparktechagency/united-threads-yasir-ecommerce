@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useGetCategoriesQuery } from "@/redux/api/productsApi";
 import { fadeUpVariants } from "@/utils/motion-variants";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
@@ -30,44 +31,6 @@ const fadeVariants = {
   },
 };
 
-const CATEGORIES = [
-  {
-    _id: 1,
-    name: "T-Shirt",
-    stock: 10,
-  },
-  {
-    _id: 2,
-    name: "Sweatshirt",
-    stock: 12,
-  },
-  {
-    _id: 3,
-    name: "Jersey",
-    stock: 8,
-  },
-  {
-    _id: 4,
-    name: "Shirt",
-    stock: 15,
-  },
-  {
-    _id: 5,
-    name: "Pant",
-    stock: 13,
-  },
-  {
-    _id: 6,
-    name: "Hoodie",
-    stock: 12,
-  },
-  {
-    _id: 7,
-    name: "Full Sleeve",
-    stock: 10,
-  },
-];
-
 const SIZES = [
   { _id: 1, name: "XS", stock: 24 },
   { _id: 2, name: "S", stock: 10 },
@@ -81,6 +44,11 @@ const SIZES = [
 export default function ProductFilters() {
   const [categoryExpanded, setCategoryExpanded] = useState(true);
   const [sizeExpanded, setSizeExpanded] = useState(true);
+
+  // Products filter api handlers
+  const { data: categoriesRes, isLoading: isCategoriesLoading } =
+    useGetCategoriesQuery();
+  const categories = categoriesRes?.data || [];
 
   return (
     <div className="pb-10">
@@ -119,13 +87,13 @@ export default function ProductFilters() {
             animate="animate"
             exit="exit"
           >
-            {CATEGORIES?.map((category) => (
+            {categories?.map((category) => (
               <motion.button
                 key={category._id}
                 className="flex-center-between w-full gap-x-2 hover:text-primary-black/75"
               >
                 <p>{category.name}</p>
-                <p>{category.stock}</p>
+                <p>{category.stock || 1}</p>
               </motion.button>
             ))}
           </motion.div>

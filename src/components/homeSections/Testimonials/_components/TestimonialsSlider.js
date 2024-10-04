@@ -10,6 +10,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import CustomStarRating from "@/components/CustomStarRating/CustomStarRating";
 import Autoplay from "embla-carousel-autoplay";
+import { useGetAllReviewsQuery } from "@/redux/api/reviewApi";
+import {
+  firstLetterUppercase,
+  transformNameInitials,
+} from "@/utils/transformNameInitials";
 
 const data = {
   key: 1,
@@ -22,12 +27,19 @@ const data = {
 };
 
 export default function TestimonialsSlider() {
+  const { data: reviewsRes, isLoading } = useGetAllReviewsQuery({
+    sort: "-rating",
+  });
+  const reviews = reviewsRes?.data || [];
+
   return (
     <div>
       <Carousel
         plugins={[
           Autoplay({
             delay: 4000,
+            stopOnInteraction: false,
+            stopOnMouseEnter: true,
           }),
         ]}
         opts={{
@@ -35,31 +47,37 @@ export default function TestimonialsSlider() {
           duration: 55,
         }}
       >
-        <CarouselContent className="-ml-8 py-10">
-          {Array.from({ length: 6 }).map((_, idx) => (
+        <CarouselContent className="-ml-6 px-1 py-5">
+          {reviews?.map((review) => (
             <CarouselItem
-              key={idx}
-              className="basis-1/2 pl-8 md:basis-1/2 lg:basis-1/3"
+              key={review._id}
+              className="h-max basis-1/2 pl-6 md:basis-1/2 lg:basis-1/3"
             >
-              <div className="space-y-6 rounded-xl border border-gray-200 p-6 py-8 shadow-md">
-                <div className="flex-center-start gap-x-8">
+              <div className="min-h-[200px] space-y-6 rounded-xl border border-gray-200 p-6 shadow-md">
+                <div className="flex-center-start gap-x-4">
                   <Avatar className="h-16 w-16">
-                    <AvatarImage src={data.user.src} />
-                    <AvatarFallback>UZ</AvatarFallback>
+                    <AvatarImage src={review?.user?.profilePicture} />
+                    <AvatarFallback className="font-medium">
+                      {transformNameInitials(
+                        review.user?.firstName + " " + review.user?.lastName,
+                      )}
+                    </AvatarFallback>
                   </Avatar>
 
                   <div className="space-y-1">
-                    <div className="flex-center gap-x-3">
-                      <h5 className="text-lg font-semibold">{data.name}</h5>
-                      <p className="font-thin text-secondary-2">
-                        {data.occupation}
-                      </p>
-                    </div>
-                    <CustomStarRating rating={data.rating} />
+                    <h5 className="text-lg font-semibold">
+                      {firstLetterUppercase(review.user?.firstName)}{" "}
+                      {firstLetterUppercase(review.user?.lastName)}
+                    </h5>
+                    <CustomStarRating rating={review.rating} />
                   </div>
                 </div>
 
-                <p>{data.review}</p>
+                <p>
+                  {review.comment.length > 4000
+                    ? `${review.comment?.slice(0, 4000)}...`
+                    : review.comment}
+                </p>
               </div>
             </CarouselItem>
           ))}

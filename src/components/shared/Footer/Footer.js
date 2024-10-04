@@ -45,7 +45,7 @@ export default function Footer() {
                 hello@theunitedthreads.com
               </p>
 
-              <Button className="rounded-lg border bg-primary-white px-5 py-[21px] text-primary-black">
+              <Button className="rounded-lg border bg-primary-white px-5 py-[21px] text-primary-black hover:bg-primary-white">
                 Email Us
               </Button>
             </div>

@@ -25,9 +25,9 @@ export default function Hero() {
           designed to inspire and empower
         </p>
 
-        <Link href="/products">
+        <Link href={"/products"} className="block lg:w-[43%]">
           <button
-            className="flex-center-between hover-bubble mt-10 rounded-full border border-primary-black bg-transparent px-4 py-2 text-lg text-primary-black lg:w-[42%]"
+            className="flex-center-between hover-bubble mt-10 w-full rounded-full border border-primary-black bg-transparent px-4 py-2 text-lg text-primary-black"
             id="request-quote-btn"
           >
             Request to quote
