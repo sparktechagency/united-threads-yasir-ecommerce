@@ -36,6 +36,10 @@ import {
 import { Info } from "lucide-react";
 import { Popover } from "antd";
 import { Tour } from "antd";
+import {
+  getFromSessionStorage,
+  setToSessionStorage,
+} from "@/utils/sessionStorage";
 
 // Motion variants
 const fadeVariants = {
@@ -341,6 +345,10 @@ export default function CustomTShirtDesigner() {
   const pantoneColorRef = useRef(null);
   const saveBtnRef = useRef(null);
   const previewRef = useRef(null);
+
+  const onTourClose = () => {
+    setToSessionStorage("customTShirtDesignerTourShown", true);
+  };
 
   const steps = [
     {
@@ -807,8 +815,15 @@ export default function CustomTShirtDesigner() {
 
       {/* Ant design step tour */}
       <Tour
-        open={showSteps}
-        onClose={() => setShowSteps(false)}
+        open={
+          !getFromSessionStorage("customTShirtDesignerTourShown") && showSteps
+            ? true
+            : false
+        }
+        onClose={() => {
+          setShowSteps(false);
+          onTourClose();
+        }}
         steps={steps}
       />
     </div>
