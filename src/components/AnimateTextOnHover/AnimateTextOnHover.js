@@ -53,7 +53,7 @@ function Container({ children, path, currentPathname }) {
               ease: [0.85, 0, 0.15, 1],
               delay: 0.025 * idx,
             }}
-            key={idx}
+            key={idx + new Date().toISOString()}
             className="inline-block"
           >
             {l === " " ? " " : l}
@@ -77,7 +77,7 @@ function Container({ children, path, currentPathname }) {
               ease: [0.95, 0, 0.15, 1],
               delay: 0.025 * idx,
             }}
-            key={idx}
+            key={idx + new Date().toISOString()}
             className="inline-block"
           >
             {l}

@@ -28,11 +28,6 @@ import { Image as AntImage } from "antd";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import * as simpleColorConverter from "simple-color-converter";
-import {
-  hex,
-  hex6,
-  pantone,
-} from "simple-color-converter/_components/_color_sanitizer";
 import { Info } from "lucide-react";
 import { Popover } from "antd";
 import { Tour } from "antd";
@@ -40,6 +35,15 @@ import {
   getFromSessionStorage,
   setToSessionStorage,
 } from "@/utils/sessionStorage";
+import { useGetSingleQuoteProductQuery } from "@/redux/api/Products Page Api/quoteProductsApi";
+import { useParams } from "next/navigation";
+
+// Don't remove this, it's for color conversion
+import {
+  hex,
+  hex6,
+  pantone,
+} from "simple-color-converter/_components/_color_sanitizer";
 
 // Motion variants
 const fadeVariants = {
@@ -60,40 +64,6 @@ const fadeVariants = {
   },
 };
 
-const SIZE_OPTIONS = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-const COLOR_VARIANTS = [
-  {
-    name: "Black",
-    hex: "#000000",
-  },
-  {
-    name: "White",
-    hex: "#FFFFFF",
-  },
-  {
-    name: "Blue Spruce",
-    hex: "#536758",
-  },
-
-  {
-    name: "True Navy",
-    hex: "#183045",
-  },
-  {
-    name: "Seafoam",
-    hex: "#609A95",
-  },
-  {
-    name: "Coral",
-    hex: "#F9B9B9",
-  },
-
-  {
-    name: "Orange",
-    hex: "#FFA500",
-  },
-];
-
 export default function CustomTShirtDesigner() {
   const {
     register,
@@ -103,7 +73,6 @@ export default function CustomTShirtDesigner() {
 
   const [showSteps, setShowSteps] = useState(true);
   const canvasRef = useRef(null);
-  const [color, setColor] = useState("");
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
   const [overlayColor, setOverlayColor] = useState("");
@@ -112,16 +81,32 @@ export default function CustomTShirtDesigner() {
     hex: "000000",
     distance: "16",
   });
-  const [selectedSizeOptions, setSelectedSizeOptions] = useState(null);
   const [sizeCollapsed, setSizeCollapsed] = useState(false);
   const [colorCollapsed, setColorCollapsed] = useState(false);
   const [pantoneColorCollapsed, setPantoneColorCollapsed] = useState(false);
+  const productId = useParams()?.id;
 
-  // Currently active image side
+  // ================= Get product api handler ======================
+  const { data: productDataRes, isLoading } = useGetSingleQuoteProductQuery(
+    productId,
+    { skip: !productId },
+  );
+  const productData = productDataRes?.data || {};
+  // ================================================================
+
+  // ================ Currently active image side based on product data response ===============
   const [activeImageSide, setActiveImageSide] = useState("front");
-  const [activeImage, setActiveImage] = useState(front);
+  const [activeImage, setActiveImage] = useState(null);
   const [savedFrontImage, setSavedFrontImage] = useState("");
   const [savedBackImage, setSavedBackImage] = useState("");
+
+  // Initialize active image on canvas
+  useEffect(() => {
+    if (productData?._id) {
+      setActiveImage(productData?.frontSide);
+    }
+  }, [productData]);
+  // =============================================================================================
 
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
@@ -146,19 +131,19 @@ export default function CustomTShirtDesigner() {
       setActiveObject(null);
     });
 
-    canvasInstance.on("mouse:wheel", (opt) => {
-      opt.e.preventDefault();
-      opt.e.stopPropagation();
+    // canvasInstance.on("mouse:wheel", (opt) => {
+    //   opt.e.preventDefault();
+    //   opt.e.stopPropagation();
 
-      let delta = opt.e.deltaY;
-      let zoom = canvasInstance.getZoom();
-      zoom = zoom + delta / 200;
+    //   let delta = opt.e.deltaY;
+    //   let zoom = canvasInstance.getZoom();
+    //   zoom = zoom + delta / 200;
 
-      if (zoom > 3) zoom = 3;
-      if (zoom < 0.5) zoom = 0.5;
+    //   if (zoom > 3) zoom = 3;
+    //   if (zoom < 0.5) zoom = 0.5;
 
-      canvasInstance.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-    });
+    //   canvasInstance.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+    // });
 
     return () => {
       canvasInstance.dispose();
@@ -199,6 +184,23 @@ export default function CustomTShirtDesigner() {
       setOverlayColor(e);
       return;
     }
+
+    // if (e.target.value) {
+    //   const pantoneColor = new simpleColorConverter({
+    //     hex6: e.target.value,
+    //     to: "pantone",
+    //   });
+
+    //   if (pantoneColor) {
+    //     const pantoneToHex = new simpleColorConverter({
+    //       pantone: `pantone ${pantoneColor?.color}`,
+    //       to: "hex6",
+    //     });
+
+    //     setOverlayColor(`#${pantoneToHex?.color}`);
+    //   }
+    // }
+
     setOverlayColor(e.target.value);
   };
 
@@ -237,7 +239,7 @@ export default function CustomTShirtDesigner() {
     };
   }, [activeObject, canvas]);
 
-  // Function to add custom picture
+  // =================== Function to add custom picture ================
   const handleCustomPicture = (e) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -259,47 +261,66 @@ export default function CustomTShirtDesigner() {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
+  // ================================================================
 
+  // ================== Function to export image on save =================
   const handleExportImage = () => {
-    const tempCanvas = document.createElement("canvas");
-    tempCanvas.width = canvas.getWidth();
-    tempCanvas.height = canvas.getHeight();
-    const context = tempCanvas.getContext("2d");
+    if (activeImage) {
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = canvas.getWidth();
+      tempCanvas.height = canvas.getHeight();
+      const context = tempCanvas.getContext("2d");
 
-    const imgElement = new window.Image();
-    imgElement.src = activeImage?.src;
+      const imgElement = new window.Image();
+      imgElement.crossOrigin = "Anonymous"; // Ensure this is set before src
+      imgElement.src = `${activeImage}?timestamp=${new Date().getTime()}`; // Avoid caching issues
 
-    imgElement.onload = () => {
-      context.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
+      imgElement.onload = () => {
+        context.drawImage(
+          imgElement,
+          0,
+          0,
+          tempCanvas.width,
+          tempCanvas.height,
+        );
 
-      if (overlayColor) {
-        context.globalCompositeOperation = "lighten"; // Use multiply to blend the color and image
-        context.fillStyle = overlayColor;
-        context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-        context.globalCompositeOperation = "source-over"; // Reset to default for further operations
-      }
-
-      const canvasDataUrl = canvas.toDataURL();
-      const canvasImage = new window.Image();
-      canvasImage.src = canvasDataUrl;
-      canvasImage.onload = () => {
-        context.drawImage(canvasImage, 0, 0);
-        const finalImageUrl = tempCanvas.toDataURL();
-
-        if (activeImageSide === "front") {
-          setSavedFrontImage(finalImageUrl);
-          toast.success("Image saved successfully!");
-        } else {
-          setSavedBackImage(finalImageUrl);
-          toast.success("Image saved successfully!");
+        if (overlayColor) {
+          context.globalCompositeOperation = "lighten";
+          context.fillStyle = overlayColor;
+          context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+          context.globalCompositeOperation = "source-over";
         }
 
-        // Clear the canvas but retain functionality
-        canvas.clear();
-      };
-    };
-  };
+        // Try to export the canvas as a DataURL
+        const canvasDataUrl = canvas.toDataURL();
+        const canvasImage = new window.Image();
+        canvasImage.src = canvasDataUrl;
+        canvasImage.onload = () => {
+          context.drawImage(canvasImage, 0, 0);
+          const finalImageUrl = tempCanvas.toDataURL();
 
+          if (activeImageSide === "front") {
+            setSavedFrontImage(finalImageUrl);
+            toast.success("Image saved successfully!");
+          } else {
+            setSavedBackImage(finalImageUrl);
+            toast.success("Image saved successfully!");
+          }
+
+          // Clear the canvas but retain functionality
+          canvas.clear();
+        };
+      };
+
+      imgElement.onerror = (error) => {
+        console.error("Image load error:", error);
+        toast.error("Failed to load image. Check CORS settings.");
+      };
+    }
+  };
+  // ======================================================================
+
+  // =================== Function to send quote on submit =================
   const onSendQuoteSubmit = (data) => {
     const toastId = toast.loading("Processing...");
 
@@ -309,6 +330,7 @@ export default function CustomTShirtDesigner() {
       });
     }, 3000);
   };
+  // ======================================================================
 
   // Transform hex to pantone color code
   useEffect(() => {
@@ -337,7 +359,7 @@ export default function CustomTShirtDesigner() {
     }
   }, [overlayColor]);
 
-  // Ant design steps
+  // ================== Ant design steps =========================
   const textBtnRef = useRef(null);
   const textStyleBoxRef = useRef(null);
   const uploadBtnRef = useRef(null);
@@ -345,6 +367,7 @@ export default function CustomTShirtDesigner() {
   const pantoneColorRef = useRef(null);
   const saveBtnRef = useRef(null);
   const previewRef = useRef(null);
+  // ===============================================================
 
   const onTourClose = () => {
     setToSessionStorage("customTShirtDesignerTourShown", true);
@@ -394,6 +417,7 @@ export default function CustomTShirtDesigner() {
 
   return (
     <div>
+      {/* <Image src={""} /> */}
       <form onSubmit={handleSubmit(onSendQuoteSubmit)} className="space-y-8">
         <div className="flex-start-between">
           {/* Left */}
@@ -464,11 +488,16 @@ export default function CustomTShirtDesigner() {
             >
               <div className="relative">
                 <Image
-                  src={activeImageSide === "front" ? front : back}
-                  alt="tshirt"
-                  height={500}
-                  width={500}
-                  className="mx-auto block w-[95%]"
+                  src={
+                    activeImageSide === "front"
+                      ? productData?.frontSide
+                      : productData?.backSide
+                  }
+                  alt={productData?.name}
+                  height={1500}
+                  width={1500}
+                  className="mx-auto block h-[500px] w-auto"
+                  priority={true}
                 />
 
                 <div
@@ -544,7 +573,7 @@ export default function CustomTShirtDesigner() {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="options" className="py-4">
-                <AnimatePresence initial={false}>
+                <AnimatePresence key={"options"} initial={false}>
                   {/* Size options */}
                   <motion.div initial="initial" animate="animate" exit="exit">
                     <button
@@ -552,7 +581,9 @@ export default function CustomTShirtDesigner() {
                       className="flex-center-between w-full rounded-t-3xl bg-lightGray p-3"
                       onClick={() => setSizeCollapsed(!sizeCollapsed)}
                     >
-                      <h5 className="text-base font-semibold">Select Size</h5>
+                      <h5 className="text-base font-semibold">
+                        Available Sizes
+                      </h5>
                       <ChevronsUpDown size={20} />
                     </button>
                     <Separator className="bg-primary-black/50" />
@@ -562,12 +593,13 @@ export default function CustomTShirtDesigner() {
                         variants={fadeVariants}
                         className="mx-auto grid gap-2 rounded-b-3xl bg-lightGray px-6 py-4 transition-all duration-300 ease-in-out lg:grid-cols-2"
                       >
-                        {SIZE_OPTIONS.map((size) => (
+                        {productData?.size?.map((size) => (
                           <div
                             key={size}
                             className="flex-center-start gap-x-2 text-lg"
                           >
-                            <Checkbox id={size} />
+                            {/* <Checkbox id={size} /> */}
+                            <div className="" />
                             <label htmlFor={size}>{size}</label>
                           </div>
                         ))}
@@ -631,7 +663,7 @@ export default function CustomTShirtDesigner() {
                                 backgroundColor: `#${pantoneColorObject?.hex}`,
                               }}
                               className={cn(
-                                "h-6 w-6 rounded-full",
+                                "aspect-square h-6 w-6 rounded-full",
                                 overlayColor === pantoneColorObject.hex &&
                                   "border-2 border-yellow-500",
                               )}
@@ -683,26 +715,22 @@ export default function CustomTShirtDesigner() {
                         variants={fadeVariants}
                         className="mx-auto grid gap-2 rounded-b-3xl bg-lightGray px-6 py-4 lg:grid-cols-2"
                       >
-                        {COLOR_VARIANTS.map((color) => (
+                        {productData?.colorsPreferences?.map((hex) => (
                           <button
                             type="button"
-                            key={color.hex}
+                            key={hex}
                             className="flex-center-start gap-x-2"
-                            onClick={() => handleColorChange(color.hex)}
+                            onClick={() => handleColorChange(hex)}
                           >
-                            <Tooltip placement="top" title={color.hex}>
-                              <div
-                                style={{ backgroundColor: color.hex }}
-                                className={cn(
-                                  "h-5 w-5 rounded-full",
-                                  overlayColor === color.hex &&
-                                    "border-2 border-yellow-500",
-                                )}
-                              />
-                            </Tooltip>
-                            <h5 className="text-lg font-medium">
-                              {color.name}
-                            </h5>
+                            <div
+                              style={{ backgroundColor: hex }}
+                              className={cn(
+                                "h-5 w-5 rounded-full",
+                                overlayColor === hex &&
+                                  "border-2 border-yellow-500",
+                              )}
+                            />
+                            <h5 className="text-lg font-medium">{hex}</h5>
                           </button>
                         ))}
                       </motion.div>

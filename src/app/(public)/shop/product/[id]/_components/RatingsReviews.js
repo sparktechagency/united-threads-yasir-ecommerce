@@ -130,7 +130,7 @@ export default function RatingsReviews() {
             <div className="space-y-10">
               {Array.from({ length: 3 }).map((idx) => (
                 <>
-                  <ReviewCard key={idx} />
+                  <ReviewCard key={idx + new Date().toISOString()} />
                   <Separator />
                 </>
               ))}

@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "http",
         hostname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "clinica-admin.s3.eu-north-1.amazonaws.com",
+      },
     ],
   },
 };

@@ -1,5 +1,5 @@
-import { tagTypes } from "../tagtypes";
-import { baseApi } from "./baseApi";
+import { tagTypes } from "../../tagtypes";
+import { baseApi } from "../baseApi";
 
 const productsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

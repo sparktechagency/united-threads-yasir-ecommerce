@@ -1,13 +1,13 @@
 "use client";
 
+import CustomSkeleton from "@/components/CustomSkeleton/CustomSkeleton";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { useGetCategoriesQuery } from "@/redux/api/productsApi";
-import { fadeUpVariants } from "@/utils/motion-variants";
+import {
+  useGetQuoteCategoriesQuery,
+  useGetQuoteSizesQuery,
+} from "@/redux/api/Products Page Api/quoteProductsApi";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
-import { DollarSign } from "lucide-react";
-import { Check } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { ChevronUp } from "lucide-react";
 import { useState } from "react";
@@ -31,15 +31,7 @@ const fadeVariants = {
   },
 };
 
-const SIZES = [
-  { _id: 1, name: "XS", stock: 24 },
-  { _id: 2, name: "S", stock: 10 },
-  { _id: 3, name: "M", stock: 17 },
-  { _id: 4, name: "L", stock: 22 },
-  { _id: 5, name: "XL", stock: 34 },
-  { _id: 6, name: "XXL", stock: 31 },
-  { _id: 7, name: "XXXL", stock: 26 },
-];
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
 export default function ProductFilters() {
   const [categoryExpanded, setCategoryExpanded] = useState(true);
@@ -47,8 +39,13 @@ export default function ProductFilters() {
 
   // Products filter api handlers
   const { data: categoriesRes, isLoading: isCategoriesLoading } =
-    useGetCategoriesQuery();
+    useGetQuoteCategoriesQuery();
   const categories = categoriesRes?.data || [];
+
+  const { data: sizeRes, isLoading: isSizeLoading } = useGetQuoteSizesQuery();
+  const sizes = sizeRes?.data || {};
+
+  console.log(sizes["L"]);
 
   return (
     <div className="pb-10">
@@ -80,27 +77,37 @@ export default function ProductFilters() {
         </motion.div>
 
         {categoryExpanded && (
-          <motion.div
-            className="my-5 flex flex-col items-start gap-y-3 overflow-hidden px-4"
-            variants={fadeVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            {categories?.map((category) => (
-              <motion.button
-                key={category._id}
-                className="flex-center-between w-full gap-x-2 hover:text-primary-black/75"
+          <>
+            {isCategoriesLoading ? (
+              <CustomSkeleton
+                className={"mt-5 space-y-3"}
+                skeletonClass="w-full h-4 rounded-lg"
+                length={8}
+              />
+            ) : (
+              <motion.div
+                className="my-5 flex w-full flex-col items-start gap-y-3 overflow-hidden px-4"
+                variants={fadeVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
               >
-                <p>{category.name}</p>
-                <p>{category.stock || 1}</p>
-              </motion.button>
-            ))}
-          </motion.div>
+                {categories?.map((category) => (
+                  <motion.button
+                    key={category._id}
+                    className="flex-center-between w-full gap-x-2 hover:text-primary-black/75"
+                  >
+                    <p>{category.name}</p>
+                    <p>{category.productCount}</p>
+                  </motion.button>
+                ))}
+              </motion.div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Price Filter */}
+      {/* Size Filter */}
       <motion.div className="mt-8" layout>
         <motion.div
           className="flex items-center justify-between"
@@ -125,13 +132,13 @@ export default function ProductFilters() {
             exit="exit"
             layout="position"
           >
-            {SIZES.map((size) => (
+            {SIZES?.map((size) => (
               <motion.button
-                key={size._id}
+                key={size}
                 className="flex-center-between w-full gap-x-2 hover:text-primary-black/75"
               >
-                <p>{size.name}</p>
-                <p>{size.stock}</p>
+                <p>{size}</p>
+                <p>{sizes[size]?.productCount || 0}</p>
               </motion.button>
             ))}
           </motion.div>

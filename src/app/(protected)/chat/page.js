@@ -36,7 +36,7 @@ export default function Chat() {
             <div className="scroll-hide mt-8 max-h-[100vh] space-y-8 overflow-auto">
               {Array.from({ length: 8 }).map((_, idx) => (
                 <UserCard
-                  key={idx}
+                  key={idx + new Date().toISOString()}
                   user={{
                     img: userImg,
                     name: "Elmer Laverty",

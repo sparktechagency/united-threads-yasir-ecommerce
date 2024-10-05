@@ -98,7 +98,7 @@ export default function Navbar() {
         <div className="flex w-[20%] items-center justify-center">
           {userId ? (
             <div className="flex items-center gap-x-6">
-              {/* <Link
+              <Link
                 href="/notification"
                 className="relative"
                 title="notifications"
@@ -107,7 +107,7 @@ export default function Navbar() {
                 <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
                   4
                 </Badge>
-              </Link> */}
+              </Link>
 
               <Link href="/chat" className="relative" title="notifications">
                 <MessageSquareText size={24} />
