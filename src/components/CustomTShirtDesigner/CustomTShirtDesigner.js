@@ -3,8 +3,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
-import front from "./front.jpg";
-import back from "./back.jpg";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
 import { Tooltip } from "antd";
@@ -37,6 +35,7 @@ import {
 } from "@/utils/sessionStorage";
 import { useGetSingleQuoteProductQuery } from "@/redux/api/Products Page Api/quoteProductsApi";
 import { useParams } from "next/navigation";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // Don't remove this, it's for color conversion
 import {
@@ -150,7 +149,7 @@ export default function CustomTShirtDesigner() {
     };
   }, [activeImage]);
 
-  //  // Handle changing the image side on button click
+  // ================= Handle changing the image side on button click ===================
   const handleChangeImageSide = (whichSide) => {
     Swal.fire({
       title: "Save Changes?",
@@ -179,6 +178,7 @@ export default function CustomTShirtDesigner() {
     });
   };
 
+  // =========================== Function to change apparel color ===================
   const handleColorChange = (e) => {
     if (typeof e === "string") {
       setOverlayColor(e);
@@ -204,6 +204,7 @@ export default function CustomTShirtDesigner() {
     setOverlayColor(e.target.value);
   };
 
+  // ========================= Function to add text on apparel ========================
   const handleAddText = () => {
     const text = new fabric.IText("Double click to edit", {
       left: 50,
@@ -217,6 +218,7 @@ export default function CustomTShirtDesigner() {
     canvas.renderAll();
   };
 
+  // ========================= Function to change text style =======================
   const handleStyleChange = (style, value) => {
     if (activeObject && activeObject?.type === "i-text") {
       activeObject?.set(style, value);
@@ -224,6 +226,7 @@ export default function CustomTShirtDesigner() {
     }
   };
 
+  // ======================== Function to delete object from apparel =========================
   const handleDeleteObject = (e) => {
     if (e.key === "Delete" && activeObject) {
       canvas.remove(activeObject);
@@ -239,7 +242,7 @@ export default function CustomTShirtDesigner() {
     };
   }, [activeObject, canvas]);
 
-  // =================== Function to add custom picture ================
+  // =================== Function to add custom picture on apparel ================
   const handleCustomPicture = (e) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -367,7 +370,6 @@ export default function CustomTShirtDesigner() {
   const pantoneColorRef = useRef(null);
   const saveBtnRef = useRef(null);
   const previewRef = useRef(null);
-  // ===============================================================
 
   const onTourClose = () => {
     setToSessionStorage("customTShirtDesignerTourShown", true);
@@ -414,6 +416,8 @@ export default function CustomTShirtDesigner() {
       target: () => previewRef?.current,
     },
   ];
+
+  // ===============================================================
 
   return (
     <div>
@@ -591,18 +595,37 @@ export default function CustomTShirtDesigner() {
                     {!sizeCollapsed && (
                       <motion.div
                         variants={fadeVariants}
-                        className="mx-auto grid gap-2 rounded-b-3xl bg-lightGray px-6 py-4 transition-all duration-300 ease-in-out lg:grid-cols-2"
+                        className="mx-auto rounded-b-3xl bg-lightGray px-6 py-4 transition-all duration-300 ease-in-out"
                       >
-                        {productData?.size?.map((size) => (
-                          <div
-                            key={size}
-                            className="flex-center-start gap-x-2 text-lg"
-                          >
-                            {/* <Checkbox id={size} /> */}
-                            <div className="" />
-                            <label htmlFor={size}>{size}</label>
-                          </div>
-                        ))}
+                        <RadioGroup className="grid grid-cols-2 gap-5">
+                          {productData?.size?.map((size) => (
+                            // <div
+                            //   key={size}
+                            //   className="flex-center-start gap-x-2 text-lg"
+                            // >
+                            //   {/* <Checkbox id={size} /> */}
+                            //   <div className="" />
+                            //   <label htmlFor={size}>{size}</label>
+                            // </div>
+
+                            <div
+                              key={size}
+                              className="flex items-center space-x-2"
+                            >
+                              <RadioGroupItem
+                                value={size}
+                                id={size}
+                                className="h-[19px] w-[19px]"
+                              />
+                              <Label
+                                htmlFor={size}
+                                className="cursor-pointer text-[17px]"
+                              >
+                                {size}
+                              </Label>
+                            </div>
+                          ))}
+                        </RadioGroup>
                       </motion.div>
                     )}
                   </motion.div>
@@ -704,7 +727,7 @@ export default function CustomTShirtDesigner() {
                       onClick={() => setColorCollapsed(!colorCollapsed)}
                     >
                       <h5 className="text-base font-semibold">
-                        Color Variants
+                        Preferred Color Variants
                       </h5>
                       <ChevronsUpDown size={20} />
                     </button>

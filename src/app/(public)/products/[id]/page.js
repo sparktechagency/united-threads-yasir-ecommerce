@@ -1,7 +1,7 @@
 import CustomTShirtDesigner from "@/components/CustomTShirtDesigner/CustomTShirtDesigner";
 
 export const metadata = {
-  title: "Design Your Product",
+  title: "Design Your Apparel",
   description: "Custom apparel designer  page",
 };
 
