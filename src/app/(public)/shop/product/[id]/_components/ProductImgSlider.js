@@ -67,6 +67,8 @@ export default function ProductImgSlider({ images }) {
               onClick={() => setlightboxImageIndex(index)}
               title="Click to expand"
             />
+
+            
           </div>
         ))}
       </Slider>

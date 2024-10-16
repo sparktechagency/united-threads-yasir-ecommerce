@@ -59,11 +59,15 @@ export default function ProductDetailsContainer({ id }) {
 
       <div className="flex min-h-screen flex-col gap-y-10 lg:min-h-[75vh] lg:flex-row lg:items-start lg:justify-between lg:gap-x-20 lg:gap-y-0">
         {/* left - product image slider */}
-        <div className="lg:w-1/2">
+        <div className="lg:w-1/2 border-red">
           {isProductLoading ? (
             <div className="h-[600px] animate-pulse rounded bg-gray-300"></div>
           ) : (
-            <ProductImgSlider images={product?.images} />
+            <>
+              {product?.images?.length > 0 && (
+                <ProductImgSlider images={product?.images} />
+              )}
+            </>
           )}
         </div>
 
