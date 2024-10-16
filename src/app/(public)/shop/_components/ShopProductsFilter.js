@@ -1,15 +1,19 @@
 "use client";
-
+import CustomSkeleton from "@/components/CustomSkeleton/CustomSkeleton";
 import { Input } from "@/components/ui/input";
+import { ShopPageContext } from "@/context/ShopPageContext";
 import { cn } from "@/lib/utils";
-import { fadeUpVariants } from "@/utils/motion-variants";
+import {
+  useGetShopCategoriesQuery,
+  useGetShopProductSizesQuery,
+} from "@/redux/api/Shop Page Api/shopApi";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
-import { DollarSign } from "lucide-react";
-import { Check } from "lucide-react";
+import { X } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
 
 // motion variants
 const fadeVariants = {
@@ -30,57 +34,46 @@ const fadeVariants = {
   },
 };
 
-const CATEGORIES = [
-  {
-    _id: 1,
-    name: "T-Shirt",
-    stock: 10,
-  },
-  {
-    _id: 2,
-    name: "Sweatshirt",
-    stock: 12,
-  },
-  {
-    _id: 3,
-    name: "Jersey",
-    stock: 8,
-  },
-  {
-    _id: 4,
-    name: "Shirt",
-    stock: 15,
-  },
-  {
-    _id: 5,
-    name: "Pant",
-    stock: 13,
-  },
-  {
-    _id: 6,
-    name: "Hoodie",
-    stock: 12,
-  },
-  {
-    _id: 7,
-    name: "Full Sleeve",
-    stock: 10,
-  },
-];
-
-const SIZES = [
-  { _id: 1, name: "XS", stock: 24 },
-  { _id: 2, name: "S", stock: 10 },
-  { _id: 3, name: "M", stock: 17 },
-  { _id: 4, name: "L", stock: 22 },
-  { _id: 5, name: "XL", stock: 34 },
-  { _id: 6, name: "XXL", stock: 31 },
-  { _id: 7, name: "XXXL", stock: 26 },
-];
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
 export default function ShopProductsFilter() {
   const [categoryExpanded, setCategoryExpanded] = useState(true);
   const [sizeExpanded, setSizeExpanded] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // ============ Categories and sizes api handler ============
+  const { data: categories, isLoading: isCategoriesLoading } =
+    useGetShopCategoriesQuery();
+  const { data: sizes, isLoading: isSizeLoading } =
+    useGetShopProductSizesQuery();
+
+  // ============ Get size & category selector from context ============
+  const {
+    searchText,
+    setSearchText,
+    setSelectedCategory,
+    setSelectedSize,
+    selectedCategory,
+    selectedSize,
+  } = useContext(ShopPageContext);
+
+  // Set search text w/ debouncing
+  const handleSearch = useMemo(
+    () =>
+      debounce(() => {
+        setSearchText(searchTerm);
+      }, 500), // Hit search api after 500ms of typing
+    [searchTerm],
+  );
+
+  // Use the debounced handleSearch whenever searchTerm or filters change
+  useEffect(() => {
+    handleSearch();
+
+    return () => {
+      handleSearch.cancel();
+    };
+  }, [searchTerm, handleSearch]);
 
   return (
     <div className="pb-10">
@@ -93,10 +86,11 @@ export default function ShopProductsFilter() {
         <Input
           className="w-full rounded-3xl border border-primary-black/75 px-10 py-5 text-lg shadow-sm"
           placeholder="Search products..."
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      {/* Category */}
+      {/* Category Filter */}
       <div className="mt-4">
         <motion.div
           className="flex items-center justify-between"
@@ -112,27 +106,50 @@ export default function ShopProductsFilter() {
         </motion.div>
 
         {categoryExpanded && (
-          <motion.div
-            className="my-5 flex flex-col items-start gap-y-3 overflow-hidden px-4"
-            variants={fadeVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            {CATEGORIES?.map((category) => (
-              <motion.button
-                key={category._id}
-                className="flex-center-between w-full gap-x-2 hover:text-primary-black/75"
+          <>
+            {isCategoriesLoading ? (
+              <CustomSkeleton
+                className={"mt-5 space-y-3"}
+                skeletonClass="w-full h-4 rounded-lg"
+                length={8}
+              />
+            ) : (
+              <motion.div
+                className="my-5 flex w-full flex-col items-start gap-y-3 px-2"
+                variants={fadeVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
               >
-                <p>{category.name}</p>
-                <p>{category.stock}</p>
-              </motion.button>
-            ))}
-          </motion.div>
+                {categories?.map((category) => (
+                  <div key={category?._id} className="relative w-full">
+                    {selectedCategory === category?._id && (
+                      <X
+                        role="button"
+                        size={18}
+                        className="absolute -left-8 top-1/2 -translate-y-1/2"
+                        onClick={() => setSelectedCategory("")}
+                      />
+                    )}
+                    <motion.button
+                      className={cn(
+                        "flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70",
+                        selectedCategory === category?._id && "font-extrabold",
+                      )}
+                      onClick={() => setSelectedCategory(category?._id)}
+                    >
+                      <p>{category.name}</p>
+                      <p>{category.productCount}</p>
+                    </motion.button>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Price Filter */}
+      {/* Size Filter */}
       <motion.div className="mt-8" layout>
         <motion.div
           className="flex items-center justify-between"
@@ -148,25 +165,35 @@ export default function ShopProductsFilter() {
           )}
         </motion.div>
 
-        {sizeExpanded && (
-          <motion.div
-            className="my-5 flex flex-col items-start gap-y-3 overflow-hidden px-4"
-            variants={fadeVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            layout="position"
-          >
-            {SIZES.map((size) => (
-              <motion.button
-                key={size._id}
-                className="flex-center-between w-full gap-x-2 hover:text-primary-black/75"
+        {isSizeLoading ? (
+          <CustomSkeleton
+            className={"mt-5 space-y-3"}
+            skeletonClass="w-full h-4 rounded-lg"
+            length={8}
+          />
+        ) : (
+          <>
+            {sizeExpanded && (
+              <motion.div
+                className="my-5 flex flex-col items-start gap-y-3 overflow-hidden px-2"
+                variants={fadeVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                layout="position"
               >
-                <p>{size.name}</p>
-                <p>{size.stock}</p>
-              </motion.button>
-            ))}
-          </motion.div>
+                {SIZES?.map((size) => (
+                  <motion.button
+                    key={size}
+                    className="flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70"
+                  >
+                    <p>{size}</p>
+                    <p>{sizes[size]?.productCount || 0}</p>
+                  </motion.button>
+                ))}
+              </motion.div>
+            )}
+          </>
         )}
       </motion.div>
     </div>

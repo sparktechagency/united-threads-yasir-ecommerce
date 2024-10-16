@@ -5,10 +5,13 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
+import { useUpdateShopProductReviewMutation } from "@/redux/api/Shop Page Api/shopApi";
+import { errorToast, successToast } from "@/utils/customToast";
 import { Controller, useForm } from "react-hook-form";
 import StarRatings from "react-star-ratings";
+import { toast } from "sonner";
 
-export default function UpdateReviewModal({ review, open, setOpen }) {
+export default function UpdateReviewModal({ open, setOpen, review }) {
   const {
     register,
     handleSubmit,
@@ -16,12 +19,21 @@ export default function UpdateReviewModal({ review, open, setOpen }) {
     control,
   } = useForm();
 
+  const [updateReview] = useUpdateShopProductReviewMutation();
   const onSubmit = async (data) => {
-    console.log(data);
+    const toastId = toast.loading("Updating review...");
+
+    try {
+      await updateReview({ id: review?._id, data }).unwrap();
+      setOpen(false);
+      successToast("Review updated successfully", toastId);
+    } catch (error) {
+      errorToast(error?.data?.message || error?.error, toastId);
+    }
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
+    <AlertDialog open={open} onOpenChange={setOpen} className="relative">
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogDescription>
@@ -63,7 +75,7 @@ export default function UpdateReviewModal({ review, open, setOpen }) {
               </p>
 
               <Controller
-                name="review"
+                name="comment"
                 control={control}
                 rules={{
                   required:
@@ -74,7 +86,7 @@ export default function UpdateReviewModal({ review, open, setOpen }) {
                     <textarea
                       {...field}
                       placeholder="Your review"
-                      className="bg-foundation-orange-light-hover min-h-[200px] w-full rounded p-4 text-[17px] text-primary-black"
+                      className="min-h-[200px] w-full rounded border border-primary-black bg-primary-white p-4 text-[17px] text-primary-black"
                       minLength={70}
                       defaultValue={review?.comment}
                     />
@@ -88,9 +100,12 @@ export default function UpdateReviewModal({ review, open, setOpen }) {
                 )}
               />
 
-              <div className="flex items-center gap-x-3">
-                <AlertDialogCancel htmlType="button" className="border">
-                  Cancel
+              <div>
+                <AlertDialogCancel
+                  htmlType="button"
+                  className="absolute right-0 top-0 border-none shadow-none"
+                >
+                  X
                 </AlertDialogCancel>
                 <button
                   type="submit"

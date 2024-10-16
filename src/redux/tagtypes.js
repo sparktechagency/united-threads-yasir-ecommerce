@@ -6,19 +6,26 @@ export const tagTypes = {
   admin: "Admin",
   common: "Common",
   settings: "Settings",
-  category: "Category",
-  products: "Products",
-  quoteProducts: "QuoteProducts",
-  quoteProduct: "QuoteProduct",
-  quoteCategories: "QuoteCategories",
-  quoteSizes: "QuoteSizes",
-  user: "User",
-  users: "Users",
-  quote: "Quote",
   review: "Review",
   order: "Order",
   payment: "Payment",
   meta: "Meta",
+  user: "User",
+  users: "Users",
+
+  // Quote Page
+  quoteProducts: "QuoteProducts",
+  quoteProduct: "QuoteProduct",
+  quoteCategories: "QuoteCategories",
+  quoteSizes: "QuoteSizes",
+  quote: "Quote",
+
+  // Shop Page
+  shopCategories: "ShopCategories",
+  shopProducts: "ShopProducts",
+  shopProduct: "ShopProduct",
+  shopProductSizes: "ShopProductSizes",
+  shopProductReviews: "ShopProductReviews",
 };
 
 export const tagTypesList = [
@@ -29,12 +36,6 @@ export const tagTypesList = [
   tagTypes.admin,
   tagTypes.common,
   tagTypes.settings,
-  tagTypes.category,
-  tagTypes.products,
-  tagTypes.quoteProduct,
-  tagTypes.quoteProducts,
-  tagTypes.quoteCategories,
-  tagTypes.quoteSizes,
   tagTypes.user,
   tagTypes.users,
   tagTypes.quote,
@@ -42,4 +43,17 @@ export const tagTypesList = [
   tagTypes.order,
   tagTypes.payment,
   tagTypes.meta,
+
+  // Quote Page
+  tagTypes.quoteProduct,
+  tagTypes.quoteProducts,
+  tagTypes.quoteCategories,
+  tagTypes.quoteSizes,
+
+  // Shop Page
+  tagTypes.shopCategories,
+  tagTypes.shopProducts,
+  tagTypes.shopProduct,
+  tagTypes.shopProductSizes,
+  tagTypes.shopProductReviews,
 ];

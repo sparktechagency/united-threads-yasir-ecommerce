@@ -10,38 +10,16 @@ import {
   Zoom,
   Slideshow,
 } from "yet-another-react-lightbox/plugins";
-import img1 from "/public/images/shop-product/img1.png";
-import img2 from "/public/images/shop-product/img2.png";
-import img3 from "/public/images/shop-product/img3.png";
-import img4 from "/public/images/shop-product/img4.png";
+// import { showImage } from "@/utils/fileHelper";
 
-const images = [
-  {
-    key: 1,
-    url: img1,
-  },
-  {
-    key: 2,
-    url: img2,
-  },
-  {
-    key: 3,
-    url: img3,
-  },
-  {
-    key: 4,
-    url: img4,
-  },
-];
+export default function ProductImgSlider({ images }) {
+  const [currentImgIndex, setCurrentImgIndex] = useState(0);
+  const [lightboxImageIndex, setlightboxImageIndex] = useState(-1); // Hide lightbox if index -1
 
-export default function ProductImgSlider() {
-  const [currentImgIndex, setCurrentImgIndex] = useState(1);
-  // const [lightboxImageIndex, setlightboxImageIndex] = useState(-1); // Hide lightbox if index -1
-
-  // // Define image slides for lightbox
-  // const imageSlides = images?.map((image) => {
-  //   return { key: 1, src: image.url };
-  // });
+  // Define image slides for lightbox
+  const imageSlides = images?.map((image) => {
+    return { ...image, src: image.url };
+  });
 
   const settings = {
     customPaging: function (i) {
@@ -50,9 +28,9 @@ export default function ProductImgSlider() {
           <Image
             src={images[i]?.url}
             alt={`product image ${currentImgIndex}`}
-            className="mx-auto block w-1/2 p-4"
-            layout="fill"
-            objectFit="contain"
+            className="mx-auto block h-auto w-3/4 p-4"
+            width={1200}
+            height={1200}
           />
         </div>
       );
@@ -74,19 +52,19 @@ export default function ProductImgSlider() {
   return (
     <>
       <Slider {...settings}>
-        {images?.map((img) => (
+        {images?.map((img, index) => (
           <div
             key={img.key}
-            onClick={() => setCurrentImgIndex(img.key)}
-            className="product-img-container h-[590px] w-full rounded border-none bg-foundation-white-hover outline-none"
+            onClick={() => setCurrentImgIndex(index)}
+            className="product-img-container h-[590px] w-full rounded bg-foundation-white-hover"
           >
             <Image
               src={img.url}
               alt={`product image ${currentImgIndex}`}
-              width={300}
-              height={300}
-              className="mt-10 block object-cover"
-              // onClick={() => setlightboxImageIndex(img.key)}
+              width={1500}
+              height={1500}
+              className="block h-auto w-auto cursor-pointer"
+              onClick={() => setlightboxImageIndex(index)}
               title="Click to expand"
             />
           </div>
@@ -94,14 +72,14 @@ export default function ProductImgSlider() {
       </Slider>
 
       {/* -------- Image Lightbox --------- */}
-      {/* <Lightbox
+      <Lightbox
         index={lightboxImageIndex}
         slides={imageSlides || []}
         open={lightboxImageIndex >= 0}
         close={() => setlightboxImageIndex(-1)}
-        // render={{ slide: NextJsImage }}
-        // plugins={[Fullscreen, Zoom, Slideshow]}
-      /> */}
+        render={{ slide: NextJsImage }}
+        plugins={[Fullscreen, Zoom, Slideshow]}
+      />
     </>
   );
 }

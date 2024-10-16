@@ -61,7 +61,7 @@ export default function ProductFilters() {
         />
       </div>
 
-      {/* Category */}
+      {/* Category Filter */}
       <div className="mt-4">
         <motion.div
           className="flex items-center justify-between"
@@ -86,7 +86,7 @@ export default function ProductFilters() {
               />
             ) : (
               <motion.div
-                className="my-5 flex w-full flex-col items-start gap-y-3 overflow-hidden px-4"
+                className="my-5 flex w-full flex-col items-start gap-y-3 overflow-hidden px-2"
                 variants={fadeVariants}
                 initial="initial"
                 animate="animate"
@@ -95,7 +95,7 @@ export default function ProductFilters() {
                 {categories?.map((category) => (
                   <motion.button
                     key={category._id}
-                    className="flex-center-between w-full gap-x-2 hover:text-primary-black/75"
+                    className="flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70"
                   >
                     <p>{category.name}</p>
                     <p>{category.productCount}</p>
@@ -123,25 +123,35 @@ export default function ProductFilters() {
           )}
         </motion.div>
 
-        {sizeExpanded && (
-          <motion.div
-            className="my-5 flex flex-col items-start gap-y-3 overflow-hidden px-4"
-            variants={fadeVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            layout="position"
-          >
-            {SIZES?.map((size) => (
-              <motion.button
-                key={size}
-                className="flex-center-between w-full gap-x-2 hover:text-primary-black/75"
+        {isSizeLoading ? (
+          <CustomSkeleton
+            className={"mt-5 space-y-3"}
+            skeletonClass="w-full h-4 rounded-lg"
+            length={8}
+          />
+        ) : (
+          <>
+            {sizeExpanded && (
+              <motion.div
+                className="my-5 flex flex-col items-start gap-y-3 overflow-hidden px-2"
+                variants={fadeVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                layout="position"
               >
-                <p>{size}</p>
-                <p>{sizes[size]?.productCount || 0}</p>
-              </motion.button>
-            ))}
-          </motion.div>
+                {SIZES?.map((size) => (
+                  <motion.button
+                    key={size}
+                    className="flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70"
+                  >
+                    <p>{size}</p>
+                    <p>{sizes[size]?.productCount || 0}</p>
+                  </motion.button>
+                ))}
+              </motion.div>
+            )}
+          </>
         )}
       </motion.div>
     </div>

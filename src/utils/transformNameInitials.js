@@ -1,4 +1,7 @@
-export const transformNameInitials = (name) => {
+export const transformNameInitials = (name, firstName, lastName) => {
+  if (firstName || lastName) {
+    return firstName.charAt(0).toUpperCase() + lastName.charAt(0).toUpperCase();
+  }
   const nameArray = name.split(" ");
   const initials = nameArray
     .map((name) => name.charAt(0).toUpperCase())

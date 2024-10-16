@@ -57,7 +57,7 @@ const baseQueryWithRefreshToken = async (args, api, extraOptions) => {
 
       result = await baseQuery(args, api, extraOptions);
     } else {
-      // api.dispatch(logout());
+      api.dispatch(logout());
     }
   }
 
