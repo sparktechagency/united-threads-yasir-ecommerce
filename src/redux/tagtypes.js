@@ -12,6 +12,7 @@ export const tagTypes = {
   meta: "Meta",
   user: "User",
   users: "Users",
+  orders: "Orders",
 
   // Quote Page
   quoteProducts: "QuoteProducts",
@@ -43,6 +44,7 @@ export const tagTypesList = [
   tagTypes.order,
   tagTypes.payment,
   tagTypes.meta,
+  tagTypes.orders,
 
   // Quote Page
   tagTypes.quoteProduct,

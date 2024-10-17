@@ -57,6 +57,10 @@ export default function RatingsReviews({ productId, isProductLoading }) {
     }
   };
 
+  if (userReviews?.length < 1) {
+    return;
+  }
+
   return (
     <>
       <div id="ratings-reviews" className="py-4">

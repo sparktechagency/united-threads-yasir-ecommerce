@@ -42,7 +42,7 @@
 
   .product-img-slider .slick-thumb li {
     margin-bottom: 12px !important;
-    background-color: var(--foundation-white-hover) !important;
+    background-color: #dfe1e3 !important;
     border-radius: 7px !important;
     height: max-content !important;
     width: 120px !important;

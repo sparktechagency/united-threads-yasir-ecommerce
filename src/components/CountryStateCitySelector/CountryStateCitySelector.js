@@ -70,7 +70,9 @@ export default function CountryStateCitySelector({
     }
   }, [userAddress?.country]);
 
-  console.log(selectedState);
+  // if (!userAddress) {
+  //   return;
+  // }
 
   return (
     <div className="grid w-full grid-cols-2 gap-x-3 gap-y-3 lg:grid-cols-5">
@@ -224,7 +226,7 @@ export default function CountryStateCitySelector({
           id="house"
           placeholder="Type House No"
           className="border border-primary-black bg-transparent py-5 text-primary-black outline-none focus:outline-none"
-          {...register("house")}
+          {...register("houseNo")}
         />
       </div>
     </div>

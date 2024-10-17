@@ -28,9 +28,9 @@ export default function ProductImgSlider({ images }) {
           <Image
             src={images[i]?.url}
             alt={`product image ${currentImgIndex}`}
-            className="mx-auto block h-auto w-3/4 p-4"
-            width={1200}
-            height={1200}
+            className="mx-auto block w-1/2 p-4"
+            layout="fill"
+            objectFit="contain"
           />
         </div>
       );
@@ -61,14 +61,12 @@ export default function ProductImgSlider({ images }) {
             <Image
               src={img.url}
               alt={`product image ${currentImgIndex}`}
-              width={1500}
-              height={1500}
-              className="block h-auto w-auto cursor-pointer"
+              width={500}
+              height={500}
+              className="block cursor-pointer"
               onClick={() => setlightboxImageIndex(index)}
               title="Click to expand"
             />
-
-            
           </div>
         ))}
       </Slider>

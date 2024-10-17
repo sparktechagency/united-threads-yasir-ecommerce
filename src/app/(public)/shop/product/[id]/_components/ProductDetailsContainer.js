@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductImgSlider from "./ProductImgSlider";
 import CustomStarRating from "@/components/CustomStarRating/CustomStarRating";
 import Link from "next/link";
@@ -24,21 +24,48 @@ import { Minus } from "lucide-react";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useGetSingleShopProductQuery } from "@/redux/api/Shop Page Api/shopApi";
+import { ShoppingBag } from "lucide-react";
+import { ErrorModal } from "@/utils/customModal";
+import {
+  getFromSessionStorage,
+  setToSessionStorage,
+} from "@/utils/sessionStorage";
+import { errorToast } from "@/utils/customToast";
+import { sizeSorter } from "@/utils/sizeSorter";
 
 export default function ProductDetailsContainer({ id }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [selectedClr, setSelectedClr] = useState(null);
-  // const [isProductLoading, setIsProductLoading] = useState(false);
-  const [cartQuantity, setCartQuantity] = useState(1);
-  const userId = null;
+  const [quantity, setQuantity] = useState(1);
   const router = useRouter();
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedClr, setSelectedClr] = useState("");
 
   // ================= Get Product Details ================= //
   const { data: productRes, isLoading: isProductLoading } =
     useGetSingleShopProductQuery(id, { skip: !id });
   const product = productRes?.data || {};
-  console.log(product);
+
+  // ================= Buy Now Handler ================= //
+  const handleBuyNow = () => {
+    if (!selectedClr) {
+      return ErrorModal("Please select a color");
+    }
+
+    if (!selectedSize) {
+      return ErrorModal("Please select a size");
+    }
+
+    // Set order info to Session Storage
+    setToSessionStorage("united-threads-order", {
+      color: selectedClr,
+      size: selectedSize,
+      quantity: quantity,
+      price: product?.price,
+      productId: id,
+    });
+
+    router.push("/checkout");
+  };
 
   return (
     <div>
@@ -58,20 +85,16 @@ export default function ProductDetailsContainer({ id }) {
       </div>
 
       <div className="flex min-h-screen flex-col gap-y-10 lg:min-h-[75vh] lg:flex-row lg:items-start lg:justify-between lg:gap-x-20 lg:gap-y-0">
-        {/* left - product image slider */}
-        <div className="lg:w-1/2 border-red">
+        {/* Left - Product Image Slider */}
+        <div className="lg:w-1/2">
           {isProductLoading ? (
             <div className="h-[600px] animate-pulse rounded bg-gray-300"></div>
           ) : (
-            <>
-              {product?.images?.length > 0 && (
-                <ProductImgSlider images={product?.images} />
-              )}
-            </>
+            <ProductImgSlider images={product?.images} />
           )}
         </div>
 
-        {/* right - product details */}
+        {/* Right - Product Details */}
         {isProductLoading ? (
           // ------------ Skeleton loader -------------- //
           <div className="space-y-5 py-10 lg:w-1/2">
@@ -115,7 +138,7 @@ export default function ProductDetailsContainer({ id }) {
 
               {/* stock status */}
               {product?.quantity > 0 ? (
-                <p className="text-success font-medium">
+                <p className="font-medium text-success">
                   In Stock ({product?.quantity})
                 </p>
               ) : (
@@ -138,7 +161,7 @@ export default function ProductDetailsContainer({ id }) {
                 <div className="flex flex-col gap-x-6 gap-y-2">
                   <h4 className="mr-5 text-xl md:text-2xl">Size</h4>
                   <div className="flex items-center gap-x-5">
-                    {product?.size?.map((size) => (
+                    {sizeSorter(product?.size)?.map((size) => (
                       <Button
                         key={size}
                         className={cn(
@@ -147,7 +170,9 @@ export default function ProductDetailsContainer({ id }) {
                             ? "border-none bg-primary-black text-primary-white"
                             : "border border-black/50 bg-transparent text-black",
                         )}
-                        onClick={() => setSelectedSize(size)}
+                        onClick={() => {
+                          setSelectedSize(size);
+                        }}
                       >
                         {!isNaN(size) ? `${size}”` : size}
                       </Button>
@@ -171,7 +196,9 @@ export default function ProductDetailsContainer({ id }) {
                             ? "border-4 border-yellow-600 p-2"
                             : "border-none p-0",
                         )}
-                        onClick={() => setSelectedClr(clr)}
+                        onClick={() => {
+                          setSelectedClr(clr);
+                        }}
                       ></Button>
                     ))}
                   </div>
@@ -185,26 +212,33 @@ export default function ProductDetailsContainer({ id }) {
                 <button
                   className="px-4 py-2 transition-all duration-300 ease-in-out hover:bg-primary-black hover:text-white"
                   onClick={() => {
-                    if (cartQuantity > 1) {
-                      setCartQuantity(cartQuantity - 1);
+                    if (quantity > 1) {
+                      setQuantity(quantity - 1);
                     }
                   }}
                 >
                   <Minus />
                 </button>
+
                 <Separator
                   orientation="vertical"
                   className="h-10 bg-black/50"
                 />
-                <h3 className="px-5 text-2xl">{cartQuantity}</h3>
+                <h3 className="px-5 text-2xl">{quantity}</h3>
 
                 <Separator
                   orientation="vertical"
                   className="h-10 bg-black/50 p-0"
                 />
+
                 <button
                   className="bg-primary-black px-4 py-2 text-white transition-all duration-300 ease-in-out hover:bg-primary-black hover:text-white"
-                  onClick={() => setCartQuantity(cartQuantity + 1)}
+                  onClick={() => {
+                    if (quantity === product?.quantity) {
+                      return errorToast("Quantity can't be more than stock");
+                    }
+                    setQuantity(quantity + 1);
+                  }}
                 >
                   <Plus />
                 </button>
@@ -212,9 +246,9 @@ export default function ProductDetailsContainer({ id }) {
 
               <Button
                 className="primary-button w-full rounded py-5 text-center"
-                onClick={() => router.push("/checkout")}
+                onClick={handleBuyNow}
               >
-                Buy Now
+                <ShoppingBag size={18} /> Buy Now
               </Button>
             </div>
           </motion.div>
