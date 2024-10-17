@@ -182,15 +182,19 @@ export default function ShopProductsFilter() {
                 exit="exit"
                 layout="position"
               >
-                {SIZES?.map((size) => (
-                  <motion.button
-                    key={size}
-                    className="flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70"
-                  >
-                    <p>{size}</p>
-                    <p>{sizes[size]?.productCount || 0}</p>
-                  </motion.button>
-                ))}
+                {sizes?.length > 0 && (
+                  <>
+                    {SIZES?.map((size) => (
+                      <motion.button
+                        key={size}
+                        className="flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70"
+                      >
+                        <p>{size}</p>
+                        <p>{sizes[size]?.productCount || 0}</p>
+                      </motion.button>
+                    ))}
+                  </>
+                )}
               </motion.div>
             )}
           </>

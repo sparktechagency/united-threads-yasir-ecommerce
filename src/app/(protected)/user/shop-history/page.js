@@ -15,12 +15,7 @@ export default function ShopHistoryPage() {
       />
 
       <div className="my-10 lg:mx-auto lg:w-3/4">
-        <div
-          className="my-8 rounded-xl p-6"
-          style={{ boxShadow: "0px 0px 5px lightGray" }}
-        >
-          <ShopHistoryTable />
-        </div>
+        <ShopHistoryTable />
       </div>
     </div>
   );

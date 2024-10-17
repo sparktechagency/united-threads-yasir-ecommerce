@@ -16,7 +16,10 @@ import { toast } from "sonner";
 import { errorToast, successToast } from "@/utils/customToast";
 import { ErrorModal } from "@/utils/customModal";
 import { useCreateOrderMutation } from "@/redux/api/orderApi";
-import { getFromSessionStorage } from "@/utils/sessionStorage";
+import {
+  getFromSessionStorage,
+  removeFromSessionStorage,
+} from "@/utils/sessionStorage";
 import { useCreatePaymentMutation } from "@/redux/api/paymentApi";
 
 export default function BillingForm({ goToNextStep }) {
@@ -113,6 +116,9 @@ export default function BillingForm({ goToNextStep }) {
           successToast("Saved. Proceed to payment", toastId);
 
           window.location.href = res?.data?.paymentLink;
+
+          // Remove order from session storage
+          removeFromSessionStorage("united-threads-order");
         }
       }
     } catch (error) {

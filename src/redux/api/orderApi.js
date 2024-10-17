@@ -12,7 +12,28 @@ const orderApi = baseApi.injectEndpoints({
 
       invalidatesTags: [tagTypes.orders],
     }),
+
+    getOrders: builder.query({
+      query: (params) => ({
+        url: "/order/my-orders",
+        method: "GET",
+        params,
+      }),
+      providesTags: [tagTypes.orders],
+    }),
+
+    getSingleOrder: builder.query({
+      query: (id) => ({
+        url: `/order/my-single-order/${id}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.order],
+    }),
   }),
 });
 
-export const { useCreateOrderMutation } = orderApi;
+export const {
+  useCreateOrderMutation,
+  useGetOrdersQuery,
+  useGetSingleOrderQuery,
+} = orderApi;
