@@ -22,6 +22,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ChevronsUpDown } from "lucide-react";
 import { Check } from "lucide-react";
+import { useGetQuotesQuery } from "@/redux/api/quoteApi";
 
 const TABLE_HEADERS = [
   "Order ID",
@@ -105,6 +106,22 @@ const DATA = [
 export default function ShadeApprovedTable() {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("All");
+
+  const query = {};
+  query["quoteStatus"] = "processing";
+
+  // ================== Pagination ===============
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  query["page"] = currentPage;
+  query["limit"] = pageSize;
+
+  // ================== Get Pending Quotes =================
+  const { data: approvedQuotesRes } = useGetQuotesQuery(query);
+  const approvedQuotes = approvedQuotesRes?.data?.quotes || [];
+  const meta = approvedQuotesRes?.data?.meta || {};
+
+  console.log(approvedQuotes);
 
   return (
     <Table>

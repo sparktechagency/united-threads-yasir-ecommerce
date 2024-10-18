@@ -6,6 +6,13 @@ export const successToast = (message, toastId) => {
   });
 };
 
+export const successToastWithDesc = (message, description, toastId) => {
+  return toast.success(message, {
+    description: description,
+    id: toastId,
+  });
+};
+
 export const errorToast = (message, toastId) => {
   return toast.error(message, {
     id: toastId,

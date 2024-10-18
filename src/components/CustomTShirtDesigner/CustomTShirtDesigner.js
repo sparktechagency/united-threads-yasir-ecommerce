@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as fabric from "fabric";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
@@ -11,13 +11,12 @@ import TextStylingWidget from "./_components/TextStylingWidget";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronsUpDown } from "lucide-react";
-import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Save } from "lucide-react";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -43,6 +42,10 @@ import {
   hex6,
   pantone,
 } from "simple-color-converter/_components/_color_sanitizer";
+import CountryStateCitySelector from "../CountryStateCitySelector/CountryStateCitySelector";
+import { ErrorModal } from "@/utils/customModal";
+import { errorToast, successToast } from "@/utils/customToast";
+import { useCreateQuoteMutation } from "@/redux/api/quoteApi";
 
 // Motion variants
 const fadeVariants = {
@@ -68,13 +71,16 @@ export default function CustomTShirtDesigner() {
     register,
     handleSubmit,
     formState: { errors },
+    control,
+    reset,
+    setValue,
   } = useForm();
 
   const [showSteps, setShowSteps] = useState(true);
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
-  const [overlayColor, setOverlayColor] = useState("");
+  const [overlayColor, setOverlayColor] = useState("#000000");
   const [pantoneColorObject, setPantoneColorObject] = useState({
     pantone: "419C",
     hex: "000000",
@@ -85,28 +91,37 @@ export default function CustomTShirtDesigner() {
   const [pantoneColorCollapsed, setPantoneColorCollapsed] = useState(false);
   const productId = useParams()?.id;
 
-  // ================= Get product api handler ======================
-  const { data: productDataRes, isLoading } = useGetSingleQuoteProductQuery(
-    productId,
-    { skip: !productId },
-  );
-  const productData = productDataRes?.data || {};
-  console.log("🚀", productData);
-  // ================================================================
-
-  // ================ Currently active image side based on product data response ===============
+  // ========= Currently active image side based on product data response ============
   const [activeImageSide, setActiveImageSide] = useState("front");
   const [activeImage, setActiveImage] = useState(null);
-  const [savedFrontImage, setSavedFrontImage] = useState("");
-  const [savedBackImage, setSavedBackImage] = useState("");
+  const [savedFrontImageUrl, setSavedFrontImageUrl] = useState("");
+  const [frontImageFile, setFrontImageFile] = useState("");
+  const [savedBackImageUrl, setSavedBackImageUrl] = useState("");
+  const [backImageFile, setBackImageFile] = useState("");
+
+  // =============== Send quote api handler =============
+  const [createQuote, { isLoading: isQuoteLoading }] = useCreateQuoteMutation();
+
+  // ================= Get product api handler ======================
+  const { data: productDataRes, isLoading: isProductLoading } =
+    useGetSingleQuoteProductQuery(productId, { skip: !productId });
+  const productData = useMemo(() => {
+    if (productDataRes?.data) {
+      return productDataRes?.data;
+    }
+    return {};
+  }, [productDataRes]);
 
   // Initialize active image on canvas
   useEffect(() => {
     if (productData?._id) {
-      setActiveImage(productData?.frontSide);
+      if (activeImageSide === "front") {
+        setActiveImage(productData?.frontSide);
+      } else {
+        setActiveImage(productData?.backSide);
+      }
     }
-  }, [productData]);
-  // =============================================================================================
+  }, [productData, activeImageSide]);
 
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
@@ -131,27 +146,13 @@ export default function CustomTShirtDesigner() {
       setActiveObject(null);
     });
 
-    // canvasInstance.on("mouse:wheel", (opt) => {
-    //   opt.e.preventDefault();
-    //   opt.e.stopPropagation();
-
-    //   let delta = opt.e.deltaY;
-    //   let zoom = canvasInstance.getZoom();
-    //   zoom = zoom + delta / 200;
-
-    //   if (zoom > 3) zoom = 3;
-    //   if (zoom < 0.5) zoom = 0.5;
-
-    //   canvasInstance.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-    // });
-
     return () => {
       canvasInstance.dispose();
     };
   }, [activeImage]);
 
-  // ================= Handle changing the image side on button click ===================
-  const handleChangeImageSide = (whichSide) => {
+  // ======== Handle changing the image side on button click ==========
+  const handleChangeImageSide = async (whichSide) => {
     Swal.fire({
       title: "Save Changes?",
       text: "Save this before editing the other part or the progress will be lost!",
@@ -163,9 +164,9 @@ export default function CustomTShirtDesigner() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await handleExportImage();
+          await handleExportImageOnSave();
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
 
         if (activeImageSide !== whichSide) {
@@ -179,33 +180,31 @@ export default function CustomTShirtDesigner() {
     });
   };
 
-  // =========================== Function to change apparel color ===================
+  // ============= Function to change apparel color ==============
   const handleColorChange = (e) => {
     if (typeof e === "string") {
       setOverlayColor(e);
       return;
     }
 
-    // if (e.target.value) {
-    //   const pantoneColor = new simpleColorConverter({
-    //     hex6: e.target.value,
-    //     to: "pantone",
-    //   });
+    if (e.target.value) {
+      const pantoneColor = new simpleColorConverter({
+        hex6: e.target.value,
+        to: "pantone",
+      });
 
-    //   if (pantoneColor) {
-    //     const pantoneToHex = new simpleColorConverter({
-    //       pantone: `pantone ${pantoneColor?.color}`,
-    //       to: "hex6",
-    //     });
+      if (pantoneColor) {
+        const pantoneToHex = new simpleColorConverter({
+          pantone: `pantone ${pantoneColor?.color}`,
+          to: "hex6",
+        });
 
-    //     setOverlayColor(`#${pantoneToHex?.color}`);
-    //   }
-    // }
-
-    setOverlayColor(e.target.value);
+        setOverlayColor(`#${pantoneToHex?.color}`);
+      }
+    }
   };
 
-  // ========================= Function to add text on apparel ========================
+  // =============== Function to add text on apparel =================
   const handleAddText = () => {
     const text = new fabric.IText("Double click to edit", {
       left: 50,
@@ -219,7 +218,7 @@ export default function CustomTShirtDesigner() {
     canvas.renderAll();
   };
 
-  // ========================= Function to change text style =======================
+  // ============== Function to change text style ===================
   const handleStyleChange = (style, value) => {
     if (activeObject && activeObject?.type === "i-text") {
       activeObject?.set(style, value);
@@ -227,7 +226,7 @@ export default function CustomTShirtDesigner() {
     }
   };
 
-  // ======================== Function to delete object from apparel =========================
+  // ================== Function to delete object from apparel =================
   const handleDeleteObject = (e) => {
     if (e.key === "Delete" && activeObject) {
       canvas.remove(activeObject);
@@ -244,7 +243,7 @@ export default function CustomTShirtDesigner() {
   }, [activeObject, canvas]);
 
   // =================== Function to add custom picture on apparel ================
-  const handleCustomPicture = (e) => {
+  const handleUploadCustomPicture = (e) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const imgObj = new window.Image();
@@ -265,76 +264,6 @@ export default function CustomTShirtDesigner() {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-  // ================================================================
-
-  // ================== Function to export image on save =================
-  const handleExportImage = () => {
-    if (activeImage) {
-      const tempCanvas = document.createElement("canvas");
-      tempCanvas.width = canvas.getWidth();
-      tempCanvas.height = canvas.getHeight();
-      const context = tempCanvas.getContext("2d");
-
-      const imgElement = new window.Image();
-      imgElement.crossOrigin = "Anonymous"; // Ensure this is set before src
-      imgElement.src = `${activeImage}?timestamp=${new Date().getTime()}`; // Avoid caching issues
-
-      imgElement.onload = () => {
-        context.drawImage(
-          imgElement,
-          0,
-          0,
-          tempCanvas.width,
-          tempCanvas.height,
-        );
-
-        if (overlayColor) {
-          context.globalCompositeOperation = "lighten";
-          context.fillStyle = overlayColor;
-          context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-          context.globalCompositeOperation = "source-over";
-        }
-
-        // Try to export the canvas as a DataURL
-        const canvasDataUrl = canvas.toDataURL();
-        const canvasImage = new window.Image();
-        canvasImage.src = canvasDataUrl;
-        canvasImage.onload = () => {
-          context.drawImage(canvasImage, 0, 0);
-          const finalImageUrl = tempCanvas.toDataURL();
-
-          if (activeImageSide === "front") {
-            setSavedFrontImage(finalImageUrl);
-            toast.success("Image saved successfully!");
-          } else {
-            setSavedBackImage(finalImageUrl);
-            toast.success("Image saved successfully!");
-          }
-
-          // Clear the canvas but retain functionality
-          canvas.clear();
-        };
-      };
-
-      imgElement.onerror = (error) => {
-        console.error("Image load error:", error);
-        toast.error("Failed to load image. Check CORS settings.");
-      };
-    }
-  };
-  // ======================================================================
-
-  // =================== Function to send quote on submit =================
-  const onSendQuoteSubmit = (data) => {
-    const toastId = toast.loading("Processing...");
-
-    setTimeout(() => {
-      toast.success("Quote sent successfully!", {
-        id: toastId,
-      });
-    }, 3000);
-  };
-  // ======================================================================
 
   // Transform hex to pantone color code
   useEffect(() => {
@@ -418,11 +347,145 @@ export default function CustomTShirtDesigner() {
     },
   ];
 
-  // ===============================================================
+  // =================== Function to convert base64 to blob =================
+  const base64ToBlob = (base64Data) => {
+    const byteString = atob(base64Data.split(",")[1]);
+    const mimeString = base64Data.split(",")[0].split(":")[1].split(";")[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+  };
+
+  // ================== Function to export image on save =================
+  const handleExportImageOnSave = () => {
+    const toastId = toast.loading("Saving...");
+
+    if (activeImage) {
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = canvas.getWidth();
+      tempCanvas.height = canvas.getHeight();
+      const context = tempCanvas.getContext("2d");
+
+      const imgElement = new window.Image();
+      imgElement.crossOrigin = "Anonymous";
+      imgElement.src = `${activeImage}?timestamp=${new Date().getTime()}`;
+
+      imgElement.onload = () => {
+        context.drawImage(
+          imgElement,
+          0,
+          0,
+          tempCanvas.width,
+          tempCanvas.height,
+        );
+
+        if (overlayColor) {
+          context.globalCompositeOperation = "lighten";
+          context.fillStyle = overlayColor;
+          context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+          context.globalCompositeOperation = "source-over";
+        }
+
+        // Try to export the canvas as a DataURL
+        const canvasDataUrl = canvas.toDataURL();
+        const canvasImage = new window.Image();
+        canvasImage.src = canvasDataUrl;
+        canvasImage.onload = () => {
+          context.drawImage(canvasImage, 0, 0);
+          const finalImageUrl = tempCanvas.toDataURL();
+
+          // Convert image url to Blob for file conversion
+          const blob = base64ToBlob(finalImageUrl);
+
+          // Convert Blob to File
+          const file = new File([blob], `tshirt-${activeImageSide}.png`, {
+            type: "image/png",
+          });
+
+          if (activeImageSide === "front") {
+            setSavedFrontImageUrl(finalImageUrl);
+            setFrontImageFile(file);
+
+            successToast("Image saved successfully!", toastId);
+          } else {
+            setSavedBackImageUrl(finalImageUrl);
+            setBackImageFile(file);
+
+            successToast("Image saved successfully!", toastId);
+          }
+
+          // Clear the canvas but retain functionality
+          canvas.clear();
+        };
+      };
+
+      imgElement.onerror = (error) => {
+        console.error(error);
+        errorToast("Failed to load image. Check CORS settings.", toastId);
+      };
+    }
+  };
+
+  // ================== Set form default values ======================= //
+  useEffect(() => {
+    if (productData) {
+      setValue("category", productData.category?.name);
+    }
+  }, [productData]);
+
+  // =================== Send Quote Handler ========================= //
+  const onSendQuoteSubmit = async (data) => {
+    if (!savedFrontImageUrl || !savedBackImageUrl) {
+      return ErrorModal("Please save front & back side images first!");
+    }
+
+    if (!productData) {
+      return errorToast(
+        "Product details loading failed. Please try again later.",
+      );
+    }
+
+    if (!data?.size) {
+      return ErrorModal("Please select size!");
+    }
+
+    const toastId = toast.loading("Sending Quote...");
+
+    const formData = new FormData();
+
+    formData.append("frontSide", frontImageFile);
+    formData.append("backSide", backImageFile);
+
+    const payload = {
+      name: productData?.name,
+      category: productData?.category?._id,
+      quantity: Number(data.quantity),
+      size: data.size,
+      pantoneColor: pantoneColorObject?.pantone,
+      hexColor: pantoneColorObject?.hex,
+      materialPreferences: data.materials,
+      country: data.country,
+      state: data.state,
+      city: data.city,
+      area: data.area,
+      houseNo: data.houseNo,
+    };
+
+    formData.append("data", JSON.stringify(payload));
+
+    try {
+      await createQuote(formData).unwrap();
+      successToast("Quote sent successfully!", toastId);
+    } catch (error) {
+      errorToast(error?.data?.message || error?.error, toastId);
+    }
+  };
 
   return (
     <div>
-      {/* <Image src={""} /> */}
       <form onSubmit={handleSubmit(onSendQuoteSubmit)} className="space-y-8">
         <div className="flex-start-between">
           {/* Left */}
@@ -456,7 +519,7 @@ export default function CustomTShirtDesigner() {
                 <input
                   type="file"
                   id="custom-image-upload-input"
-                  onChange={handleCustomPicture}
+                  onChange={handleUploadCustomPicture}
                   className="hidden"
                 />
               </Tooltip>
@@ -486,77 +549,80 @@ export default function CustomTShirtDesigner() {
           </div>
 
           {/* Center */}
-          <div className="lg:w-[50%]">
-            <div
-              id="tshirt-div"
-              className="group relative mx-auto w-[500px] bg-white"
-            >
-              <div className="relative">
-                <Image
-                  src={
-                    activeImageSide === "front"
-                      ? productData?.frontSide
-                      : productData?.backSide
-                  }
-                  alt={productData?.name}
-                  height={1500}
-                  width={1500}
-                  className="mx-auto block h-[500px] w-auto"
-                  priority={true}
-                />
+          {isProductLoading ? (
+            <div className="lg:w-[50%]">
+              <div className="h-[500px] w-3/4 animate-pulse rounded bg-slate-200" />
+            </div>
+          ) : (
+            <div className="lg:w-[50%]">
+              <div id="tshirt-div" className="group relative w-3/4 bg-white">
+                <div className="relative">
+                  <Image
+                    src={
+                      activeImageSide === "front"
+                        ? productData?.frontSide
+                        : productData?.backSide
+                    }
+                    alt={productData?.name}
+                    height={1500}
+                    width={1500}
+                    className="mx-auto block h-[500px] w-auto"
+                    priority={true}
+                  />
 
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundColor: overlayColor,
-                    mixBlendMode: "lighten",
-                    pointerEvents: "none",
-                  }}
-                ></div>
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundColor: overlayColor,
+                      mixBlendMode: "lighten",
+                      pointerEvents: "none",
+                    }}
+                  ></div>
+                </div>
+
+                <div className="absolute inset-0 h-[500px] border border-dashed border-black">
+                  <canvas id="tshirt-canvas" ref={canvasRef}></canvas>
+                </div>
+
+                <Button
+                  type="button"
+                  className="absolute -right-10 -top-4 gap-x-2 rounded-full px-6 transition-all duration-300 ease-in-out"
+                  onClick={handleExportImageOnSave}
+                  ref={saveBtnRef}
+                >
+                  <Save size={16} /> Save
+                </Button>
               </div>
 
-              <div className="absolute inset-0 h-[500px] w-[500px] border border-dashed border-yellow-600">
-                <canvas id="tshirt-canvas" ref={canvasRef}></canvas>
+              {/* Change image side buttons */}
+              <div className="my-10 flex w-3/4 items-center justify-center gap-x-5 text-primary-black">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={cn(
+                    "group w-[22%] rounded-full border border-black transition-all duration-300 ease-in-out hover:bg-black hover:text-white",
+                    activeImageSide === "front" &&
+                      "bg-primary-black text-primary-white",
+                  )}
+                  onClick={() => handleChangeImageSide("front")}
+                >
+                  Front Side
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={cn(
+                    "w-[22%] rounded-full border border-black transition-all duration-300 ease-in-out hover:bg-black hover:text-white",
+                    activeImageSide === "back" &&
+                      "bg-primary-black text-primary-white",
+                  )}
+                  onClick={() => handleChangeImageSide("back")}
+                >
+                  Back Side
+                </Button>
               </div>
-
-              <Button
-                type="button"
-                className="absolute -right-10 -top-4 gap-x-2 rounded-full px-6 transition-all duration-300 ease-in-out"
-                onClick={handleExportImage}
-                ref={saveBtnRef}
-              >
-                <Save size={16} /> Save
-              </Button>
             </div>
-
-            {/* Change image side buttons */}
-            <div className="my-10 flex items-center justify-center gap-x-5 text-primary-black">
-              <Button
-                type="button"
-                variant="outline"
-                className={cn(
-                  "group w-[22%] rounded-full border border-black transition-all duration-300 ease-in-out hover:bg-black hover:text-white",
-                  activeImageSide === "front" &&
-                    "bg-primary-black text-primary-white",
-                )}
-                onClick={() => handleChangeImageSide("front")}
-              >
-                Front Side
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className={cn(
-                  "w-[22%] rounded-full border border-black transition-all duration-300 ease-in-out hover:bg-black hover:text-white",
-                  activeImageSide === "back" &&
-                    "bg-primary-black text-primary-white",
-                )}
-                onClick={() => handleChangeImageSide("back")}
-              >
-                Back Side
-              </Button>
-            </div>
-          </div>
+          )}
 
           {/* Right */}
           <div className="h-full lg:w-[30%]">
@@ -580,7 +646,14 @@ export default function CustomTShirtDesigner() {
               <TabsContent value="options" className="py-4">
                 <AnimatePresence key={"options"} initial={false}>
                   {/* Size options */}
-                  <motion.div initial="initial" animate="animate" exit="exit">
+                  <motion.div
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className={cn(
+                      errors?.size && "rounded-3xl border border-red-600",
+                    )}
+                  >
                     <button
                       type="button"
                       className="flex-center-between w-full rounded-t-3xl bg-lightGray p-3"
@@ -598,35 +671,49 @@ export default function CustomTShirtDesigner() {
                         variants={fadeVariants}
                         className="mx-auto rounded-b-3xl bg-lightGray px-6 py-4 transition-all duration-300 ease-in-out"
                       >
-                        <RadioGroup className="grid grid-cols-2 gap-5">
-                          {productData?.size?.map((size) => (
-                            // <div
-                            //   key={size}
-                            //   className="flex-center-start gap-x-2 text-lg"
-                            // >
-                            //   {/* <Checkbox id={size} /> */}
-                            //   <div className="" />
-                            //   <label htmlFor={size}>{size}</label>
-                            // </div>
-
-                            <div
-                              key={size}
-                              className="flex items-center space-x-2"
-                            >
-                              <RadioGroupItem
-                                value={size}
-                                id={size}
-                                className="h-[19px] w-[19px]"
-                              />
-                              <Label
-                                htmlFor={size}
-                                className="cursor-pointer text-[17px]"
+                        <Controller
+                          control={control}
+                          name="size"
+                          rules={{
+                            required: {
+                              value: true,
+                              message: "Please select a size!",
+                            },
+                          }}
+                          render={({ field }) => (
+                            <>
+                              <RadioGroup
+                                onValueChange={field.onChange}
+                                className="grid grid-cols-2 gap-5"
                               >
-                                {size}
-                              </Label>
-                            </div>
-                          ))}
-                        </RadioGroup>
+                                {productData?.size?.map((size) => (
+                                  <div
+                                    key={size}
+                                    className="flex items-center space-x-2"
+                                  >
+                                    <RadioGroupItem
+                                      value={size}
+                                      id={size}
+                                      className="h-[19px] w-[19px]"
+                                    />
+                                    <Label
+                                      htmlFor={size}
+                                      className="cursor-pointer text-[17px]"
+                                    >
+                                      {size}
+                                    </Label>
+                                  </div>
+                                ))}
+                              </RadioGroup>
+
+                              {errors?.size && (
+                                <p className="mt-2 text-danger">
+                                  {errors?.size?.message}
+                                </p>
+                              )}
+                            </>
+                          )}
+                        />
                       </motion.div>
                     )}
                   </motion.div>
@@ -688,7 +775,7 @@ export default function CustomTShirtDesigner() {
                               }}
                               className={cn(
                                 "aspect-square h-6 w-6 rounded-full",
-                                overlayColor === pantoneColorObject.hex &&
+                                overlayColor === "#" + pantoneColorObject.hex &&
                                   "border-2 border-yellow-500",
                               )}
                             />
@@ -767,10 +854,13 @@ export default function CustomTShirtDesigner() {
                 className="rounded-b-xl border border-dashed p-3"
               >
                 <div>
-                  <h4 className="text-lg font-semibold">Front Side</h4>
-                  {savedFrontImage ? (
+                  <h4 className="text-lg font-semibold">Front Side *</h4>
+                  {savedFrontImageUrl ? (
                     <div className="mx-auto h-[300px] w-[300px]">
-                      <AntImage src={savedFrontImage} alt="front side image" />
+                      <AntImage
+                        src={savedFrontImageUrl}
+                        alt="front side image"
+                      />
                     </div>
                   ) : (
                     <p className="text-center">No saved image</p>
@@ -780,10 +870,10 @@ export default function CustomTShirtDesigner() {
                 <Separator className="my-10" />
 
                 <div>
-                  <h4 className="text-lg font-semibold">Back Side</h4>
-                  {savedBackImage ? (
+                  <h4 className="text-lg font-semibold">Back Side *</h4>
+                  {savedBackImageUrl ? (
                     <div className="mx-auto h-[300px] w-[300px]">
-                      <AntImage src={savedBackImage} alt="back side image" />
+                      <AntImage src={savedBackImageUrl} alt="back side image" />
                     </div>
                   ) : (
                     <p className="text-center">No saved image</p>
@@ -807,8 +897,8 @@ export default function CustomTShirtDesigner() {
           <Input
             type="text"
             id="category"
-            defaultValue="T-Shirt"
             disabled={true}
+            defaultValue={productData?.category?.name}
             {...register("category")}
             className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
           />
@@ -857,8 +947,28 @@ export default function CustomTShirtDesigner() {
           )}
         </div>
 
+        <div>
+          <Label
+            htmlFor="shippingLocation"
+            className="mb-3 block font-semibold text-primary-black"
+          >
+            Shipping Location
+          </Label>
+
+          <CountryStateCitySelector
+            control={control}
+            register={register}
+            setValue={setValue}
+            required={["country", "state", "city"]}
+            errors={errors}
+          />
+
+          {}
+        </div>
+
         <Button
           type="submit"
+          disabled={isQuoteLoading}
           className="group mt-10 h-[2.8rem] w-full gap-x-2 rounded-xl bg-primary-black font-semibold"
         >
           Send Quote <AnimatedArrow />

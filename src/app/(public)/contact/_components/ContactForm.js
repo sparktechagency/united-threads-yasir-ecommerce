@@ -5,17 +5,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useSendMailMutation } from "@/redux/api/contactApi";
+import { errorToast, successToastWithDesc } from "@/utils/customToast";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function ContactForm() {
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm();
 
+  const [sendMail, { isLoading }] = useSendMailMutation();
+
   const onSubmit = async (data) => {
-    console.log(data);
+    const toastId = toast.loading("Sending...");
+
+    try {
+      await sendMail(data).unwrap();
+      successToastWithDesc(
+        "Message sent successfully",
+        "Thank you for your message. We will get back to you shortly.",
+        toastId,
+      );
+
+      reset();
+    } catch (error) {
+      errorToast(error?.data?.message || error?.error, toastId);
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -24,19 +43,19 @@ export default function ContactForm() {
           {/* first name */}
           <div className="grid w-full items-center gap-2">
             <Label
-              htmlFor="fname"
+              htmlFor="firstName"
               className="mb-1 block font-semibold text-primary-black"
             >
-              First Name
+              First Name *
             </Label>
             <Input
               type="text"
-              id="fname"
+              id="firstName"
               placeholder="Enter your first name"
-              {...register("fname", { required: true })}
-              className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none focus:outline-none"
+              {...register("firstName", { required: true })}
+              className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none focus:outline-none"
             />
-            {errors.fname && (
+            {errors.firstName && (
               <p className="mt-1 text-danger">First Name is required</p>
             )}
           </div>
@@ -44,19 +63,19 @@ export default function ContactForm() {
           {/* last name */}
           <div className="grid w-full items-center gap-2">
             <Label
-              htmlFor="lname"
+              htmlFor="lastName"
               className="mb-1 block font-semibold text-primary-black"
             >
-              Last Name
+              Last Name *
             </Label>
             <Input
               type="text"
-              id="lname"
+              id="lastName"
               placeholder="Enter your last name"
-              {...register("lname", { required: true })}
-              className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
+              {...register("lastName", { required: true })}
+              className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
             />
-            {errors.lname && (
+            {errors.lastName && (
               <p className="mt-1 text-danger">Last Name is required</p>
             )}
           </div>
@@ -68,7 +87,7 @@ export default function ContactForm() {
             htmlFor="email"
             className="mb-1 block font-semibold text-primary-black"
           >
-            Email
+            Email *
           </Label>
           <Input
             type="email"
@@ -77,10 +96,32 @@ export default function ContactForm() {
             {...register("email", {
               required: true,
             })}
-            className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
+            className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
           />
           {errors.email && (
             <p className="mt-1 text-danger">Email is required</p>
+          )}
+        </div>
+
+        {/* Subject */}
+        <div className="grid w-full items-center gap-2">
+          <Label
+            htmlFor="subject"
+            className="mb-1 block font-semibold text-primary-black"
+          >
+            Subject *
+          </Label>
+          <Input
+            type="subject"
+            id="subject"
+            placeholder="Enter your subject of discussion"
+            {...register("subject", {
+              required: true,
+            })}
+            className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
+          />
+          {errors.subject && (
+            <p className="mt-1 text-danger">Subject is required</p>
           )}
         </div>
 
@@ -90,23 +131,35 @@ export default function ContactForm() {
             htmlFor="description"
             className="mb-1 block font-semibold text-primary-black"
           >
-            Description
+            Description *
           </Label>
           <Textarea
             id="description"
             placeholder="Tell us about your queries"
             {...register("description", {
-              required: true,
+              required: {
+                value: true,
+                message: "Description is required",
+              },
+              minLength: {
+                value: 100,
+                message:
+                  "Description must be at least 100 characters long so that we can understand about your queries better!",
+              },
             })}
-            className="min-h-20 rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
+            className="min-h-28 rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
           />
           {errors.description && (
-            <p className="mt-1 text-danger">Please tell us about your query</p>
+            <p className="mt-1 text-danger">{errors.description.message}</p>
           )}
         </div>
       </div>
 
-      <Button className="primary-button group my-10 h-[2.7rem] w-full rounded-xl">
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="primary-button group my-10 h-[2.7rem] w-full rounded-xl"
+      >
         Submit
         <AnimatedArrow />
       </Button>

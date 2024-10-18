@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function ContactUsPage() {
   return (
-    <div className="flex-center h-[80vh]">
+    <div className="flex-center mt-40 h-[80vh]">
       <div className="lg:w-1/2">
         <h1 className="text-center text-6xl font-extrabold text-primary-black">
           Get In Touch
@@ -27,7 +27,6 @@ export default function ContactUsPage() {
             <p className="text-lg">+1 (234) 8097</p>
           </div>
         </div>
-
         <ContactForm />
       </div>
     </div>

@@ -34,7 +34,7 @@ export default function Stepper() {
                 currentStep === 1 ? "text-black" : "text-green-600",
               )}
             >
-              Billing Information
+              Shipping Information
             </p>
           </div>
 

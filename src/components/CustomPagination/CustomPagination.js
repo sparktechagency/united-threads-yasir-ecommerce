@@ -9,7 +9,6 @@ export default function CustomPagination({
   currentPage,
   setCurrentPage,
 }) {
-  console.log(total, pageSize);
   return (
     <Pagination
       totalItems={total}

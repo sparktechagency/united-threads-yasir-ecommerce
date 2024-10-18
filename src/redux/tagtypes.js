@@ -19,7 +19,7 @@ export const tagTypes = {
   quoteProduct: "QuoteProduct",
   quoteCategories: "QuoteCategories",
   quoteSizes: "QuoteSizes",
-  quote: "Quote",
+  quotes: "Quotes",
 
   // Shop Page
   shopCategories: "ShopCategories",
@@ -51,6 +51,7 @@ export const tagTypesList = [
   tagTypes.quoteProducts,
   tagTypes.quoteCategories,
   tagTypes.quoteSizes,
+  tagTypes.quotes,
 
   // Shop Page
   tagTypes.shopCategories,
