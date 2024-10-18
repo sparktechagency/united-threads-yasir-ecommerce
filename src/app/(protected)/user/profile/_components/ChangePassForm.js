@@ -5,11 +5,17 @@ import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useChangePasswordMutation } from "@/redux/api/userApi";
+import { logout } from "@/redux/features/authSlice";
+import { ConfirmModal } from "@/utils/customModal";
+import { errorToast, successToast } from "@/utils/customToast";
 import { Edit } from "lucide-react";
 import { Loader } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 export default function ChangePassForm() {
   const {
@@ -17,58 +23,79 @@ export default function ChangePassForm() {
     handleSubmit,
     formState: { errors },
     watch,
-    control,
   } = useForm();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPass, setShowPass] = useState(false);
+  const [showOldPass, setShowOldPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  // Change password api handler
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
+
+  const onSubmit = async (data) => {
+    delete data["confirmPassword"];
+
+    try {
+      await changePassword(data).unwrap();
+
+      // Prompt user to logout
+      ConfirmModal(
+        "Password changed successfully",
+        "Do you want to logout and login with new password?",
+        "Logout",
+        "Not right now",
+      ).then((res) => {
+        if (res?.isConfirmed) {
+          // Logout
+          dispatch(logout());
+          router.refresh();
+          router.push("/login");
+        } else {
+          // do nothing
+        }
+      });
+    } catch (error) {
+      errorToast(error?.data?.message || error?.error);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="">
       <div className="space-y-8">
-        {/* Current password */}
+        {/* Old password */}
         <div className="mt-6 grid w-full items-center gap-2">
           <Label
-            htmlFor="currentPassword"
+            htmlFor="oldPassword"
             className="font-semibold text-primary-black"
           >
-            New Password
+            Old Password
           </Label>
 
           <div className="relative">
             <Input
-              type={showPass ? "text" : "password"}
-              id="currentPassword"
-              placeholder="New Password"
-              {...register("currentPassword", {
-                required: "Current Password is required",
-                pattern: {
-                  value:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  message:
-                    "New Password must have at least one uppercase, one lowercase letter, one number, one special character and 8 characters long",
-                },
+              type={showOldPass ? "text" : "password"}
+              id="oldPassword"
+              placeholder="Old Password"
+              {...register("oldPassword", {
+                required: "Old Password is required",
               })}
               className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
             />
 
             <EyeIconInverse
-              showPassword={showPass}
-              setShowPassword={setShowPass}
+              showPassword={showOldPass}
+              setShowPassword={setShowOldPass}
             />
           </div>
 
-          {errors.currentPassword && (
-            <p className="mt-1 text-danger">{errors.currentPassword.message}</p>
+          {errors.oldPassword && (
+            <p className="mt-1 text-danger">{errors.oldPassword.message}</p>
           )}
         </div>
 
-        {/* new password */}
+        {/* New password */}
         <div className="mt-6 grid w-full items-center gap-2">
           <Label
             htmlFor="newPassword"
@@ -79,7 +106,7 @@ export default function ChangePassForm() {
 
           <div className="relative">
             <Input
-              type={showPass ? "text" : "password"}
+              type={showNewPass ? "text" : "password"}
               id="newPassword"
               placeholder="New Password"
               {...register("newPassword", {
@@ -95,8 +122,8 @@ export default function ChangePassForm() {
             />
 
             <EyeIconInverse
-              showPassword={showPass}
-              setShowPassword={setShowPass}
+              showPassword={showNewPass}
+              setShowPassword={setShowNewPass}
             />
           </div>
 
@@ -105,7 +132,7 @@ export default function ChangePassForm() {
           )}
         </div>
 
-        {/* confirm password */}
+        {/* Confirm password */}
         <div className="mt-6 grid w-full items-center gap-2">
           <Label
             htmlFor="confirmPassword"
@@ -126,7 +153,7 @@ export default function ChangePassForm() {
                   message: "Password must be at least 8 characters long",
                 },
                 validate: (value) =>
-                  value === watch("password") || "Passwords do not match",
+                  value === watch("newPassword") || "Passwords do not match",
               })}
               className="rounded-xl border-primary-black/50 bg-transparent text-primary-black outline-none"
             />

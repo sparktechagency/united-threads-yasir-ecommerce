@@ -175,26 +175,36 @@ export default function ShopProductsFilter() {
           <>
             {sizeExpanded && (
               <motion.div
-                className="my-5 flex flex-col items-start gap-y-3 overflow-hidden px-2"
+                className="my-5 flex w-full flex-col items-start gap-y-3 px-2"
                 variants={fadeVariants}
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                layout="position"
               >
-                {sizes?.length > 0 && (
-                  <>
-                    {SIZES?.map((size) => (
-                      <motion.button
-                        key={size}
-                        className="flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70"
-                      >
-                        <p>{size}</p>
-                        <p>{sizes[size]?.productCount || 0}</p>
-                      </motion.button>
-                    ))}
-                  </>
-                )}
+                {SIZES?.map((size) => (
+                  <div key={size} className="relative w-full">
+                    {selectedSize === size && (
+                      <X
+                        role="button"
+                        size={18}
+                        className="absolute -left-8 top-1/2 -translate-y-1/2"
+                        onClick={() => setSelectedSize("")}
+                      />
+                    )}
+
+                    <motion.button
+                      key={size}
+                      className={cn(
+                        "flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70",
+                        selectedSize === size && "font-extrabold",
+                      )}
+                      onClick={() => setSelectedSize(size)}
+                    >
+                      <p>{size}</p>
+                      <p>{sizes[size]?.productCount || 0}</p>
+                    </motion.button>
+                  </div>
+                ))}
               </motion.div>
             )}
           </>

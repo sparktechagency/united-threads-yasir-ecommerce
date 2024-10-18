@@ -1,13 +1,13 @@
 import { Phone } from "lucide-react";
 import { Clock } from "lucide-react";
-import AboutUsForm from "./_components/AboutUsForm";
+import ContactForm from "./_components/ContactForm";
 
 export const metadata = {
-  title: "About Us",
+  title: "Contact Us",
   description: "About us page",
 };
 
-export default function AboutUsPage() {
+export default function ContactUsPage() {
   return (
     <div className="flex-center h-[80vh]">
       <div className="lg:w-1/2">
@@ -28,7 +28,7 @@ export default function AboutUsPage() {
           </div>
         </div>
 
-        <AboutUsForm />
+        <ContactForm />
       </div>
     </div>
   );

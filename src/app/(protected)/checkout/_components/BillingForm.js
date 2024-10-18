@@ -97,6 +97,8 @@ export default function BillingForm({ goToNextStep }) {
       product: shop?.productId,
       quantity: shop?.quantity,
       amount: shop?.price,
+      color: shop?.color,
+      size: shop?.size,
       orderType: "SHOP",
       country: data?.country || user?.country,
       state: data?.state || user?.state,

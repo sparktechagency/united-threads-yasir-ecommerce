@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 
-export default function AboutUsForm() {
+export default function ContactForm() {
   const {
     register,
     formState: { errors },
@@ -106,7 +106,7 @@ export default function AboutUsForm() {
         </div>
       </div>
 
-      <Button className="primary-button group my-10 h-[2.7rem] w-full">
+      <Button className="primary-button group my-10 h-[2.7rem] w-full rounded-xl">
         Submit
         <AnimatedArrow />
       </Button>

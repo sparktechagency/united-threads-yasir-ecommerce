@@ -19,7 +19,30 @@ const userApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.user],
     }),
+
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: "/auth/change-password",
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.user],
+    }),
+
+    deleteAccount: builder.mutation({
+      query: () => ({
+        url: "/user/delete-my-profile",
+        method: "DELETE",
+      }),
+
+      invalidatesTags: [tagTypes.user],
+    }),
   }),
 });
 
-export const { useGetProfileQuery, useUpdateProfileMutation } = userApi;
+export const {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
+  useDeleteAccountMutation,
+} = userApi;

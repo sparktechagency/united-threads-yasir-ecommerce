@@ -91,6 +91,7 @@ export default function CustomTShirtDesigner() {
     { skip: !productId },
   );
   const productData = productDataRes?.data || {};
+  console.log("🚀", productData);
   // ================================================================
 
   // ================ Currently active image side based on product data response ===============
@@ -809,7 +810,7 @@ export default function CustomTShirtDesigner() {
             defaultValue="T-Shirt"
             disabled={true}
             {...register("category")}
-            className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
+            className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
           />
         </div>
 
@@ -827,7 +828,7 @@ export default function CustomTShirtDesigner() {
             {...register("quantity", {
               required: true,
             })}
-            className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
+            className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
           />
           {errors.quantity && (
             <p className="mt-1 text-danger">Quantity is required</p>
@@ -847,7 +848,7 @@ export default function CustomTShirtDesigner() {
             {...register("materials", {
               required: true,
             })}
-            className="min-h-32 rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
+            className="min-h-32 rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
           />
           {errors.materials && (
             <p className="mt-1 text-danger">

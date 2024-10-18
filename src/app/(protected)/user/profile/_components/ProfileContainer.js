@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import {
+  useDeleteAccountMutation,
   useGetProfileQuery,
   useUpdateProfileMutation,
 } from "@/redux/api/userApi";
@@ -17,17 +18,23 @@ import { useState } from "react";
 import { Camera } from "lucide-react";
 import { X } from "lucide-react";
 import { Loader } from "lucide-react";
-import { ErrorModal, SuccessModal } from "@/utils/customModal";
+import { ConfirmModal, ErrorModal, SuccessModal } from "@/utils/customModal";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { errorToast } from "@/utils/customToast";
 
 export default function ProfileContainer() {
   const [profilePicInput, setProfilePicInput] = useState(null);
   const [profilePicUrl, setProfilePicUrl] = useState(null);
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const [deleteAccount, { isLoading: isDeleting }] = useDeleteAccountMutation();
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const { data: userRes } = useGetProfileQuery();
   const user = userRes?.data || {};
 
-  // Change Profile Picture
+  // Change and show profile pic locally
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
@@ -37,6 +44,7 @@ export default function ProfileContainer() {
     }
   };
 
+  // Change Profile Picture api handler
   const handleChangeProfilePic = async (e) => {
     e.preventDefault();
 
@@ -63,8 +71,45 @@ export default function ProfileContainer() {
     }
   };
 
+  // Delete user account
+  const handleDeleteAccount = async () => {
+    ConfirmModal(
+      "Are you sure?",
+      "All of your account details will be removed!",
+      "Yes, I confirm",
+      "Cancel",
+    ).then(async (res) => {
+      if (res.isConfirmed) {
+        try {
+          await deleteAccount().unwrap;
+          dispatch(logout());
+          router.refresh();
+          router.push("/");
+        } catch (error) {
+          errorToast(error?.data?.message || error?.error);
+        }
+      }
+    });
+  };
+
   return (
     <div className="lg:mx-auto lg:w-[60%]">
+      {/* Whole page overlay loader */}
+
+      {isDeleting && (
+        <div>
+          <div
+            id="overlay"
+            className="fixed inset-0 z-50 bg-gray-400 bg-opacity-50 transition-all duration-300 ease-in-out"
+          />
+
+          {/* Page loader */}
+          <div className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
+            <Loader size={40} color="#f11a00" className="animate-spin" />
+          </div>
+        </div>
+      )}
+
       {/* Profile Image */}
       <div className="flex-center-between">
         <div className="flex-center-start gap-x-3">
@@ -144,7 +189,11 @@ export default function ProfileContainer() {
           </h4>
         </div>
 
-        <Button variant="destructive" className="rounded-full">
+        <Button
+          variant="destructive"
+          className="rounded-full"
+          onClick={handleDeleteAccount}
+        >
           <Trash2 size={16} className="mr-2" /> Delete Account
         </Button>
       </div>

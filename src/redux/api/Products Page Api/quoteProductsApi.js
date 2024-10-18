@@ -3,6 +3,25 @@ import { baseApi } from "../baseApi";
 
 const quoteProductsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getQuoteProducts: builder.query({
+      query: (params) => ({
+        url: "/quote-product/products",
+        method: "GET",
+        params,
+      }),
+
+      providesTags: [tagTypes.quoteProducts],
+    }),
+
+    getSingleQuoteProduct: builder.query({
+      query: (productId) => ({
+        url: `/quote-product/single-product/${productId}`,
+        method: "GET",
+      }),
+
+      providesTags: [tagTypes.quoteProduct],
+    }),
+
     getQuoteCategories: builder.query({
       query: () => ({
         url: "/quote-category/categories",
@@ -18,24 +37,6 @@ const quoteProductsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: [tagTypes.quoteSizes],
-    }),
-
-    getQuoteProducts: builder.query({
-      query: () => ({
-        url: "/quote-product/products",
-        method: "GET",
-      }),
-
-      providesTags: [tagTypes.quoteProducts],
-    }),
-
-    getSingleQuoteProduct: builder.query({
-      query: (productId) => ({
-        url: `/quote-product/single-product/${productId}`,
-        method: "GET",
-      }),
-
-      providesTags: [tagTypes.quoteProduct],
     }),
   }),
 
