@@ -12,7 +12,7 @@ import { X } from "lucide-react";
 export default function ModalWrapper({ children, open, setOpen }) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen} className="relative">
-      <AlertDialogContent className="max-h-[75vh] overflow-auto">
+      <AlertDialogContent className="max-h-[75vh] max-w-[40%] overflow-auto">
         <AlertDialogHeader>
           <AlertDialogDescription className="text-primary-black">
             {children}

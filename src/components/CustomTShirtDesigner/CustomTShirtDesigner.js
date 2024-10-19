@@ -161,6 +161,7 @@ export default function CustomTShirtDesigner() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Save",
+      cancelButtonText: "Already Saved",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -346,7 +347,6 @@ export default function CustomTShirtDesigner() {
       target: () => previewRef?.current,
     },
   ];
-
   // =================== Function to convert base64 to blob =================
   const base64ToBlob = (base64Data) => {
     const byteString = atob(base64Data.split(",")[1]);
@@ -465,7 +465,7 @@ export default function CustomTShirtDesigner() {
       quantity: Number(data.quantity),
       size: data.size,
       pantoneColor: pantoneColorObject?.pantone,
-      hexColor: pantoneColorObject?.hex,
+      hexColor: `#${pantoneColorObject?.hex}`,
       materialPreferences: data.materials,
       country: data.country,
       state: data.state,

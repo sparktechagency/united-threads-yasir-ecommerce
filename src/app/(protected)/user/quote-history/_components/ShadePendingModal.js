@@ -2,6 +2,7 @@ import Image from "next/image";
 import ModalWrapper from "@/components/shared/ModalWrapper/ModalWrapper";
 
 export default function ShadePendingModal({ open, setOpen, quote }) {
+  console.log("🚀quote:", quote);
   return (
     <ModalWrapper open={open} setOpen={setOpen}>
       <div className="mb-10">
@@ -32,7 +33,13 @@ export default function ShadePendingModal({ open, setOpen, quote }) {
           </div>
         </div>
       </div>
+
       <div className="mb-8 grid grid-cols-2 gap-6 gap-x-16">
+        <div className="col-span-2">
+          <h4 className="text-lg font-medium">Product</h4>
+          <h5 className="text-lg font-extrabold text-black">{quote?.name}</h5>
+        </div>
+
         <div>
           <h4 className="text-lg font-medium">Category</h4>
           <h5 className="text-lg font-extrabold text-black">
@@ -50,7 +57,11 @@ export default function ShadePendingModal({ open, setOpen, quote }) {
           <h5 className="flex-center-start gap-x-2 text-lg font-extrabold text-black">
             <div
               className="h-5 w-5 rounded-full"
-              style={{ backgroundColor: `#${quote?.hexColor}` }}
+              style={{
+                backgroundColor: quote?.hexColor?.includes("#")
+                  ? quote?.hexColor
+                  : `#${quote?.hexColor}`,
+              }}
             />
             <p>{quote?.pantoneColor}</p>
           </h5>

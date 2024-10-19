@@ -20,7 +20,20 @@ const quoteApi = baseApi.injectEndpoints({
 
       invalidatesTags: [tagTypes.quotes],
     }),
+
+    acceptQuoteByCustomer: builder.mutation({
+      query: (quoteId) => ({
+        url: `/quote/accept-quote/${quoteId}`,
+        method: "PATCH",
+      }),
+
+      invalidatesTags: [tagTypes.quotes],
+    }),
   }),
 });
 
-export const { useCreateQuoteMutation, useGetQuotesQuery } = quoteApi;
+export const {
+  useCreateQuoteMutation,
+  useGetQuotesQuery,
+  useAcceptQuoteByCustomerMutation,
+} = quoteApi;

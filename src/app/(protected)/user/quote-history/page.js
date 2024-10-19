@@ -24,10 +24,11 @@ export default function OrderHistoryPage() {
         <Tabs defaultValue="shadeApprovalPending" className="w-full">
           <TabsList className="px-2 py-6 shadow">
             <TabsTrigger value="shadeApprovalPending" className="py-2 text-sm">
-              <Clock size={18} className="mr-2" /> Design Approval Pending...
+              <Clock size={18} className="mr-2 text-blue-700" /> Design Approval
+              Pending...
             </TabsTrigger>
             <TabsTrigger value="shadeApproved" className="py-2 text-sm">
-              <CheckCheck size={18} className="mr-2" /> Approved
+              <CheckCheck size={18} className="mr-2 text-success" /> Approved
             </TabsTrigger>
           </TabsList>
 

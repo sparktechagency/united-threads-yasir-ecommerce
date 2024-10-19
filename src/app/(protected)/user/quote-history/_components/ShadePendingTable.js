@@ -9,9 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EyeIcon } from "lucide-react";
-import { MessageSquareText } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import ShadePendingModal from "./ShadePendingModal";
 import { useGetQuotesQuery } from "@/redux/api/quoteApi";
 import { format } from "date-fns";
@@ -19,11 +17,12 @@ import CustomPagination from "@/components/CustomPagination/CustomPagination";
 
 const TABLE_HEADERS = [
   "Quote ID",
+  "Product",
   "Category",
   "Quantity",
   "Size",
   "Pantone",
-  "Order Created",
+  "Quote Created",
   "Action",
 ];
 
@@ -31,6 +30,7 @@ export default function ShadePendingTable() {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const query = {};
   query["quoteStatus"] = "pending";
+  const [selectedQuote, setSelectedQuote] = useState({});
 
   // ================== Pagination ===============
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,7 +40,7 @@ export default function ShadePendingTable() {
 
   // ================== Get Pending Quotes =================
   const { data: pendingQuotesRes } = useGetQuotesQuery(query);
-  const pendingQuotes = pendingQuotesRes?.data?.quotes || [];
+  const pendingQuotes = pendingQuotesRes?.data || [];
   const meta = pendingQuotesRes?.data?.meta || {};
 
   return (
@@ -66,6 +66,7 @@ export default function ShadePendingTable() {
               className="border-b border-primary-black/15"
             >
               <TableCell className="py-5 font-medium">#{quote?._id}</TableCell>
+              <TableCell className="py-5 font-medium">{quote?.name}</TableCell>
               <TableCell className="py-5 font-medium">
                 {quote?.category?.name}
               </TableCell>
@@ -77,7 +78,11 @@ export default function ShadePendingTable() {
               <TableCell className="flex items-center gap-x-2 py-5 font-medium">
                 <div
                   className="h-5 w-5 rounded-full"
-                  style={{ backgroundColor: `#${quote?.hexColor}` }}
+                  style={{
+                    backgroundColor: quote?.hexColor?.includes("#")
+                      ? quote?.hexColor
+                      : `#${quote?.hexColor}`,
+                  }}
                 />
 
                 {quote?.pantoneColor}
@@ -91,16 +96,14 @@ export default function ShadePendingTable() {
               <TableCell className="py-5 font-medium">
                 <div className="flex-center-start gap-x-4">
                   <div>
-                    <button onClick={() => setShowOrderModal(!showOrderModal)}>
+                    <button
+                      onClick={() => {
+                        setShowOrderModal(!showOrderModal);
+                        setSelectedQuote(quote);
+                      }}
+                    >
                       <EyeIcon size={20} color="#292929" />
                     </button>
-
-                    {/* Quote Details Modal */}
-                    <ShadePendingModal
-                      quote={quote}
-                      open={showOrderModal}
-                      setOpen={setShowOrderModal}
-                    />
                   </div>
 
                   {/* <button className="relative">
@@ -115,6 +118,7 @@ export default function ShadePendingTable() {
           ))}
         </TableBody>
       </Table>
+
       {pendingQuotes?.length > 9 && (
         <div className="ms-auto mt-8 w-max">
           <CustomPagination
@@ -125,6 +129,13 @@ export default function ShadePendingTable() {
           />
         </div>
       )}
+
+      {/* Quote Details Modal */}
+      <ShadePendingModal
+        quote={selectedQuote}
+        open={showOrderModal}
+        setOpen={setShowOrderModal}
+      />
     </>
   );
 }

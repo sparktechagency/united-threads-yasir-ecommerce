@@ -15,7 +15,7 @@ export default function ContinueToLoginModal({ open, setOpen, text }) {
     <AlertDialog open={open} setOpen={setOpen}>
       <AlertDialogContent className="space-y-5">
         <div className="flex items-start gap-x-5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-danger/25 text-danger/65">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-600 text-yellow-400">
             <TriangleAlert size={20} strokeWidth={2.6} />
           </div>
 
