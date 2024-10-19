@@ -3,6 +3,15 @@ import { baseApi } from "../baseApi";
 
 const shopApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    // Get all types of categories
+    getAllCategories: builder.query({
+      query: () => ({
+        url: "/category/all-categories",
+        method: "GET",
+      }),
+      providesTags: [tagTypes.categories],
+    }),
+
     getShopCategories: builder.query({
       query: () => ({
         url: "/category/categories",
@@ -79,6 +88,7 @@ const shopApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetAllCategoriesQuery,
   useGetShopCategoriesQuery,
   useGetShopProductSizesQuery,
   useGetShopProductsQuery,

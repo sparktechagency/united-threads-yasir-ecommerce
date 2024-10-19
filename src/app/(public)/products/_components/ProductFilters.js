@@ -14,6 +14,7 @@ import { Search } from "lucide-react";
 import { X } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { ChevronUp } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useState } from "react";
 
 // motion variants
@@ -41,6 +42,9 @@ export default function ProductFilters() {
   const [categoryExpanded, setCategoryExpanded] = useState(true);
   const [sizeExpanded, setSizeExpanded] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [categoryIdFromSearchUrl, setCategoryIdFromSearchUrl] = useState(
+    useSearchParams().get("category"),
+  );
 
   // Products filter api handlers
   const { data: categoriesRes, isLoading: isCategoriesLoading } =
@@ -76,6 +80,10 @@ export default function ProductFilters() {
       handleSearch.cancel();
     };
   }, [searchTerm, handleSearch]);
+
+  useEffect(() => {
+    setSelectedCategory(categoryIdFromSearchUrl);
+  }, [categoryIdFromSearchUrl]);
 
   return (
     <div className="pb-10">
@@ -125,18 +133,24 @@ export default function ProductFilters() {
               >
                 {categories?.map((category) => (
                   <div key={category?._id} className="relative w-full">
-                    {selectedCategory === category?._id && (
+                    {(selectedCategory === category?._id ||
+                      categoryIdFromSearchUrl === category?._id) && (
                       <X
                         role="button"
                         size={18}
                         className="absolute -left-8 top-1/2 -translate-y-1/2"
-                        onClick={() => setSelectedCategory("")}
+                        onClick={() => {
+                          setSelectedCategory("");
+                          setCategoryIdFromSearchUrl("");
+                        }}
                       />
                     )}
                     <motion.button
                       className={cn(
                         "flex-center-between w-full gap-x-2 transition-all duration-300 ease-in-out hover:scale-[0.99] hover:text-primary-black/70",
-                        selectedCategory === category?._id && "font-extrabold",
+                        (selectedCategory === category?._id ||
+                          categoryIdFromSearchUrl === category?._id) &&
+                          "font-extrabold",
                       )}
                       onClick={() => setSelectedCategory(category?._id)}
                     >

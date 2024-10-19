@@ -9,6 +9,7 @@ import { selectUser } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ContinueToLoginModal from "@/components/ContinueToLoginModal/ContinueToLoginModal";
+import { Tag } from "antd";
 
 export default function QuoteProductCard({ product }) {
   const userId = useSelector(selectUser)?._id;
@@ -26,7 +27,7 @@ export default function QuoteProductCard({ product }) {
   return (
     <>
       <div className="rounded-3xl border border-primary-black/50 p-5 shadow transition-all duration-300 ease-in-out hover:shadow-lg">
-        <div className="flex-center h-[250px]">
+        <div className="flex-center relative h-[250px]">
           <Image
             src={product?.frontSide}
             alt="product image"
@@ -34,6 +35,13 @@ export default function QuoteProductCard({ product }) {
             width={500}
             className="mx-auto block h-full w-auto rounded"
           />
+
+          {/* Category */}
+          <div className="absolute right-0 top-0">
+            <Tag color="lime" className="rounded-full font-medium">
+              {product?.category?.name}
+            </Tag>
+          </div>
         </div>
 
         <div className="flex-center-between mb-5 mt-5 text-xl font-bold">

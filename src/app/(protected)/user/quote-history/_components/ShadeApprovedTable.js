@@ -21,6 +21,7 @@ import { Check } from "lucide-react";
 import { useGetQuotesQuery } from "@/redux/api/quoteApi";
 import { format } from "date-fns";
 import QuoteApprovedModal from "./QuoteApprovedModal";
+import CustomPagination from "@/components/CustomPagination/CustomPagination";
 
 const TABLE_HEADERS = [
   "Order ID",
@@ -51,7 +52,6 @@ export default function ShadeApprovedTable() {
   const { data: approvedQuotesRes } = useGetQuotesQuery(query);
   const approvedQuotes = approvedQuotesRes?.data || [];
   const meta = approvedQuotesRes?.data?.meta || {};
-  console.log(approvedQuotes);
 
   return (
     <>
@@ -150,6 +150,17 @@ export default function ShadeApprovedTable() {
           ))}
         </TableBody>
       </Table>
+
+      {approvedQuotes?.length > 9 && (
+        <div className="ms-auto mt-8 w-max">
+          <CustomPagination
+            total={meta?.total}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+      )}
 
       {/* Order Modal */}
       <QuoteApprovedModal

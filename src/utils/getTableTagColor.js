@@ -6,7 +6,7 @@ export const getTableTagColor = (status) => {
       return "purple";
     case "DELIVERED":
       return "green";
-    case "CANCELLED":
+    case "CANCELED":
       return "red";
     default:
       return "bg-red-500";

@@ -76,9 +76,7 @@ export default function OrderContainer({ orderId }) {
         <div className="flex-center-start mt-20 gap-x-16">
           <div className="flex-center-start gap-x-5 text-xl font-semibold">
             <h4>Size: </h4>
-            <p className="rounded-full border border-primary-black px-3 py-[1px] text-lg">
-              {order?.size}
-            </p>
+            <Tag color="blue-inverse">{order?.size}</Tag>
           </div>
 
           <div className="flex-center-start gap-x-5 text-xl font-semibold">
@@ -104,17 +102,43 @@ export default function OrderContainer({ orderId }) {
         <div className="mx-auto h-full max-w-max rounded-xl bg-gray-300 px-20">
           <Carousel className="h-full">
             <CarouselContent className="h-full">
-              {order?.product?.images?.map((img) => (
-                <CarouselItem className="flex h-[400px] items-center">
-                  <Image
-                    src={img?.url}
-                    alt="product image"
-                    width={1200}
-                    height={1200}
-                    className="mx-auto max-w-max"
-                  />
-                </CarouselItem>
-              ))}
+              {order?.product?.images?.length > 0 ? (
+                <>
+                  {order?.product?.images?.map((img) => (
+                    <CarouselItem
+                      key={img}
+                      className="flex h-[400px] items-center"
+                    >
+                      <Image
+                        src={img?.url}
+                        alt="product image"
+                        width={1200}
+                        height={1200}
+                        className="mx-auto max-w-max"
+                      />
+                    </CarouselItem>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {[order?.quote?.backSide, order?.quote?.frontSide]?.map(
+                    (img) => (
+                      <CarouselItem
+                        key={img}
+                        className="flex h-[400px] items-center"
+                      >
+                        <Image
+                          src={img}
+                          alt="product image"
+                          width={1200}
+                          height={1200}
+                          className="mx-auto max-w-max"
+                        />
+                      </CarouselItem>
+                    ),
+                  )}
+                </>
+              )}
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />

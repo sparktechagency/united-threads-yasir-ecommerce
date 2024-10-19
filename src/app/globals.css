@@ -233,3 +233,7 @@ body {
   color: var(--primary-white) !important;
   padding: 0.8rem 1.2rem !important;
 }
+
+.ant-tag {
+  font-family: var(--font-uncut-sans) !important;
+}

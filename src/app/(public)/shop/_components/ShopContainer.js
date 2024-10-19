@@ -7,8 +7,17 @@ import { useGetShopProductsQuery } from "@/redux/api/Shop Page Api/shopApi";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton/ProductCardSkeleton";
 import EmptyContainer from "@/components/EmptyContainer/EmptyContainer";
 import { motion } from "framer-motion";
-import { Pagination } from "react-pagination-bar";
 import CustomPagination from "@/components/CustomPagination/CustomPagination";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ArrowDownNarrowWide } from "lucide-react";
+import { Check } from "lucide-react";
 
 // Motion Variants
 const fadeUpVariants = {
@@ -33,12 +42,14 @@ const fadeUpVariants = {
 export default function ShopContainer() {
   const { selectedCategory, selectedSize, searchText } =
     useContext(ShopPageContext);
+  const [selectedSortMethod, setSelectedSortMethod] = useState("");
 
   // ============ Query ===============
   const query = {};
   query["category"] = selectedCategory;
   query["size"] = selectedSize;
   query["searchTerm"] = searchText;
+  query["sort"] = selectedSortMethod;
 
   // ================= Pagination ===============
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,6 +62,17 @@ export default function ShopContainer() {
   const products = productsRes?.data || [];
   const meta = productsRes?.meta || {};
 
+  // =============== Function to sort products =============
+  const handleSort = (sortMethod) => {
+    if (selectedSortMethod === sortMethod) {
+      return setSelectedSortMethod("");
+    }
+
+    setSelectedSortMethod(sortMethod);
+  };
+
+  console.log(selectedSortMethod);
+
   // Show skeleton for product loading
   if (isLoading) {
     return (
@@ -62,25 +84,64 @@ export default function ShopContainer() {
     );
   }
 
-  // Show empty if no product found
-  if (!products?.length) {
-    return <EmptyContainer className="flex-center h-[65vh]" />;
-  }
-
   return (
     <>
-      <motion.div
-        variants={fadeUpVariants}
-        initial="initial"
-        animate="animate"
-        className="grid grid-cols-1 md:grid-cols-2 md:gap-7 lg:grid-cols-3"
-      >
-        {products?.map((product) => (
-          <motion.div variants={fadeUpVariants} key={product?._id}>
-            <ShopProductsCard product={product} />
-          </motion.div>
-        ))}
-      </motion.div>
+      <div className="flex-center-between">
+        {/* Search found */}
+        <div>
+          <p className="font-medium">
+            {products?.length} product(s) found{" "}
+            {searchText && <span>for &quot;{searchText}&quot;</span>}
+          </p>
+        </div>
+
+        {/* Sort by button */}
+        <DropdownMenu>
+          {/* <div className="flex justify-end"> */}
+          <DropdownMenuTrigger className="rounded-full border border-primary-black/75 p-2.5">
+            <ArrowDownNarrowWide size={20} />
+          </DropdownMenuTrigger>
+          {/* </div> */}
+          <DropdownMenuContent
+            className="rounded-lg border border-primary-black lg:w-[180px]"
+            align="end"
+          >
+            <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => handleSort("price")}>
+              Price{" "}
+              {selectedSortMethod === "price" && (
+                <Check size={16} className="ml-2" />
+              )}
+            </DropdownMenuItem>
+
+            {/* <DropdownMenuItem onClick={() => handleSort("createdAt")}>
+              Newly Added
+              {selectedSortMethod === "createdAt" && (
+                <Check size={16} className="ml-2" />
+              )}
+            </DropdownMenuItem> */}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Products */}
+      {products?.length > 0 ? (
+        <motion.div
+          variants={fadeUpVariants}
+          initial="initial"
+          animate="animate"
+          className="mt-6 grid grid-cols-1 md:grid-cols-2 md:gap-7 lg:grid-cols-3"
+        >
+          {products?.map((product) => (
+            <motion.div variants={fadeUpVariants} key={product?._id}>
+              <ShopProductsCard product={product} />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <EmptyContainer className="flex-center h-[65vh]" />
+      )}
 
       <div className="ml-auto mt-20 w-max">
         <CustomPagination

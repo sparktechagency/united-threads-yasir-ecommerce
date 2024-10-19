@@ -171,7 +171,7 @@ const CarouselPrevious = React.forwardRef(
         variant={variant}
         size={size}
         className={cn(
-          "absolute h-9 w-9 rounded-full",
+          "absolute h-10 w-10 rounded-full",
           orientation === "horizontal"
             ? "-left-9 top-1/2 -translate-y-1/2"
             : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -200,7 +200,7 @@ const CarouselNext = React.forwardRef(
         variant={variant}
         size={size}
         className={cn(
-          "absolute h-9 w-9 rounded-full",
+          "absolute h-10 w-10 rounded-full",
           orientation === "horizontal"
             ? "-right-12 top-1/2 -translate-y-1/2"
             : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -248,10 +248,10 @@ const CarouselDots = React.forwardRef((props, ref) => {
         {Array.from({ length: numberOfSlides }, (_, i) => (
           <Button
             key={i}
-            className={`mx-1 h-1.5 w-1.5 rounded-full p-0 transition-all duration-300 ease-in-out ${props.btnClass} ${
+            className={`mx-1 h-1.5 w-1.5 rounded-full p-0 ${props.btnClass} ${
               i === currentSlide
                 ? `scale-125 transform bg-gray-500 hover:bg-gray-500 ${props.activeClass}`
-                : `bg-gray-300 hover:bg-gray-300 ${props.nonActiveClass}`
+                : `bg-gray-300 hover:bg-gray-300`
             }`}
             aria-label={`Go to slide ${i + 1}`}
             onClick={() => api?.scrollTo(i)}

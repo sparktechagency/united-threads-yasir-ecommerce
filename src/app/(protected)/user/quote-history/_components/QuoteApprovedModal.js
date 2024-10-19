@@ -23,19 +23,25 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
   const handleAcceptQuote = async () => {
     try {
       const acceptQuoteRes = await acceptQuote(quote?._id).unwrap();
-      console.log(acceptQuoteRes);
 
       if (acceptQuoteRes?.success) {
-        const createPaymentRes = await createPaymentLink(
-          acceptQuoteRes?.data[0]?._id,
-        ).unwrap();
-        if (createPaymentRes?.success) {
-          window.location.href = createPaymentRes?.data?.paymentLink;
-          successToast("Proceed to payment....");
-        }
+        // Accepted quote becomes an Order
+        // so, proceed to pay for the order
+
+        handlePaymentForQuote(acceptQuoteRes?.data[0]?._id);
       }
     } catch (error) {
-      console.log(error);
+      errorToast(error?.data?.message || error?.error);
+    }
+  };
+
+  const handlePaymentForQuote = async (orderId) => {
+    try {
+      const createPaymentRes = await createPaymentLink(orderId).unwrap();
+
+      successToast("Proceed to payment....");
+      window.location.href = createPaymentRes?.data?.paymentLink;
+    } catch (error) {
       errorToast(error?.data?.message || error?.error);
     }
   };

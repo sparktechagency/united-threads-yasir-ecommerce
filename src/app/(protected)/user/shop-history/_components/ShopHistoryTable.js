@@ -57,8 +57,8 @@ export default function ShopHistoryTable() {
 
   // ================ Get shop order details ================
   const { data: ordersRes } = useGetOrdersQuery(query);
-  const orders = ordersRes?.data?.orders || [];
-  const meta = ordersRes?.data?.meta || {};
+  const orders = ordersRes?.data || [];
+  const meta = ordersRes?.meta || {};
 
   return (
     <div
@@ -114,10 +114,10 @@ export default function ShopHistoryTable() {
             >
               <TableCell className="py-5 font-medium">#{order?._id}</TableCell>
               <TableCell className="py-5 font-medium">
-                {order?.product?.name}
+                {order?.quote?.name || order?.product?.name}
               </TableCell>
               <TableCell className="py-5 font-medium">
-                {order?.product?.category?.name}
+                {order?.quote?.category?.name || order?.product?.category?.name}
               </TableCell>
               <TableCell className="py-5 font-medium">
                 {order?.quantity}
@@ -129,16 +129,7 @@ export default function ShopHistoryTable() {
               <TableCell className="py-5 font-medium">
                 ${Number(order?.amount * order?.quantity)?.toFixed(2)}
               </TableCell>
-              <TableCell
-                className={cn(
-                  "py-5 font-medium",
-                  order?.status === "Pending"
-                    ? "text-blue-500"
-                    : order?.status === "Shipped"
-                      ? "text-orange-500"
-                      : "text-green-500",
-                )}
-              >
+              <TableCell className={cn("py-5 font-medium")}>
                 <Tag
                   color={getTableTagColor(order?.status)}
                   style={{ fontWeight: "bold" }}
@@ -149,9 +140,16 @@ export default function ShopHistoryTable() {
 
               <TableCell>
                 <Button variant="outline" asChild className="group gap-x-2">
-                  <Link href={`/user/shop-history/${order?._id}`}>
-                    View Details <AnimatedArrow />
-                  </Link>
+                  {order?.status === "DELIVERED" &&
+                  order?.orderType === "SHOP" ? (
+                    <Link href={`/user/shop-history/${order?.product?._id}`}>
+                      Share Review <AnimatedArrow />
+                    </Link>
+                  ) : (
+                    <Link href={`/user/shop-history/${order?._id}`}>
+                      View Details <AnimatedArrow />
+                    </Link>
+                  )}
                 </Button>
               </TableCell>
             </TableRow>
