@@ -9,6 +9,15 @@ import { Upload } from "lucide-react";
 import { Tooltip } from "antd";
 import { Label } from "../ui/label";
 import TextStylingWidget from "./_components/TextStylingWidget";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { cn } from "@/lib/utils";
 
 const TShirtDesigner = () => {
   const canvasRef = useRef(null);
@@ -16,6 +25,7 @@ const TShirtDesigner = () => {
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
   const activeObjectRef = useRef(null);
+  const inputRef = useRef(null);
 
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
@@ -83,6 +93,7 @@ const TShirtDesigner = () => {
   }, [activeObject, canvas]);
 
   const handleCustomPicture = (e) => {
+    console.log(e.target?.files);
     const reader = new FileReader();
     reader.onload = (event) => {
       const imgObj = new window.Image();
@@ -103,6 +114,7 @@ const TShirtDesigner = () => {
     }
   };
 
+  console.log(activeObject?.type);
   return (
     <>
       <div className="border-red flex-start-between">
@@ -118,17 +130,25 @@ const TShirtDesigner = () => {
                 <p>Add Text</p>
               </button>
             </Tooltip>
+            <input
+              type="file"
+              id="custom-picture"
+              ref={inputRef}
+              style={{ display: "none" }}
+              onChange={handleCustomPicture}
+            />
 
             <Tooltip placement="right" title="Upload Your Logo/Design">
-              <button className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80">
+              <button
+                className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
+                onClick={() => inputRef.current.click()}
+              >
                 <Upload />
                 <p>Upload</p>
               </button>
             </Tooltip>
           </div>
 
-          {/* {activeObject && (
-          )} */}
           <TextStylingWidget
             handleStyleChange={handleStyleChange}
             activeObject={activeObject}

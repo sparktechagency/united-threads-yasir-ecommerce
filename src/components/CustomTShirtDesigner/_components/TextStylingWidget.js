@@ -29,7 +29,7 @@ export default function TextStylingWidget({ handleStyleChange, activeObject }) {
     <div
       className={cn(
         "fixed bottom-2 z-20 mx-auto mt-5 flex w-3/4 items-center justify-center gap-x-16 rounded-xl bg-gray-200 px-6 py-2 transition-all duration-300 ease-in-out",
-        activeObject
+        activeObject?.type === "i-text"
           ? "translate-y-0 opacity-100"
           : "translate-y-[100vh] opacity-0",
       )}
