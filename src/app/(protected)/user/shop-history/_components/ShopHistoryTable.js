@@ -21,6 +21,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
+import { useGetOrdersQuery } from "@/redux/api/orderApi";
+import { format } from "date-fns";
+import EmptyContainer from "@/components/EmptyContainer/EmptyContainer";
+import CustomPagination from "@/components/CustomPagination/CustomPagination";
+import { Tag } from "antd";
+import { getTableTagColor } from "@/utils/getTableTagColor";
 
 const TABLE_HEADERS = [
   "Order ID",
@@ -35,157 +41,132 @@ const TABLE_HEADERS = [
 
 const ORDER_STATUS = ["All", "Pending", "Shipped", "Delivered"];
 
-const DATA = [
-  {
-    orderId: "12ab34cd",
-    product: "Rosemary",
-    category: "T-Shirt",
-    quantity: 25,
-    date: "31 Aug 2024",
-    totalAmount: 420,
-    status: "Pending",
-  },
-  {
-    orderId: "56ef78gh",
-    product: "Lavender",
-    category: "Hoodie",
-    quantity: 10,
-    date: "01 Sep 2024",
-    totalAmount: 650,
-    status: "Shipped",
-  },
-  {
-    orderId: "90ij12kl",
-    product: "Chamomile",
-    category: "T-Shirt",
-    quantity: 30,
-    date: "28 Aug 2024",
-    totalAmount: 500,
-    status: "Delivered",
-  },
-  {
-    orderId: "34mn56op",
-    product: "Peppermint",
-    category: "Sweatshirt",
-    quantity: 15,
-    date: "29 Aug 2024",
-    totalAmount: 375,
-    status: "Cancelled",
-  },
-  {
-    orderId: "78qr90st",
-    product: "Basil",
-    category: "Cap",
-    quantity: 20,
-    date: "02 Sep 2024",
-    totalAmount: 200,
-    status: "Pending",
-  },
-  {
-    orderId: "12uv34wx",
-    product: "Thyme",
-    category: "T-Shirt",
-    quantity: 35,
-    date: "03 Sep 2024",
-    totalAmount: 750,
-    status: "Shipped",
-  },
-  {
-    orderId: "56yz78ab",
-    product: "Sage",
-    category: "Jacket",
-    quantity: 5,
-    date: "30 Aug 2024",
-    totalAmount: 1250,
-    status: "Delivered",
-  },
-];
-
 export default function ShopHistoryTable() {
   const [selectedStatus, setSelectedStatus] = useState("All");
+  const query = {};
+
+  if (selectedStatus !== "All") {
+    query["status"] = selectedStatus?.toUpperCase();
+  }
+
+  // =============== Pagination ================
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  query["page"] = currentPage;
+  query["limit"] = pageSize;
+
+  // ================ Get shop order details ================
+  const { data: ordersRes } = useGetOrdersQuery(query);
+  const orders = ordersRes?.data || [];
+  const meta = ordersRes?.meta || {};
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow className="bg-lightGray hover:bg-lightGray">
-          {TABLE_HEADERS.map((header) => (
-            <TableHead
-              key={header}
-              className="text-lg font-semibold text-primary-black"
-              style={{ paddingBlock: "14px" }}
-            >
-              {header !== "Status" && header}
+    <div
+      className="my-8 rounded-xl p-6"
+      style={{ boxShadow: "0px 0px 5px lightGray" }}
+    >
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-lightGray hover:bg-lightGray">
+            {TABLE_HEADERS.map((header) => (
+              <TableHead
+                key={header}
+                className="text-lg font-semibold text-primary-black"
+                style={{ paddingBlock: "14px" }}
+              >
+                {header !== "Status" && header}
 
-              {header === "Status" && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex-center-start gap-x-3">
-                    Status <ChevronsUpDown size={16} />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {ORDER_STATUS.map((status) => (
-                      <DropdownMenuItem
-                        key={status}
-                        onClick={() => setSelectedStatus(status)}
-                      >
-                        {selectedStatus === status && (
-                          <Check className="mr-1" size={16} />
-                        )}
+                {header === "Status" && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="flex-center-start gap-x-3">
+                      Status <ChevronsUpDown size={16} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {ORDER_STATUS.map((status) => (
+                        <DropdownMenuItem
+                          key={status}
+                          onClick={() => setSelectedStatus(status)}
+                        >
+                          {selectedStatus === status && (
+                            <Check className="mr-1" size={16} />
+                          )}
 
-                        <button className={selectedStatus !== status && "ml-4"}>
-                          {status}
-                        </button>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody style={{ padding: "14px" }}>
-        {DATA.map((order) => (
-          <TableRow
-            key={order?.orderId}
-            className="border-b border-primary-black/15"
-          >
-            <TableCell className="py-5 font-medium">
-              #{order?.orderId}
-            </TableCell>
-            <TableCell className="py-5 font-medium">{order?.product}</TableCell>
-            <TableCell className="py-5 font-medium">
-              {order?.category}
-            </TableCell>
-            <TableCell className="py-5 font-medium">
-              {order?.quantity}
-            </TableCell>
-            <TableCell className="py-5 font-medium">{order?.date}</TableCell>
-            <TableCell className="py-5 font-medium">
-              ${order?.totalAmount}
-            </TableCell>
-            <TableCell
-              className={cn(
-                "py-5 font-medium",
-                order?.status === "Pending"
-                  ? "text-blue-500"
-                  : order?.status === "Shipped"
-                    ? "text-orange-500"
-                    : "text-green-500",
-              )}
-            >
-              {order?.status}
-            </TableCell>
-
-            <TableCell>
-              <Button variant="outline" asChild className="group gap-x-2">
-                <Link href={`/user/shop-history/${order?.orderId}`}>
-                  View Details <AnimatedArrow />
-                </Link>
-              </Button>
-            </TableCell>
+                          <button
+                            className={selectedStatus !== status && "ml-4"}
+                          >
+                            {status}
+                          </button>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </TableHead>
+            ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+
+        <TableBody style={{ padding: "14px" }}>
+          {orders?.map((order) => (
+            <TableRow
+              key={order?._id}
+              className="border-b border-primary-black/15"
+            >
+              <TableCell className="py-5 font-medium">#{order?._id}</TableCell>
+              <TableCell className="py-5 font-medium">
+                {order?.quote?.name || order?.product?.name}
+              </TableCell>
+              <TableCell className="py-5 font-medium">
+                {order?.quote?.category?.name || order?.product?.category?.name}
+              </TableCell>
+              <TableCell className="py-5 font-medium">
+                {order?.quantity}
+              </TableCell>
+              <TableCell className="py-5 font-medium">
+                {order?.createdAt &&
+                  format(order?.createdAt, "dd MMM yyyy, hh:mm a")}
+              </TableCell>
+              <TableCell className="py-5 font-medium">
+                ${Number(order?.amount * order?.quantity)?.toFixed(2)}
+              </TableCell>
+              <TableCell className={cn("py-5 font-medium")}>
+                <Tag
+                  color={getTableTagColor(order?.status)}
+                  style={{ fontWeight: "bold" }}
+                >
+                  {order?.status}
+                </Tag>
+              </TableCell>
+
+              <TableCell>
+                <Button variant="outline" asChild className="group gap-x-2">
+                  {order?.status === "DELIVERED" &&
+                  order?.orderType === "SHOP" ? (
+                    <Link href={`/user/shop-history/${order?.product?._id}`}>
+                      Share Review <AnimatedArrow />
+                    </Link>
+                  ) : (
+                    <Link href={`/user/shop-history/${order?._id}`}>
+                      View Details <AnimatedArrow />
+                    </Link>
+                  )}
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {orders?.length > 9 && (
+        <div className="ml-auto mt-10 max-w-max">
+          <CustomPagination
+            currentPage={currentPage}
+            pageSize={pageSize}
+            total={meta?.total}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      )}
+    </div>
   );
 }

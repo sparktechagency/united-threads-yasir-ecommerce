@@ -14,6 +14,8 @@ export default function CountryStateCitySelector({
   userAddress,
   register,
   setValue,
+  required = [],
+  errors = {},
 }) {
   const [allData, setAllData] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(userAddress?.country);
@@ -70,7 +72,9 @@ export default function CountryStateCitySelector({
     }
   }, [userAddress?.country]);
 
-  console.log(selectedState);
+  // if (!userAddress) {
+  //   return;
+  // }
 
   return (
     <div className="grid w-full grid-cols-2 gap-x-3 gap-y-3 lg:grid-cols-5">
@@ -79,25 +83,37 @@ export default function CountryStateCitySelector({
           name="country"
           control={control}
           defaultValue={selectedCountry}
+          rules={{
+            required: {
+              value: required.includes("country"),
+              message: "Country is required",
+            },
+          }}
           render={({ field }) => (
-            <Select
-              onValueChange={(countryName) => {
-                field.onChange(countryName);
-                setSelectedCountry(countryName);
-              }}
-              value={selectedCountry || ""}
-            >
-              <SelectTrigger className="border border-primary-black">
-                <SelectValue placeholder="Select country" />
-              </SelectTrigger>
-              <SelectContent>
-                {memoizedAllCountries?.map((country) => (
-                  <SelectItem key={country.name} value={country.name}>
-                    {country.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <>
+              <Select
+                onValueChange={(countryName) => {
+                  field.onChange(countryName);
+                  setSelectedCountry(countryName);
+                }}
+                value={selectedCountry || ""}
+              >
+                <SelectTrigger className="border border-primary-black">
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {memoizedAllCountries?.map((country) => (
+                    <SelectItem key={country.name} value={country.name}>
+                      {country.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {errors?.country && (
+                <p className="mt-2 text-danger">{errors?.country?.message}</p>
+              )}
+            </>
           )}
         />
       </div>
@@ -110,25 +126,39 @@ export default function CountryStateCitySelector({
                 name="state"
                 control={control}
                 defaultValue={selectedState}
+                rules={{
+                  required: {
+                    value: required.includes("state"),
+                    message: "State is required",
+                  },
+                }}
                 render={({ field }) => (
-                  <Select
-                    onValueChange={(stateName) => {
-                      field.onChange(stateName);
-                      setSelectedState(stateName);
-                    }}
-                    value={selectedState || ""}
-                  >
-                    <SelectTrigger className="border border-primary-black">
-                      <SelectValue placeholder="Select state" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statesOfCountry?.map((state) => (
-                        <SelectItem key={state.name} value={state.name}>
-                          {state.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <>
+                    <Select
+                      onValueChange={(stateName) => {
+                        field.onChange(stateName);
+                        setSelectedState(stateName);
+                      }}
+                      value={selectedState || ""}
+                    >
+                      <SelectTrigger className="border border-primary-black">
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {statesOfCountry?.map((state) => (
+                          <SelectItem key={state.name} value={state.name}>
+                            {state.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {errors?.state && (
+                      <p className="mt-2 text-danger">
+                        {errors?.state?.message}
+                      </p>
+                    )}
+                  </>
                 )}
               />
             ) : (
@@ -161,27 +191,41 @@ export default function CountryStateCitySelector({
               name="city"
               control={control}
               defaultValue={selectedCity}
+              rules={{
+                required: {
+                  value: required.includes("city"),
+                  message: "City is required",
+                },
+              }}
               render={({ field }) => (
                 <>
                   {citiesOfState?.length ? (
-                    <Select
-                      onValueChange={(cityName) => {
-                        field.onChange(cityName);
-                        setSelectedCity(cityName);
-                      }}
-                      value={selectedCity || ""}
-                    >
-                      <SelectTrigger className="border border-primary-black">
-                        <SelectValue placeholder="Select city" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {citiesOfState?.map((city) => (
-                          <SelectItem key={city.name} value={city.name}>
-                            {city.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <>
+                      <Select
+                        onValueChange={(cityName) => {
+                          field.onChange(cityName);
+                          setSelectedCity(cityName);
+                        }}
+                        value={selectedCity || ""}
+                      >
+                        <SelectTrigger className="border border-primary-black">
+                          <SelectValue placeholder="Select city" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {citiesOfState?.map((city) => (
+                            <SelectItem key={city.name} value={city.name}>
+                              {city.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {errors?.city && (
+                        <p className="mt-2 text-danger">
+                          {errors?.city?.message}
+                        </p>
+                      )}
+                    </>
                   ) : (
                     <Select onValueChange={field.onChange}>
                       <SelectTrigger>
@@ -213,7 +257,7 @@ export default function CountryStateCitySelector({
           type="text"
           id="area"
           placeholder="Type Area"
-          className="border border-primary-black bg-transparent py-5 text-primary-black outline-none focus:outline-none"
+          className="border border-primary-black bg-transparent text-primary-black outline-none focus:outline-none"
           {...register("area")}
         />
       </div>
@@ -223,8 +267,8 @@ export default function CountryStateCitySelector({
           type="text"
           id="house"
           placeholder="Type House No"
-          className="border border-primary-black bg-transparent py-5 text-primary-black outline-none focus:outline-none"
-          {...register("house")}
+          className="border border-primary-black bg-transparent text-primary-black outline-none focus:outline-none"
+          {...register("houseNo")}
         />
       </div>
     </div>

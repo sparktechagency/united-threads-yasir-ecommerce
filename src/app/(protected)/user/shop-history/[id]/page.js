@@ -5,10 +5,10 @@ export const metadata = {
   description: "Order details page",
 };
 
-export default function DynamicOrderPage() {
+export default function DynamicOrderPage({ params }) {
   return (
     <div className="lg:mx-auto lg:w-3/4">
-      <OrderContainer />
+      <OrderContainer orderId={params?.id} />
     </div>
   );
 }

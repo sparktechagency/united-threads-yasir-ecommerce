@@ -1,14 +1,13 @@
 import CommonPageHeader from "@/components/CommonPageHeader/CommonPageHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ShadeApprovedTable from "./_components/ShadeApprovedTable";
-import { Watch } from "lucide-react";
-import { Check } from "lucide-react";
 import { CheckCheck } from "lucide-react";
 import ShadePendingTable from "./_components/ShadePendingTable";
+import { Clock } from "lucide-react";
 
 export const metadata = {
-  title: "Order History",
-  description: "Order history page",
+  title: "Quote History",
+  description: "Quote history page",
 };
 
 export default function OrderHistoryPage() {
@@ -23,12 +22,13 @@ export default function OrderHistoryPage() {
 
       <div className="my-10 lg:mx-auto lg:w-3/4">
         <Tabs defaultValue="shadeApprovalPending" className="w-full">
-          <TabsList className="py-5 shadow">
-            <TabsTrigger value="shadeApprovalPending" className="text-base">
-              <Watch size={18} className="mr-2" /> Shade Approval Pending...
+          <TabsList className="px-2 py-6 shadow">
+            <TabsTrigger value="shadeApprovalPending" className="py-2 text-sm">
+              <Clock size={18} className="mr-2 text-blue-700" /> Design Approval
+              Pending...
             </TabsTrigger>
-            <TabsTrigger value="shadeApproved" className="text-base">
-              <CheckCheck size={18} className="mr-2" /> Approved
+            <TabsTrigger value="shadeApproved" className="py-2 text-sm">
+              <CheckCheck size={18} className="mr-2 text-success" /> Approved
             </TabsTrigger>
           </TabsList>
 

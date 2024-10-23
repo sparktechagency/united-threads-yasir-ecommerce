@@ -1,12 +1,30 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
 import { Separator } from "@/components/ui/separator";
-import { Truck } from "lucide-react";
-import Image from "next/image";
-import productImg from "/public/images/order-details/71DjprnHx4L._AC_SX522_-removebg-preview.png";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useGetSingleOrderQuery } from "@/redux/api/orderApi";
+import { Tag } from "antd";
+import { getTableTagColor } from "@/utils/getTableTagColor";
+import { format } from "date-fns";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Image from "next/image";
 
-export default function OrderContainer() {
+export default function OrderContainer({ orderId }) {
+  // ================ Get single order details ================
+  const { data: orderRes, isLoading } = useGetSingleOrderQuery(orderId, {
+    skip: !orderId,
+  });
+
+  const order = orderRes?.data || {};
+  console.log("order:", order);
+
   return (
     <div className="flex min-h-[75vh] items-center lg:w-full lg:gap-x-10">
       {/* Left */}
@@ -21,50 +39,52 @@ export default function OrderContainer() {
         <div>
           <div className="flex-center-between">
             <h3 className="text-2xl font-bold">
-              Order ID: <span className="text-orange-400">#12ab34cd</span>
+              Order ID: <span className="text-orange-400">#{order?._id}</span>
             </h3>
 
             {/* Order Status Button */}
-            <Button className="flex-center gap-x-2 bg-orange-500">
-              Shipped
-              <Truck size={16} />
-            </Button>
+            <Tag
+              color={getTableTagColor(order?.status)}
+              style={{ fontWeight: "bold", fontSize: "1rem" }}
+              size="large"
+            >
+              {order?.status}
+            </Tag>
           </div>
 
           <div className="text-muted-foreground mt-5 space-y-1 font-medium">
             <p className="flex items-center justify-between">
               <span className="font-semibold">Date:</span>
-              20 Aug 2024, 10:30 PM
+              {order?.createdAt &&
+                format(order?.createdAt, "dd MMM yyyy, hh:mm a")}
             </p>
             <p className="flex items-center justify-between">
               <span className="font-semibold">Contact No:</span>
-              +9900000000
+              {order?.user?.contact}
             </p>
 
             <p className="flex items-center justify-between">
               <span className="font-semibold">Shipping Address:</span>
-              13th Street. 47 W 13th St,New York, NY 10011
+              {order?.houseNo && `${order?.houseNo},`}{" "}
+              {order?.area && `${order?.area},`} {order?.city}, {order?.state},{" "}
+              {order?.country}
             </p>
           </div>
         </div>
-
-        {/* <Separator className="my-5 bg-primary-black" /> */}
 
         {/* size & color */}
         <div className="flex-center-start mt-20 gap-x-16">
           <div className="flex-center-start gap-x-5 text-xl font-semibold">
             <h4>Size: </h4>
-            <p className="rounded-full border border-primary-black px-3 py-[1px] text-lg">
-              L
-            </p>
+            <Tag color="blue-inverse">{order?.size}</Tag>
           </div>
 
           <div className="flex-center-start gap-x-5 text-xl font-semibold">
-            <h4>Color Palette: </h4>
-            <div className="h-6 w-6 rounded-full border bg-black"></div>
-            <div className="h-6 w-6 rounded-full border bg-black/75"></div>
-            <div className="h-6 w-6 rounded-full border bg-black/50"></div>
-            <div className="h-6 w-6 rounded-full border bg-black/25"></div>
+            <h4>Color: </h4>
+            <div
+              className="h-6 w-6 rounded-full border shadow-md"
+              style={{ backgroundColor: order?.color }}
+            />
           </div>
         </div>
 
@@ -73,18 +93,56 @@ export default function OrderContainer() {
         {/* Subtotal */}
         <div className="flex-center-between text-2xl font-bold text-primary-black">
           <h4>Subtotal: </h4>
-          <h4>$777</h4>
+          <h4>${Number(order?.quantity * order?.amount)?.toFixed(2)}</h4>
         </div>
       </div>
 
       {/* Right */}
-      <div className="lg:flex-grow">
-        <div className="mx-auto max-w-max rounded-xl bg-gray-300 px-20 pt-5">
-          <Image
-            src={productImg}
-            alt="product image"
-            className="mx-auto max-w-max"
-          />
+      <div className="h-[400px] lg:w-1/3">
+        <div className="mx-auto h-full max-w-max rounded-xl bg-gray-300 px-20">
+          <Carousel className="h-full">
+            <CarouselContent className="h-full">
+              {order?.product?.images?.length > 0 ? (
+                <>
+                  {order?.product?.images?.map((img) => (
+                    <CarouselItem
+                      key={img}
+                      className="flex h-[400px] items-center"
+                    >
+                      <Image
+                        src={img?.url}
+                        alt="product image"
+                        width={1200}
+                        height={1200}
+                        className="mx-auto max-w-max"
+                      />
+                    </CarouselItem>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {[order?.quote?.backSide, order?.quote?.frontSide]?.map(
+                    (img) => (
+                      <CarouselItem
+                        key={img}
+                        className="flex h-[400px] items-center"
+                      >
+                        <Image
+                          src={img}
+                          alt="product image"
+                          width={1200}
+                          height={1200}
+                          className="mx-auto max-w-max"
+                        />
+                      </CarouselItem>
+                    ),
+                  )}
+                </>
+              )}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </div>
       </div>
     </div>

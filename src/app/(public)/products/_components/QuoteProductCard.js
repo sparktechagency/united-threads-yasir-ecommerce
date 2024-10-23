@@ -1,38 +1,64 @@
+"use client";
+
 import Image from "next/image";
-import productImage from "/public/images/products/product-image.png";
 import { Button } from "@/components/ui/button";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { selectUser } from "@/redux/features/authSlice";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import ContinueToLoginModal from "@/components/ContinueToLoginModal/ContinueToLoginModal";
+import { Tag } from "antd";
 
-const product = {
-  _id: 1,
-  img: productImage,
-  name: "Rosemary",
-  price: 485,
-};
+export default function QuoteProductCard({ product }) {
+  const userId = useSelector(selectUser)?._id;
+  const router = useRouter();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
-export default function QuoteProductCard() {
+  const handleRequestQuote = () => {
+    if (!userId) {
+      setShowLoginModal(true);
+    } else {
+      router.push(`/products/${product._id}`);
+    }
+  };
+
   return (
-    <div className="rounded-3xl border border-primary-black/50 p-5 shadow transition-all duration-300 ease-in-out hover:shadow-lg">
-      <Image
-        src={product?.img}
-        alt="product image"
-        height={200}
-        width={200}
-        className="mx-auto block"
-      />
+    <>
+      <div className="rounded-3xl border border-primary-black/50 p-5 shadow transition-all duration-300 ease-in-out hover:shadow-lg">
+        <div className="flex-center relative h-[250px]">
+          <Image
+            src={product?.frontSide}
+            alt="product image"
+            height={500}
+            width={500}
+            className="mx-auto block h-full w-auto rounded"
+          />
 
-      <div className="flex-center-between mb-4 mt-2 text-2xl font-bold">
-        <h4>{product?.name}</h4>
-        <h4>${product?.price}</h4>
+          {/* Category */}
+          <div className="absolute right-0 top-0">
+            <Tag color="lime" className="rounded-full font-medium">
+              {product?.category?.name}
+            </Tag>
+          </div>
+        </div>
+
+        <div className="flex-center-between mb-5 mt-5 text-xl font-bold">
+          <h4>{product?.name}</h4>
+        </div>
+
+        <Button
+          className="primary-button group rounded-full"
+          onClick={handleRequestQuote}
+        >
+          Request Quote
+          <AnimatedArrow arrowSize={16} />
+        </Button>
       </div>
 
-      <Link href={`/products/${product._id}`}>
-        <Button size="lg" className="primary-button group rounded-full">
-          Request Quote
-          <AnimatedArrow />
-        </Button>
-      </Link>
-    </div>
+      {/* ---- Show continue login if user not found ---- */}
+      <ContinueToLoginModal open={showLoginModal} setOpen={setShowLoginModal} />
+    </>
   );
 }

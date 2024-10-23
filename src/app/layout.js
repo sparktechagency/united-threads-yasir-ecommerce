@@ -9,6 +9,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "yet-another-react-lightbox/styles.css";
 import Providers from "@/utils/Providers";
+import { Toaster } from "sonner";
+import "react-pagination-bar/dist/index.css";
 
 // Custom font
 const uncutSans = localFont({
@@ -56,6 +58,8 @@ export default function RootLayout({ children }) {
           <main className="min-h-screen">{children}</main>
 
           <Footer />
+
+          <Toaster position="bottom-center" richColors duration={1800} />
         </Providers>
       </body>
     </html>

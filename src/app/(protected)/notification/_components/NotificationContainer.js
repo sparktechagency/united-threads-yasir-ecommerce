@@ -38,7 +38,7 @@ export default function NotificationContainer() {
         {Array.from({ length: 7 }).map((_, idx) => (
           <>
             <div
-              key={idx}
+              key={idx + new Date().toISOString()}
               className={cn(
                 "my-2 flex items-start gap-x-5 px-4 py-4",
                 idx % 2 === 0 && !markRead && "bg-lightGray/5",

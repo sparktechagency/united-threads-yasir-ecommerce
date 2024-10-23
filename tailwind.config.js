@@ -29,6 +29,7 @@ module.exports = {
         lightGray: "rgba(0, 0, 0, 0.05)",
         footerBg: "rgba(38, 50, 56, 0.06)",
         danger: "#DC4C64",
+        success: "#4bb543",
       },
       fontFamily: {
         "uncut-sans": ["var(--font-uncut-sans)"],

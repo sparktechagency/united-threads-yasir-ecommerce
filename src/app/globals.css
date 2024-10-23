@@ -221,3 +221,38 @@ body {
     transform: translateX(-8px);
   }
 }
+
+/* Ant design custom styles */
+.ant-tour-inner * {
+  font-family: var(--font-uncut-sans) !important;
+  font-size: 1.07rem;
+}
+
+.ant-tour-next-btn {
+  background-color: var(--primary-black) !important;
+  color: var(--primary-white) !important;
+  padding: 0.8rem 1.2rem !important;
+}
+
+.ant-tag {
+  font-family: var(--font-uncut-sans) !important;
+}
+
+textarea {
+  font-family: var(--font-uncut-sans) !important;
+}
+
+.ant-input * {
+  font-family: var(--font-uncut-sans) !important;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scroll {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

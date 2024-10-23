@@ -21,8 +21,13 @@ import { History } from "lucide-react";
 import { LogOut } from "lucide-react";
 import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { MessageCircleMore } from "lucide-react";
+import { toast } from "sonner";
+import { useSelector } from "react-redux";
+import { logout, selectUser } from "@/redux/features/authSlice";
+import { useDispatch } from "react-redux";
+import { MessageSquareText } from "lucide-react";
 
 // Links
 const LINKS = [
@@ -55,13 +60,18 @@ const LINKS = [
 ];
 
 export default function Navbar() {
-  const userId = true;
+  const userId = useSelector(selectUser)?._id;
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-  const currentPathname = usePathname();
-  console.log(currentPathname);
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success("Logout successful");
+    router.push("/");
+  };
 
   return (
-    <header className="mb-12 mt-8">
+    <header className="mb-20 mt-8">
       {/* -------------- Desktop Version ------------- */}
       <div className="mx-auto flex w-3/4 items-center justify-between rounded-2xl bg-lightGray px-4 py-5">
         {/* Left ----- Logo */}
@@ -100,7 +110,7 @@ export default function Navbar() {
               </Link>
 
               <Link href="/chat" className="relative" title="notifications">
-                <MessageCircleMore size={24} />
+                <MessageSquareText size={24} />
                 <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
                   2
                 </Badge>
@@ -134,7 +144,7 @@ export default function Navbar() {
                         Quote History
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout}>
                       <LogOut size={20} strokeWidth={1.5} className="mr-2" />
                       Logout
                     </DropdownMenuItem>
@@ -148,8 +158,8 @@ export default function Navbar() {
                 href="/login"
                 className="group flex items-center gap-x-1 transition-all duration-200"
               >
-                Sign Up
-                <AnimatedArrow />
+                Sign In
+                <AnimatedArrow arrowSize={17} />
               </Link>
             </Button>
           )}

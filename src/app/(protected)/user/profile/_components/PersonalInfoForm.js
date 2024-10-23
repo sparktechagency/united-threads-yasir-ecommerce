@@ -5,25 +5,48 @@ import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useUpdateProfileMutation } from "@/redux/api/userApi";
+import { errorToast, successToast } from "@/utils/customToast";
 import { Edit } from "lucide-react";
 import { Loader } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-export default function PersonalInfoForm() {
+export default function PersonalInfoForm({ user }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
     control,
+    setValue,
   } = useForm();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  // =========== Set default values ================
+  useEffect(() => {
+    if (user) {
+      setValue("firstName", user?.firstName);
+      setValue("lastName", user?.lastName);
+      setValue("email", user?.email);
+      setValue("contact", user?.contact);
+    }
+  }, [user]);
+
+  const onSubmit = async (data) => {
+    delete data["email"];
+    delete data["contact"];
+
+    try {
+      const res = await updateProfile(data).unwrap();
+      if (res?.success) {
+        successToast("Profile updated successfully");
+      }
+    } catch (error) {
+      errorToast(error?.data?.message || error?.error);
+    }
   };
 
   return (
@@ -32,19 +55,19 @@ export default function PersonalInfoForm() {
         {/* first name */}
         <div className="grid w-full items-center gap-2">
           <Label
-            htmlFor="fname"
+            htmlFor="firstName"
             className="mb-1 block font-semibold text-primary-black"
           >
             First Name
           </Label>
           <Input
             type="text"
-            id="fname"
+            id="firstName"
             placeholder="Enter your first name"
-            {...register("fname", { required: true })}
+            {...register("firstName", { required: true })}
             className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none focus:outline-none"
           />
-          {errors.fname && (
+          {errors.firstName && (
             <p className="mt-1 text-danger">First Name is required</p>
           )}
         </div>
@@ -52,34 +75,34 @@ export default function PersonalInfoForm() {
         {/* last name */}
         <div className="grid w-full items-center gap-2">
           <Label
-            htmlFor="lname"
+            htmlFor="lastName"
             className="mb-1 block font-semibold text-primary-black"
           >
             Last Name
           </Label>
           <Input
             type="text"
-            id="lname"
+            id="lastName"
             placeholder="Enter your last name"
-            {...register("lname", { required: true })}
+            {...register("lastName", { required: true })}
             className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
           />
-          {errors.lname && (
+          {errors.lastName && (
             <p className="mt-1 text-danger">Last Name is required</p>
           )}
         </div>
 
-        {/* phone number */}
+        {/* Contact */}
         <div className="grid w-full items-center gap-2">
           <Label
-            htmlFor="phoneNumber"
+            htmlFor="contact"
             className="mb-1 block font-semibold text-primary-black"
           >
-            Phone Number
+            Contact
           </Label>
           <Controller
-            name="phoneNumber"
-            rules={{ required: "Phone number is required" }}
+            name="contact"
+            rules={{ required: "Contact is required" }}
             control={control}
             render={({ field }) => (
               <PhoneInput
@@ -91,8 +114,8 @@ export default function PersonalInfoForm() {
             )}
           />
 
-          {errors.phoneNumber && (
-            <p className="mt-1 text-danger">Phone Number is required</p>
+          {errors.contact && (
+            <p className="mt-1 text-danger">Contact is required</p>
           )}
         </div>
 
@@ -107,9 +130,9 @@ export default function PersonalInfoForm() {
           <Input
             type="email"
             id="email"
-            defaultValue={"userEmail@gmail.com"}
             disabled={true}
             className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
+            {...register("email", { required: true })}
           />
         </div>
 

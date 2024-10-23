@@ -24,7 +24,11 @@ const FONT_FAMILIES = [
   { key: 7, name: "Maxcellent", value: "Maxcellent" },
 ];
 
-export default function TextStylingWidget({ handleStyleChange, activeObject }) {
+export default function TextStylingWidget({
+  handleStyleChange,
+  activeObject,
+  ref,
+}) {
   return (
     <div
       className={cn(
@@ -33,6 +37,7 @@ export default function TextStylingWidget({ handleStyleChange, activeObject }) {
           ? "translate-y-0 opacity-100"
           : "translate-y-[100vh] opacity-0",
       )}
+      ref={ref}
     >
       <div className="w-full">
         <Label htmlFor="fontFamily">Text Style</Label>
@@ -96,7 +101,6 @@ export default function TextStylingWidget({ handleStyleChange, activeObject }) {
           type="color"
           onChange={(e) => handleStyleChange("fill", e.target.value)}
           defaultValue={activeObject?.fill || "#000000"}
-          // className="m-0 h-10 w-10 rounded-full"
         />
       </div>
 

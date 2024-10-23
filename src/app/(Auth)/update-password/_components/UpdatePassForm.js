@@ -7,6 +7,12 @@ import { useForm } from "react-hook-form";
 import EyeIconInverse from "@/components/EyeIconInverse/EyeIconInverse";
 import { useState } from "react";
 import { Loader } from "lucide-react";
+import { SuccessModal } from "@/utils/customModal";
+import { useResetPasswordMutation } from "@/redux/api/authApi";
+import CustomLoader from "@/components/CustomLoader/CustomLoader";
+import CustomFormError from "@/components/CustomFormError/CustomFormError";
+import { useRouter } from "next/navigation";
+import { removeFromSessionStorage } from "@/utils/sessionStorage";
 
 export default function UpdatePassForm() {
   const {
@@ -18,10 +24,33 @@ export default function UpdatePassForm() {
 
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [updatePassword, { isLoading }] = useResetPasswordMutation();
+  const [formError, setFormError] = useState(null);
+  const router = useRouter();
 
-  const onUpdatePassSubmit = (data) => {
-    console.log(data);
+  const onUpdatePassSubmit = async (data) => {
+    const payload = { password: data.newPassword };
+    console.log(payload);
+
+    try {
+      const res = await updatePassword(payload).unwrap();
+
+      if (res?.success) {
+        SuccessModal(
+          "Password Updated Successfully",
+          "Please login with new password",
+        );
+
+        // Remove forget password token
+        removeFromSessionStorage("changePassToken");
+
+        // Send to login page
+        router.push("/login");
+        setFormError(null);
+      }
+    } catch (error) {
+      setFormError(error?.data?.message || error?.error);
+    }
   };
 
   return (
@@ -94,11 +123,14 @@ export default function UpdatePassForm() {
       </div>
 
       <Button
+        type="submit"
         disabled={isLoading}
         className="mt-10 h-[2.7rem] w-full rounded-xl bg-primary-black text-center text-primary-white"
       >
-        Submit {isLoading && <Loader className="ml-2 animate-spin" size={20} />}
+        {isLoading ? <CustomLoader /> : "Submit"}
       </Button>
+
+      {formError && <CustomFormError formError={formError} />}
     </form>
   );
 }

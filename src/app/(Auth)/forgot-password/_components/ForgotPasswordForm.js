@@ -1,9 +1,15 @@
 "use client";
 
+import CustomFormError from "@/components/CustomFormError/CustomFormError";
+import CustomLoader from "@/components/CustomLoader/CustomLoader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useForgotPasswordMutation } from "@/redux/api/authApi";
+import { SuccessModal } from "@/utils/customModal";
+import { setToSessionStorage } from "@/utils/sessionStorage";
 import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -14,10 +20,29 @@ export default function ForgotPasswordForm() {
     formState: { errors },
   } = useForm();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const [formError, setFormError] = useState(null);
+  const router = useRouter();
 
-  const onForgotPassSubmit = (data) => {
-    console.log(data);
+  const onForgotPassSubmit = async (data) => {
+    try {
+      const res = await forgotPassword(data).unwrap();
+
+      if (res?.success) {
+        SuccessModal(
+          "OTP sent to email",
+          "Please check your email for otp verification",
+        );
+
+        // Set forgotPassToken in session-storage
+        setToSessionStorage("forgotPassToken", res.data.token);
+
+        // Sent to update password page
+        router.push("/verify-otp");
+      }
+    } catch (error) {
+      setFormError(error?.message || error?.data?.message || error?.error);
+    }
   };
 
   return (
@@ -45,8 +70,10 @@ export default function ForgotPasswordForm() {
         disabled={isLoading}
         className="mt-6 h-[2.6rem] w-full rounded-xl bg-primary-black py-1 text-center text-primary-white"
       >
-        Submit {isLoading && <Loader className="ml-2 animate-spin" size={20} />}
+        {isLoading ? <CustomLoader /> : "Submit"}
       </Button>
+
+      {formError && <CustomFormError formError={formError} />}
     </form>
   );
 }
