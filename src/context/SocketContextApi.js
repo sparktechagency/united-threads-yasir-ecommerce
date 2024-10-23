@@ -17,7 +17,7 @@ export const SocketProvider = ({ children }) => {
   const token = useSelector(selectToken);
   const [chatIdFromSocket, setChatIdFromSocket] = useState(null);
 
-  const { data: chatReceiverIdRes } = useGetCsrIdQuery();
+  const { data: chatReceiverIdRes } = useGetCsrIdQuery(null, { skip: !token });
   const chatReceiverId = useMemo(() => {
     return chatReceiverIdRes?.data?._id;
   }, [chatReceiverIdRes]);

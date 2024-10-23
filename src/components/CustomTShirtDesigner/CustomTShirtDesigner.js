@@ -1,9 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as fabric from "fabric";
-import { FabricImage } from "fabric";
 import { Typewriter } from "react-simple-typewriter";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
@@ -38,12 +36,6 @@ import { useGetSingleQuoteProductQuery } from "@/redux/api/Products Page Api/quo
 import { useParams } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-// Don't remove this, it's for color conversion
-import {
-  hex,
-  hex6,
-  pantone,
-} from "simple-color-converter/_components/_color_sanitizer";
 import CountryStateCitySelector from "../CountryStateCitySelector/CountryStateCitySelector";
 import { ErrorModal } from "@/utils/customModal";
 import { errorToast, successToast } from "@/utils/customToast";
@@ -51,19 +43,15 @@ import { useCreateQuoteMutation } from "@/redux/api/quoteApi";
 import { Sparkles } from "lucide-react";
 import { Images } from "lucide-react";
 
-import { Input as AntInput } from "antd";
 import { X } from "lucide-react";
 import { Tag } from "antd";
-import { SendHorizonal } from "lucide-react";
 import { SendHorizontal } from "lucide-react";
 import { useGetLibraryQuery } from "@/redux/api/libraryApi";
-import InfiniteScroll from "../ui/InfiniteScroll";
 import { Loader } from "lucide-react";
 import { useGenerateWithAiMutation } from "@/redux/api/generateWithAiApi";
 import SparklesLottie from "../SparklesLottie/SparklesLottie";
 import { Download } from "lucide-react";
 import { Trash } from "lucide-react";
-import { saveAs } from "file-saver";
 import fileDownload from "js-file-download";
 import axios from "axios";
 import EmptyContainer from "../EmptyContainer/EmptyContainer";

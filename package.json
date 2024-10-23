@@ -26,7 +26,6 @@
     "@radix-ui/react-tabs": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
     "@reduxjs/toolkit": "^2.2.7",
-    "@samvera/image-downloader": "^1.1.6",
     "antd": "^5.20.5",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
@@ -40,7 +39,6 @@
     "emoji-picker-react": "^4.12.0",
     "fabric": "^6.4.1",
     "fabricjs-react": "^2.0.0",
-    "file-saver": "^2.0.5",
     "framer-motion": "^11.5.3",
     "input-otp": "^1.2.4",
     "js-cookie": "^3.0.5",
@@ -80,5 +78,6 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwindcss": "^3.4.1"
-  }
+  },
+  "packageManager": "pnpm@9.12.1+sha512.e5a7e52a4183a02d5931057f7a0dbff9d5e9ce3161e33fa68ae392125b79282a8a8a470a51dfc8a0ed86221442eb2fb57019b0990ed24fab519bf0e1bc5ccfc4"
 }
