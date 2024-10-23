@@ -37,6 +37,10 @@ const userApi = baseApi.injectEndpoints({
 
       invalidatesTags: [tagTypes.user],
     }),
+
+    getCsrId: builder.query({
+      query: () => "/user/csr-id",
+    }),
   }),
 });
 
@@ -45,4 +49,5 @@ export const {
   useUpdateProfileMutation,
   useChangePasswordMutation,
   useDeleteAccountMutation,
+  useGetCsrIdQuery,
 } = userApi;

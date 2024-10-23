@@ -46,10 +46,10 @@ export default function ShopContainer() {
 
   // ============ Query ===============
   const query = {};
-  query["category"] = selectedCategory;
-  query["size"] = selectedSize;
-  query["searchTerm"] = searchText;
-  query["sort"] = selectedSortMethod;
+  query["category"] = selectedCategory || "";
+  query["size"] = selectedSize || "";
+  query["searchTerm"] = searchText || "";
+  query["sort"] = selectedSortMethod || "";
 
   // ================= Pagination ===============
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,8 +70,6 @@ export default function ShopContainer() {
 
     setSelectedSortMethod(sortMethod);
   };
-
-  console.log(selectedSortMethod);
 
   // Show skeleton for product loading
   if (isLoading) {

@@ -3,6 +3,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as fabric from "fabric";
+import { FabricImage } from "fabric";
+import { Typewriter } from "react-simple-typewriter";
 import { Type } from "lucide-react";
 import { Upload } from "lucide-react";
 import { Tooltip } from "antd";
@@ -46,6 +48,25 @@ import CountryStateCitySelector from "../CountryStateCitySelector/CountryStateCi
 import { ErrorModal } from "@/utils/customModal";
 import { errorToast, successToast } from "@/utils/customToast";
 import { useCreateQuoteMutation } from "@/redux/api/quoteApi";
+import { Sparkles } from "lucide-react";
+import { Images } from "lucide-react";
+
+import { Input as AntInput } from "antd";
+import { X } from "lucide-react";
+import { Tag } from "antd";
+import { SendHorizonal } from "lucide-react";
+import { SendHorizontal } from "lucide-react";
+import { useGetLibraryQuery } from "@/redux/api/libraryApi";
+import InfiniteScroll from "../ui/InfiniteScroll";
+import { Loader } from "lucide-react";
+import { useGenerateWithAiMutation } from "@/redux/api/generateWithAiApi";
+import SparklesLottie from "../SparklesLottie/SparklesLottie";
+import { Download } from "lucide-react";
+import { Trash } from "lucide-react";
+import { saveAs } from "file-saver";
+import fileDownload from "js-file-download";
+import axios from "axios";
+import EmptyContainer from "../EmptyContainer/EmptyContainer";
 
 // Motion variants
 const fadeVariants = {
@@ -76,6 +97,9 @@ export default function CustomTShirtDesigner() {
     setValue,
   } = useForm();
 
+  const [showAiGenerateBox, setShowAiGenerateBox] = useState(false);
+  const [aiGeneratedImageLink, setAiGeneratedImage] = useState("");
+  const [showLibraryBox, setShowLibraryBox] = useState(false);
   const [showSteps, setShowSteps] = useState(true);
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
@@ -98,9 +122,16 @@ export default function CustomTShirtDesigner() {
   const [frontImageFile, setFrontImageFile] = useState("");
   const [savedBackImageUrl, setSavedBackImageUrl] = useState("");
   const [backImageFile, setBackImageFile] = useState("");
+  const aiPromptRef = useRef(null);
 
   // =============== Send quote api handler =============
   const [createQuote, { isLoading: isQuoteLoading }] = useCreateQuoteMutation();
+
+  // ================= Get Library api handler =========================
+  const { data: libraryRes, isLoading: libraryLoading } = useGetLibraryQuery({
+    size: 999999,
+  });
+  const library = libraryRes?.data?.libraries || [];
 
   // ================= Get product api handler ======================
   const { data: productDataRes, isLoading: isProductLoading } =
@@ -298,6 +329,8 @@ export default function CustomTShirtDesigner() {
   const textStyleBoxRef = useRef(null);
   const uploadBtnRef = useRef(null);
   const colorBtnRef = useRef(null);
+  const aiGenerateBtnRef = useRef(null);
+  const libraryBtnRef = useRef(null);
   const pantoneColorRef = useRef(null);
   const saveBtnRef = useRef(null);
   const previewRef = useRef(null);
@@ -330,6 +363,18 @@ export default function CustomTShirtDesigner() {
       target: () => colorBtnRef?.current,
     },
     {
+      title: "Generate with AI",
+      description:
+        "Generate stunningly beautiful designs with Artificial Intelligence.",
+      target: () => aiGenerateBtnRef?.current,
+    },
+    {
+      title: "Library",
+      description:
+        "Explore our vast collection of designs and add to your design.",
+      target: () => libraryBtnRef?.current,
+    },
+    {
       title: "Pantone color code",
       description: "This pantone color code will be applied to your apparel",
       target: () => pantoneColorRef?.current,
@@ -347,6 +392,7 @@ export default function CustomTShirtDesigner() {
       target: () => previewRef?.current,
     },
   ];
+
   // =================== Function to convert base64 to blob =================
   const base64ToBlob = (base64Data) => {
     const byteString = atob(base64Data.split(",")[1]);
@@ -436,6 +482,70 @@ export default function CustomTShirtDesigner() {
     }
   }, [productData]);
 
+  // ===================== Generate With AI ====================== //
+  const [generateWithAi, { isLoading: aiLoading }] =
+    useGenerateWithAiMutation();
+  const handleGenerateWithAI = async () => {
+    const prompt = aiPromptRef?.current?.value;
+
+    if (prompt?.length < 1) {
+      return errorToast("Please enter prompt!");
+    }
+
+    if (prompt?.length < 20) {
+      return errorToast("Prompt can't be less than 20 characters!");
+    }
+
+    if (prompt?.length > 300) {
+      return errorToast("Prompt can't be more than 300 characters long!");
+    }
+
+    try {
+      const res = await generateWithAi({ prompt }).unwrap();
+      if (res?.success) {
+        setAiGeneratedImage(res?.data[0]);
+      }
+    } catch (error) {
+      errorToast(error?.data?.message || error?.error);
+      setAiGeneratedImage("");
+    }
+  };
+
+  const handleDownloadImage = (base64Image) => {
+    let url = base64Image || aiGeneratedImageLink;
+    console.log(url);
+
+    if (!url) {
+      return errorToast("Please select an image first!");
+    }
+
+    // Check if the URL is already in Base64 format
+    if (url.includes("data:image")) {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "download.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // If it's not base64 (if using URLs in the future), handle it with axios
+      axios
+        .get(url, {
+          responseType: "blob",
+          withCredentials: false,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+        })
+        .then((res) => {
+          fileDownload(res.data, "download.jpg");
+        })
+        .catch((err) => {
+          errorToast(err?.data?.message || err?.error);
+        });
+    }
+  };
+
   // =================== Send Quote Handler ========================= //
   const onSendQuoteSubmit = async (data) => {
     if (!savedFrontImageUrl || !savedBackImageUrl) {
@@ -491,6 +601,7 @@ export default function CustomTShirtDesigner() {
           {/* Left */}
           <div className="lg:w-[25%]">
             <div className="flex w-max flex-col items-center gap-y-7 rounded bg-lightGray p-3 text-primary-black">
+              {/* Add Text */}
               <Tooltip placement="right" title="Add Text">
                 <button
                   type="button"
@@ -503,9 +614,10 @@ export default function CustomTShirtDesigner() {
                 </button>
               </Tooltip>
 
+              {/* Upload Design */}
               <Tooltip placement="right" title="Upload Your Logo/Design">
                 <button
-                  type="submit"
+                  type="button"
                   className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
                   onClick={() =>
                     document.getElementById("custom-image-upload-input").click()
@@ -524,21 +636,227 @@ export default function CustomTShirtDesigner() {
                 />
               </Tooltip>
 
-              <Tooltip placement="right" title="Choose T-shirt color">
-                <button
-                  type="button"
-                  className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
-                  ref={colorBtnRef}
-                >
+              {/* Color */}
+              <button
+                type="button"
+                className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
+                ref={colorBtnRef}
+              >
+                <Tooltip placement="right" title="Choose T-shirt color">
                   <input
                     type="color"
                     value={overlayColor}
                     onChange={handleColorChange}
                     className="h-7 w-10"
                   />
-                  <p>Color</p>
-                </button>
-              </Tooltip>
+                </Tooltip>
+                Color
+              </button>
+
+              {/* AI Generate */}
+              <div className="relative">
+                <Tooltip placement="right" title="Generate With AI">
+                  <button
+                    type="button"
+                    className="flex flex-col items-center gap-y-1 text-center font-medium text-primary-black hover:text-primary-black/80"
+                    ref={aiGenerateBtnRef}
+                    onClick={() => setShowAiGenerateBox(!showAiGenerateBox)}
+                  >
+                    <Sparkles size={23} className="mb-1" />
+                    AI <br /> Generate
+                  </button>
+                </Tooltip>
+
+                {/* AI Generate Chat */}
+                <div
+                  className={cn(
+                    "absolute -bottom-40 left-[90px] z-[9999] h-[500px] w-[500px] rounded-3xl border border-primary-black/50 bg-[#f2f2f2] p-2 shadow-lg transition-all duration-300 ease-in-out",
+                    showAiGenerateBox
+                      ? "visible opacity-100"
+                      : "invisible opacity-0",
+                  )}
+                >
+                  {/* Generated Image */}
+                  <div className="flex h-full flex-col">
+                    <div className="flex h-[30px] items-center justify-between">
+                      {/* Prompt Count */}
+                      <div className="">
+                        <Tag color="green" className="rounded-full">
+                          10 Prompts{" "}
+                          <span className="text-[10px] font-medium">/day</span>
+                        </Tag>
+                      </div>
+                      {/* Close Button */}
+                      <button
+                        type="button"
+                        className="rounded-full bg-white p-2"
+                        onClick={() => setShowAiGenerateBox(false)}
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+
+                    <div className="lg:flex-grow">
+                      {aiGeneratedImageLink ? (
+                        <div className="flex-center relative h-full rounded-3xl pb-10">
+                          {/* download button */}
+                          <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-x-3">
+                            <Button
+                              variant="outline"
+                              className="rounded-full"
+                              onClick={() => {
+                                setAiGeneratedImage("");
+                                aiPromptRef.current.value = "";
+                              }}
+                            >
+                              Clear <Trash size={16} className="ml-2" />
+                            </Button>
+                            <Button
+                              type="button"
+                              className="rounded-full"
+                              onClick={() =>
+                                handleDownloadImage(aiGeneratedImageLink)
+                              }
+                            >
+                              Download <Download size={16} className="ml-2" />
+                            </Button>
+                          </div>
+
+                          <Image
+                            src={aiGeneratedImageLink}
+                            alt="Generated Image"
+                            height={1200}
+                            width={1200}
+                            className="h-auto w-auto"
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          {aiLoading ? (
+                            <div className="flex-center h-full">
+                              <SparklesLottie />
+                            </div>
+                          ) : (
+                            <div className="flex h-full flex-col items-center justify-center gap-y-1 space-y-2 text-center font-medium">
+                              <Sparkles />
+                              <Typewriter
+                                loop
+                                words={[
+                                  "Generate stunning designs with AI",
+                                  "Make your creations stand out",
+                                  "Customize your design",
+                                  "Generate cool stuffs with ease",
+                                ]}
+                              />
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+
+                    {/* Input */}
+                    <div className="relative h-[50px]">
+                      <Input
+                        className={
+                          "h-full rounded-3xl border border-primary-black bg-white pr-12 font-medium text-primary-black"
+                        }
+                        placeholder="Enter prompt..."
+                        ref={aiPromptRef}
+                      />
+                      {/* Send Button */}
+                      <Button
+                        disabled={aiLoading}
+                        type="button"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary-black p-2 text-primary-white"
+                        onClick={handleGenerateWithAI}
+                      >
+                        <SendHorizontal size={20} />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Library */}
+              <div className="relative">
+                <Tooltip placement="right" title="Explore designs">
+                  <button
+                    type="button"
+                    className="flex flex-col items-center gap-y-1 text-center font-medium text-primary-black hover:text-primary-black/80"
+                    ref={libraryBtnRef}
+                    onClick={() => setShowLibraryBox(!showLibraryBox)}
+                  >
+                    <Images size={23} className="mb-1" />
+                    Library
+                  </button>
+                </Tooltip>
+
+                {/* Library */}
+                <div
+                  className={cn(
+                    "absolute -bottom-40 left-[90px] z-[9999] h-[500px] w-[500px] rounded-3xl border border-primary-black/50 bg-[#f2f2f2] p-2 shadow-lg transition-all duration-300 ease-in-out",
+                    showLibraryBox
+                      ? "visible opacity-100"
+                      : "invisible opacity-0",
+                  )}
+                >
+                  <div style={{ height: "calc(100% - 70px)" }}>
+                    {/* Close Button */}
+                    <button
+                      type="button"
+                      className="absolute right-3 top-3 rounded-full bg-white p-2"
+                      onClick={() => setShowLibraryBox(false)}
+                    >
+                      <X size={20} />
+                    </button>
+
+                    <div className="absolute left-4 top-4 h-full">
+                      <h4 className="text-2xl font-bold">Library</h4>
+                    </div>
+                    <Separator className="mx-auto mt-14 w-[98%] bg-primary-black/25" />
+
+                    {/* Images */}
+                    {libraryLoading ? (
+                      <div className="flex-center h-full">
+                        <Loader className="animate-spin" size={25} />
+                      </div>
+                    ) : (
+                      <>
+                        {library?.length ? (
+                          <div className="hide-scroll my-4 grid h-full gap-8 overflow-auto px-2 lg:grid-cols-2">
+                            {library?.map((element) => (
+                              <div key={element?._id} className="relative">
+                                <Image
+                                  src={element?.image}
+                                  alt="Library Image"
+                                  height={1200}
+                                  width={1200}
+                                  className="h-[200px] w-full cursor-pointer rounded-2xl border border-primary-black/50 bg-white p-1 transition-all duration-300 ease-in-out hover:shadow-lg"
+                                />
+
+                                <Button
+                                  type="button"
+                                  className="absolute right-3 top-3 aspect-square rounded-full bg-blue-700 p-0 px-3"
+                                  onClick={() => {
+                                    handleDownloadImage(element?.image);
+                                    setShowLibraryBox(false);
+                                  }}
+                                >
+                                  <Download size={16} />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="flex-center h-full">
+                            <EmptyContainer />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
             <TextStylingWidget
@@ -650,9 +968,7 @@ export default function CustomTShirtDesigner() {
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    className={cn(
-                      errors?.size && "rounded-3xl border border-red-600",
-                    )}
+                    className={cn(errors?.size && "border-600 rounded-3xl")}
                   >
                     <button
                       type="button"
@@ -962,8 +1278,6 @@ export default function CustomTShirtDesigner() {
             required={["country", "state", "city"]}
             errors={errors}
           />
-
-          {}
         </div>
 
         <Button

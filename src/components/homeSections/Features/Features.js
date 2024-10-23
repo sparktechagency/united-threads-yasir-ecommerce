@@ -20,9 +20,9 @@ export default function Features() {
         Fast and Quality Service
       </h1>
 
-      <div className="flex w-full items-stretch justify-between gap-x-8">
+      <div className="flex w-full items-stretch justify-between gap-x-14">
         <div className="flex w-full flex-col items-start gap-y-3 lg:w-1/4">
-          <div className="flex-center h-16 w-16 rounded-xl bg-slate-200 p-4">
+          <div className="flex-center h-20 w-20 rounded-xl bg-slate-200 p-4">
             <Image
               src={customProductIcon}
               alt="custom product icon"
@@ -39,7 +39,7 @@ export default function Features() {
         </div>
 
         <div className="flex w-full flex-col items-start gap-y-3 lg:w-1/4">
-          <div className="flex-center h-16 w-16 rounded-xl bg-slate-200 p-4">
+          <div className="flex-center h-20 w-20 rounded-xl bg-slate-200 p-4">
             <Image
               src={shippingIcon}
               alt="secure shipping icon"
@@ -57,7 +57,7 @@ export default function Features() {
         </div>
 
         <div className="flex w-full flex-col items-start gap-y-3 lg:w-1/4">
-          <div className="flex-center h-16 w-16 rounded-xl bg-slate-200 p-4">
+          <div className="flex-center h-20 w-20 rounded-xl bg-slate-200 p-4">
             <Image
               src={customDesignIcon}
               alt="custom design icon"
@@ -75,7 +75,7 @@ export default function Features() {
         </div>
 
         <div className="flex w-full flex-col items-start gap-y-3 lg:w-1/4">
-          <div className="flex-center h-16 w-16 rounded-xl bg-slate-200 p-4">
+          <div className="flex-center h-20 w-20 rounded-xl bg-slate-200 p-4">
             <Image src={clockIcon} alt="clock icon" className="h-full w-full" />
           </div>
 

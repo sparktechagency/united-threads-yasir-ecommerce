@@ -36,9 +36,9 @@ export default function ProductsContainer() {
 
   // ============ Query ===============
   const query = {};
-  query["category"] = selectedCategory;
-  query["size"] = selectedSize;
-  query["searchTerm"] = searchText;
+  query["category"] = selectedCategory || "";
+  query["size"] = selectedSize || "";
+  query["searchTerm"] = searchText || "";
 
   // ================= Pagination ===============
   const [currentPage, setCurrentPage] = useState(1);

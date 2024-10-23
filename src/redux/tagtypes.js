@@ -14,6 +14,9 @@ export const tagTypes = {
   users: "Users",
   orders: "Orders",
   categories: "Categories",
+  library: "Library",
+  aiGeneratedImage: "AiGeneratedImage",
+  messages: "Messages",
 
   // Quote Page
   quoteProducts: "QuoteProducts",
@@ -47,6 +50,9 @@ export const tagTypesList = [
   tagTypes.meta,
   tagTypes.orders,
   tagTypes.categories,
+  tagTypes.library,
+  tagTypes.aiGeneratedImage,
+  tagTypes.messages,
 
   // Quote Page
   tagTypes.quoteProduct,

@@ -9,3 +9,7 @@ export const getBackendBaseUrl = () => {
 // export const getStripePublishableKey = () => {
 //   return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 // };
+
+export const getSocketEndpoint = () => {
+  return process.env.NEXT_PUBLIC_SOCKET_ENDPOINT;
+};

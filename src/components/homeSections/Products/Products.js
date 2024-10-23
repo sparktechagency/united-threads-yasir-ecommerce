@@ -8,6 +8,7 @@ import { useGetShopProductsQuery } from "@/redux/api/Shop Page Api/shopApi";
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton/ProductCardSkeleton";
 
 const fadeUpVariants = {
   initial: {
@@ -39,7 +40,7 @@ export default function Products() {
   const query = {};
   query[`sort`] = selectedFilter;
 
-  const { data: productsRes } = useGetShopProductsQuery(query);
+  const { data: productsRes, isLoading } = useGetShopProductsQuery(query);
   const products = productsRes?.data || [];
 
   const handleFilter = (filter) => {
@@ -77,19 +78,30 @@ export default function Products() {
         </div>
       </div>
 
-      <motion.div
-        variants={fadeUpVariants}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true }}
-        className="mx-auto mt-10 grid grid-cols-1 lg:grid-cols-3 lg:gap-x-10"
-      >
-        {products?.slice(0, 6)?.map((product) => (
-          <motion.div variants={fadeUpVariants} key={product?._id}>
-            <ShopProductsCard product={product} />
-          </motion.div>
-        ))}
-      </motion.div>
+      {isLoading ? (
+        <div className="mt-10">
+          {/* Skeleton Loader */}
+          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-10">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <ProductCardSkeleton key={idx} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <motion.div
+          variants={fadeUpVariants}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="mx-auto mt-10 grid grid-cols-1 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-10"
+        >
+          {products?.slice(0, 6)?.map((product) => (
+            <motion.div variants={fadeUpVariants} key={product?._id}>
+              <ShopProductsCard product={product} />
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
 
       <Link href={"/shop"} className="mx-auto mt-16 block lg:w-[40%]">
         <button className="group w-full rounded-xl border border-primary-black bg-white px-4 py-3 text-center text-primary-black transition-all duration-300 ease-in-out hover:bg-primary-black hover:text-primary-white">

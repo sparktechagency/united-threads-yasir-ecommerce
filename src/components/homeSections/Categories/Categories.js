@@ -52,11 +52,12 @@ export default function Categories() {
         {isLoading ? (
           <div className="max-w-3/4 mx-auto grid grid-cols-2 gap-x-5 overflow-auto md:grid-cols-3 lg:grid-cols-5">
             {Array?.from({ length: 5 })?.map((_, idx) => (
-              <div className="w-full">
+              <div key={idx} className="w-full">
                 <div
                   key={idx}
                   className="mx-auto h-40 w-40 animate-pulse rounded-full bg-slate-200"
                 />
+                <div className="mx-auto mt-3 h-4 w-3/4 rounded-full bg-slate-200" />
               </div>
             ))}
           </div>

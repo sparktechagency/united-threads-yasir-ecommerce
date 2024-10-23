@@ -59,9 +59,15 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.2.7
         version: 2.2.7(react-redux@9.1.2(react@18.3.1)(redux@5.0.1))(react@18.3.1)
+      '@samvera/image-downloader':
+        specifier: ^1.1.6
+        version: 1.1.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       antd:
         specifier: ^5.20.5
         version: 5.20.5(date-fns@3.6.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      axios:
+        specifier: ^1.7.7
+        version: 1.7.7
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -83,12 +89,18 @@ importers:
       embla-carousel-react:
         specifier: ^8.2.1
         version: 8.2.1(react@18.3.1)
+      emoji-picker-react:
+        specifier: ^4.12.0
+        version: 4.12.0(react@18.3.1)
       fabric:
         specifier: ^6.4.1
         version: 6.4.1
       fabricjs-react:
         specifier: ^2.0.0
         version: 2.0.0(fabric@6.4.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      file-saver:
+        specifier: ^2.0.5
+        version: 2.0.5
       framer-motion:
         specifier: ^11.5.3
         version: 11.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -98,6 +110,9 @@ importers:
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      js-file-download:
+        specifier: ^0.4.12
+        version: 0.4.12
       jwt-decode:
         specifier: ^4.0.0
         version: 4.0.0
@@ -137,6 +152,9 @@ importers:
       react-redux:
         specifier: ^9.1.2
         version: 9.1.2(react@18.3.1)(redux@5.0.1)
+      react-simple-typewriter:
+        specifier: ^5.0.1
+        version: 5.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-slick:
         specifier: ^0.30.2
         version: 0.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -155,6 +173,9 @@ importers:
       slick-carousel:
         specifier: ^1.8.1
         version: 1.8.1(jquery@3.7.1)
+      socket.io-client:
+        specifier: ^4.8.0
+        version: 4.8.0
       sonner:
         specifier: ^1.5.0
         version: 1.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1215,6 +1236,15 @@ packages:
   '@rushstack/eslint-patch@1.10.4':
     resolution: {integrity: sha512-WJgX9nzTqknM393q1QJDJmoW28kUfEnybeTfVNcNAPnIx210RXm2DiXiHzfNPJNIUUb1tJnz/l4QGtJ30PgWmA==}
 
+  '@samvera/image-downloader@1.1.6':
+    resolution: {integrity: sha512-CcSHxVtH8FEBFQ977fC6ygxMh45bu5kIEAT1NOojh68jfcEFADLT1FtlsZFd4XuA2ZQDfUgD0UXwKjS4MKoJIQ==}
+    peerDependencies:
+      react: ^16.13.1  || ^17 || ^18
+      react-dom: ^16.13.1  || ^17 || ^18
+
+  '@socket.io/component-emitter@3.1.2':
+    resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
+
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
 
@@ -1398,6 +1428,9 @@ packages:
   axe-core@4.10.0:
     resolution: {integrity: sha512-Mr2ZakwQ7XUAjp7pAwQWRhhK8mQQ6JAaNWSjmjxil0R8BPioMtQsTLOolGYkji1rcL++3dCqZA3zWqpT+9Ew6g==}
     engines: {node: '>=4'}
+
+  axios@1.7.7:
+    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -1677,11 +1710,24 @@ packages:
   embla-carousel@8.2.1:
     resolution: {integrity: sha512-9mTDtyMZJhFuuW5pixhTT4iLiJB1l3dH3IpXUKCsgLlRlHCiySf/wLKy5xIAzmxIsokcQ50xea8wi7BCt0+Rxg==}
 
+  emoji-picker-react@4.12.0:
+    resolution: {integrity: sha512-q2c8UcZH0eRIMj41bj0k1akTjk69tsu+E7EzkW7giN66iltF6H9LQvQvw6ugscsxdC+1lmt3WZpQkkY65J95tg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
 
   emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
+
+  engine.io-client@6.6.2:
+    resolution: {integrity: sha512-TAr+NKeoVTjEVW8P3iHguO1LO6RlUz9O5Y8o7EY0fU+gY1NYqas7NN3slpFtbXEsLMHk0h90fJMfKjRkQ0qUIw==}
+
+  engine.io-parser@5.2.3:
+    resolution: {integrity: sha512-HqD3yTBfnBxIrbnM1DoD6Pcq8NECnh8d4As1Qgh0z5Gg3jRRIqijury0CL3ghu/edArpUYiYqQiDUQBIs4np3Q==}
+    engines: {node: '>=10.0.0'}
 
   enhanced-resolve@5.17.1:
     resolution: {integrity: sha512-LMHl3dXhTcfv8gM4kEzIUeTQ+7fpdA0l2tUf34BddXPkz2A5xJ5L/Pchd5BL6rdccM9QGvu0sWZzK1Z1t4wwyg==}
@@ -1881,6 +1927,9 @@ packages:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
 
+  file-saver@2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
+
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
@@ -1889,12 +1938,24 @@ packages:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
 
+  flairup@1.0.0:
+    resolution: {integrity: sha512-IKlE+pNvL2R+kVL1kEhUYqRxVqeFnjiIvHWDMLFXNaqyUdFXQM2wte44EfMYJNHkW16X991t2Zg8apKkhv7OBA==}
+
   flat-cache@3.2.0:
     resolution: {integrity: sha512-CYcENa+FtcUKLmhhqyctpclsq7QF38pKjZHsGNiSQF5r4FtoKDWabFDl3hzaEQMvT1LHEysw5twgLvpYYb4vbw==}
     engines: {node: ^10.12.0 || >=12.0.0}
 
   flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
+
+  follow-redirects@1.15.9:
+    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -2236,6 +2297,9 @@ packages:
   js-cookie@3.0.5:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
     engines: {node: '>=14'}
+
+  js-file-download@0.4.12:
+    resolution: {integrity: sha512-rML+NkoD08p5Dllpjo0ffy4jRHeY6Zsapvr/W86N7E0yuzAO6qa5X9+xog6zQNlH102J7IXljNY2FtS6Lj3ucg==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -2690,6 +2754,9 @@ packages:
   prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
 
+  proxy-from-env@1.1.0:
+    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+
   psl@1.9.0:
     resolution: {integrity: sha512-E/ZsdU4HLs/68gYzgGTkMicWTLPdAftJLfJFlLUAAKZGkStNU72sZjT66SnMDVOfOWY/YAoiD7Jxa9iHvngcag==}
 
@@ -3008,6 +3075,13 @@ packages:
       '@types/react':
         optional: true
 
+  react-simple-typewriter@5.0.1:
+    resolution: {integrity: sha512-vA5HkABwJKL/DJ4RshSlY/igdr+FiVY4MLsSQYJX6FZG/f1/VwN4y1i3mPXRyfaswrvI8xii1kOVe1dYtO2Row==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+
   react-slick@0.30.2:
     resolution: {integrity: sha512-XvQJi7mRHuiU3b9irsqS9SGIgftIfdV5/tNcURTb5LdIokRA5kIIx3l4rlq2XYHfxcSntXapoRg/GxaVOM1yfg==}
     peerDependencies:
@@ -3202,6 +3276,14 @@ packages:
     peerDependencies:
       jquery: '>=1.8.0'
 
+  socket.io-client@4.8.0:
+    resolution: {integrity: sha512-C0jdhD5yQahMws9alf/yvtsMGTaIDBnZ8Rb5HU56svyq0l5LIrGzIDZZD5pHQlmzxLuU91Gz+VpQMKgCTNYtkw==}
+    engines: {node: '>=10.0.0'}
+
+  socket.io-parser@4.2.4:
+    resolution: {integrity: sha512-/GbIKmo8ioc+NIWIhwdecY0ge+qVBSMdgxGygevmdHj24bsfgtCmcUUcQ5ZzcylGFHsN3k4HB4Cgkl96KVnuew==}
+    engines: {node: '>=10.0.0'}
+
   sonner@1.5.0:
     resolution: {integrity: sha512-FBjhG/gnnbN6FY0jaNnqZOMmB73R+5IiyYAw8yBj7L54ER7HB3fOSE5OFiQiE2iXWxeXKvg6fIP4LtVppHEdJA==}
     peerDependencies:
@@ -3303,6 +3385,9 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  svg-loaders-react@2.2.1:
+    resolution: {integrity: sha512-ATfg5pAMOla2GqPcwGRDrNTLlTQzl2fMvfW290j20qH7qpB61C3SQAnu+T9t8Z+V4IKKN2Bm1d/SaCv5IR1DDA==}
 
   sweetalert2@11.14.0:
     resolution: {integrity: sha512-kF1Q/+GtZZXr+rYVcBNwlEsnxP089CpDbck+MYjvLaQj9x4fzHqN9UhlkHOIR0k09LVu2sx8cU9BnvRlxWIZqg==}
@@ -3518,6 +3603,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.17.1:
+    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   ws@8.18.0:
     resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
     engines: {node: '>=10.0.0'}
@@ -3536,6 +3633,10 @@ packages:
 
   xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
+
+  xmlhttprequest-ssl@2.1.1:
+    resolution: {integrity: sha512-ptjR8YSJIXoA3Mbv5po7RtSYHO6mZr8s7i5VGmEk7QY2pQWyT1o0N+W1gKbOyJPUCGXGnuw0wqe8f0L6Y0ny7g==}
+    engines: {node: '>=0.4.0'}
 
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
@@ -4420,6 +4521,14 @@ snapshots:
 
   '@rushstack/eslint-patch@1.10.4': {}
 
+  '@samvera/image-downloader@1.1.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      svg-loaders-react: 2.2.1
+
+  '@socket.io/component-emitter@3.1.2': {}
+
   '@swc/counter@0.1.3': {}
 
   '@swc/helpers@0.5.5':
@@ -4680,14 +4789,21 @@ snapshots:
 
   ast-types-flow@0.0.8: {}
 
-  asynckit@0.4.0:
-    optional: true
+  asynckit@0.4.0: {}
 
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.0.0
 
   axe-core@4.10.0: {}
+
+  axios@1.7.7:
+    dependencies:
+      follow-redirects: 1.15.9
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
 
   axobject-query@4.1.0: {}
 
@@ -4807,7 +4923,6 @@ snapshots:
   combined-stream@1.0.8:
     dependencies:
       delayed-stream: 1.0.0
-    optional: true
 
   commander@4.1.1: {}
 
@@ -4929,8 +5044,7 @@ snapshots:
       has-property-descriptors: 1.0.2
       object-keys: 1.1.1
 
-  delayed-stream@1.0.0:
-    optional: true
+  delayed-stream@1.0.0: {}
 
   delegates@1.0.0:
     optional: true
@@ -4980,9 +5094,28 @@ snapshots:
 
   embla-carousel@8.2.1: {}
 
+  emoji-picker-react@4.12.0(react@18.3.1):
+    dependencies:
+      flairup: 1.0.0
+      react: 18.3.1
+
   emoji-regex@8.0.0: {}
 
   emoji-regex@9.2.2: {}
+
+  engine.io-client@6.6.2:
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.3.6
+      engine.io-parser: 5.2.3
+      ws: 8.17.1
+      xmlhttprequest-ssl: 2.1.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  engine.io-parser@5.2.3: {}
 
   enhanced-resolve@5.17.1:
     dependencies:
@@ -5349,6 +5482,8 @@ snapshots:
     dependencies:
       flat-cache: 3.2.0
 
+  file-saver@2.0.5: {}
+
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
@@ -5358,6 +5493,8 @@ snapshots:
       locate-path: 6.0.0
       path-exists: 4.0.0
 
+  flairup@1.0.0: {}
+
   flat-cache@3.2.0:
     dependencies:
       flatted: 3.3.1
@@ -5365,6 +5502,8 @@ snapshots:
       rimraf: 3.0.2
 
   flatted@3.3.1: {}
+
+  follow-redirects@1.15.9: {}
 
   for-each@0.3.3:
     dependencies:
@@ -5380,7 +5519,6 @@ snapshots:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
-    optional: true
 
   framer-motion@11.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -5732,6 +5870,8 @@ snapshots:
 
   js-cookie@3.0.5: {}
 
+  js-file-download@0.4.12: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@4.1.0:
@@ -5854,13 +5994,11 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.1
 
-  mime-db@1.52.0:
-    optional: true
+  mime-db@1.52.0: {}
 
   mime-types@2.1.35:
     dependencies:
       mime-db: 1.52.0
-    optional: true
 
   mimic-response@2.1.0:
     optional: true
@@ -6136,6 +6274,8 @@ snapshots:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       react-is: 16.13.1
+
+  proxy-from-env@1.1.0: {}
 
   psl@1.9.0:
     optional: true
@@ -6533,6 +6673,11 @@ snapshots:
       use-callback-ref: 1.3.2(react@18.3.1)
       use-sidecar: 1.1.2(react@18.3.1)
 
+  react-simple-typewriter@5.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   react-slick@0.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       classnames: 2.5.1
@@ -6770,6 +6915,24 @@ snapshots:
     dependencies:
       jquery: 3.7.1
 
+  socket.io-client@4.8.0:
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.3.6
+      engine.io-client: 6.6.2
+      socket.io-parser: 4.2.4
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  socket.io-parser@4.2.4:
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.3.6
+    transitivePeerDependencies:
+      - supports-color
+
   sonner@1.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -6883,6 +7046,8 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  svg-loaders-react@2.2.1: {}
 
   sweetalert2@11.14.0: {}
 
@@ -7159,6 +7324,8 @@ snapshots:
 
   wrappy@1.0.2: {}
 
+  ws@8.17.1: {}
+
   ws@8.18.0:
     optional: true
 
@@ -7167,6 +7334,8 @@ snapshots:
 
   xmlchars@2.2.0:
     optional: true
+
+  xmlhttprequest-ssl@2.1.1: {}
 
   yallist@4.0.0:
     optional: true

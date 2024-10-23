@@ -9,6 +9,10 @@ export function middleware(req) {
   const isAuthRoute =
     nextUrl.pathname === "/login" || nextUrl.pathname === "/sign-up";
 
+  if (nextUrl.pathname === "/products") {
+    return NextResponse.next();
+  }
+
   // If user exists, redirect to `/` from `login`
   if (isLoggedIn && isAuthRoute) {
     return NextResponse.redirect(new URL("/", req.url));
@@ -29,5 +33,6 @@ export const config = {
     "/checkout",
     "/login",
     "/sign-up",
+    "/products/:path*",
   ],
 };
