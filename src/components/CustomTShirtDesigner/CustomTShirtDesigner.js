@@ -42,7 +42,7 @@ import { errorToast, successToast } from "@/utils/customToast";
 import { useCreateQuoteMutation } from "@/redux/api/quoteApi";
 import { Sparkles } from "lucide-react";
 import { Images } from "lucide-react";
-
+import tempImg from "./front.jpg";
 import { X } from "lucide-react";
 import { Tag } from "antd";
 import { SendHorizontal } from "lucide-react";
@@ -55,6 +55,9 @@ import { Trash } from "lucide-react";
 import fileDownload from "js-file-download";
 import axios from "axios";
 import EmptyContainer from "../EmptyContainer/EmptyContainer";
+import { Share } from "lucide-react";
+import { Share2 } from "lucide-react";
+import { message } from "antd";
 
 // Motion variants
 const fadeVariants = {
@@ -81,7 +84,6 @@ export default function CustomTShirtDesigner() {
     handleSubmit,
     formState: { errors },
     control,
-    reset,
     setValue,
   } = useForm();
 
@@ -116,10 +118,9 @@ export default function CustomTShirtDesigner() {
   const [createQuote, { isLoading: isQuoteLoading }] = useCreateQuoteMutation();
 
   // ================= Get Library api handler =========================
-  const { data: libraryRes, isLoading: libraryLoading } = useGetLibraryQuery({
-    size: 999999,
-  });
-  const library = libraryRes?.data?.libraries || [];
+  const { data: libraryRes, isLoading: libraryLoading } = useGetLibraryQuery();
+  console.log(libraryRes);
+  const library = libraryRes?.data || [];
 
   // ================= Get product api handler ======================
   const { data: productDataRes, isLoading: isProductLoading } =
@@ -141,8 +142,6 @@ export default function CustomTShirtDesigner() {
       }
     }
   }, [productData, activeImageSide]);
-
-  const [tshirtOverlay, setTshirtOverlay] = useState(null);
 
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
@@ -407,7 +406,7 @@ export default function CustomTShirtDesigner() {
 
       const imgElement = new window.Image();
       imgElement.crossOrigin = "Anonymous";
-      imgElement.src = `${activeImage}?timestamp=${new Date().getTime()}`;
+      imgElement.src = activeImage;
 
       imgElement.onload = () => {
         context.drawImage(
@@ -466,6 +465,68 @@ export default function CustomTShirtDesigner() {
   };
 
   // ================== Set form default values ======================= //
+  // const handleExportImageOnSave = () => {
+  //   const tempCanvas = document.createElement("canvas");
+  //   tempCanvas.width = canvas.getWidth();
+  //   tempCanvas.height = canvas.getHeight();
+  //   const context = tempCanvas.getContext("2d");
+
+  //   const imgElement = new window.Image();
+  //   imgElement.crossOrigin = "anonymous";
+  //   imgElement.src = activeImage;
+
+  //   imgElement.onload = () => {
+  //     context.fillStyle = "#FFFFFF";
+  //     context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+  //     context.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
+
+  //     if (overlayColor) {
+  //       context.globalCompositeOperation = "lighten";
+  //       context.fillStyle = overlayColor;
+  //       context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+  //       context.globalCompositeOperation = "lighten";
+  //     }
+
+  //     const canvasDataUrl = canvas.toDataURL();
+  //     const canvasImage = new window.Image();
+  //     canvasImage.src = canvasDataUrl;
+  //     canvasImage.onload = () => {
+  //       context.drawImage(canvasImage, 0, 0);
+  //       const finalImageUrl = tempCanvas.toDataURL();
+
+  //       // Convert image url to Blob for file conversion
+  //       const blob = base64ToBlob(finalImageUrl);
+
+  //       // Convert Blob to File
+  //       const file = new File([blob], `tshirt-${activeImageSide}.png`, {
+  //         type: "image/png",
+  //       });
+
+  //       if (activeImageSide === "front") {
+  //         setSavedFrontImageUrl(finalImageUrl);
+  //         setFrontImageFile(file);
+
+  //         successToast("Image saved successfully!");
+  //       } else {
+  //         setSavedBackImageUrl(finalImageUrl);
+  //         setBackImageFile(file);
+
+  //         successToast("Image saved successfully!");
+  //       }
+
+  //       // Clear the canvas but retain functionality
+  //       canvas.clear();
+  //     };
+  //   };
+
+  //   imgElement.onerror = (error) => {
+  //     console.error(error);
+  //     errorToast("Failed to load image. Check CORS settings.", toastId);
+  //   };
+  // };
+
+  // Set form default value
   useEffect(() => {
     if (productData) {
       setValue("category", productData.category?.name);
@@ -480,10 +541,6 @@ export default function CustomTShirtDesigner() {
 
     if (prompt?.length < 1) {
       return errorToast("Please enter prompt!");
-    }
-
-    if (prompt?.length < 20) {
-      return errorToast("Prompt can't be less than 20 characters!");
     }
 
     if (prompt?.length > 300) {
@@ -503,7 +560,6 @@ export default function CustomTShirtDesigner() {
 
   const handleDownloadImage = (base64Image) => {
     let url = base64Image || aiGeneratedImageLink;
-    console.log(url);
 
     if (!url) {
       return errorToast("Please select an image first!");
@@ -1155,36 +1211,76 @@ export default function CustomTShirtDesigner() {
                   </motion.div>
                 </AnimatePresence>
               </TabsContent>
+
               <TabsContent
                 value="preview"
                 className="rounded-b-xl border border-dashed p-3"
               >
-                <div>
-                  <h4 className="text-lg font-semibold">Front Side *</h4>
-                  {savedFrontImageUrl ? (
-                    <div className="mx-auto h-[300px] w-[300px]">
-                      <AntImage
-                        src={savedFrontImageUrl}
-                        alt="front side image"
-                      />
-                    </div>
-                  ) : (
-                    <p className="text-center">No saved image</p>
-                  )}
-                </div>
+                <AntImage.PreviewGroup>
+                  <div>
+                    <div className="flex-center-between">
+                      <h4 className="text-lg font-semibold">Front Side *</h4>
 
-                <Separator className="my-10" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!savedFrontImageUrl) {
+                            return message.error(
+                              "No saved back side image found",
+                            );
+                          }
 
-                <div>
-                  <h4 className="text-lg font-semibold">Back Side *</h4>
-                  {savedBackImageUrl ? (
-                    <div className="mx-auto h-[300px] w-[300px]">
-                      <AntImage src={savedBackImageUrl} alt="back side image" />
+                          handleDownloadImage(savedFrontImageUrl);
+                        }}
+                      >
+                        <Download size={20} />
+                      </button>
                     </div>
-                  ) : (
-                    <p className="text-center">No saved image</p>
-                  )}
-                </div>
+                    {savedFrontImageUrl ? (
+                      <div className="mx-auto h-[300px] w-[300px]">
+                        <AntImage
+                          src={savedFrontImageUrl}
+                          alt="front side image"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-center">No saved image</p>
+                    )}
+                  </div>
+
+                  <Separator className="my-5" />
+
+                  <div>
+                    <div className="flex-center-between">
+                      <h4 className="text-lg font-semibold">Back Side *</h4>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!savedBackImageUrl) {
+                            return message.error(
+                              "No saved back side image found",
+                            );
+                          }
+
+                          handleDownloadImage(savedBackImageUrl);
+                        }}
+                      >
+                        <Download size={20} />
+                      </button>
+                    </div>
+                    {savedBackImageUrl ? (
+                      <div className="mx-auto h-[300px] w-[300px]">
+                        <AntImage
+                          src={savedBackImageUrl}
+                          alt="back side image"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-center">No saved image</p>
+                    )}
+                  </div>
+                </AntImage.PreviewGroup>
               </TabsContent>
             </Tabs>
           </div>

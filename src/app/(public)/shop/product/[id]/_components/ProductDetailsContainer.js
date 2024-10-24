@@ -92,7 +92,10 @@ export default function ProductDetailsContainer({ id }) {
           {isProductLoading ? (
             <div className="h-[600px] animate-pulse rounded bg-gray-300"></div>
           ) : (
-            <ProductImgSlider images={product?.images} />
+            <ProductImgSlider
+              images={product?.images}
+              primaryImage={product?.primaryImage}
+            />
           )}
         </div>
 
@@ -139,9 +142,9 @@ export default function ProductDetailsContainer({ id }) {
               />
 
               {/* stock status */}
-              {product?.quantity > 0 ? (
+              {product?.stock > 0 ? (
                 <p className="font-medium text-success">
-                  In Stock ({product?.quantity})
+                  In Stock ({product?.stock})
                 </p>
               ) : (
                 <p className="font-medium text-danger">Out of Stock</p>

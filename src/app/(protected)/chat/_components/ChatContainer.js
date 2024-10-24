@@ -21,6 +21,7 @@ import { SmilePlus } from "lucide-react";
 import { errorToast } from "@/utils/customToast";
 import { useOnClickOutside } from "usehooks-ts";
 import TypingLottie from "@/components/TypingLottie/TypingLottie";
+import { useGetProfileQuery } from "@/redux/api/userApi";
 
 export default function ChatContainer() {
   const {
@@ -45,6 +46,8 @@ export default function ChatContainer() {
   const emojiPickerRef = useRef(null);
   const [isSenderTyping, setIsSenderTyping] = useState(null);
   const [isReceiverTyping, setIsReceiverTyping] = useState(false);
+  const { data: userProfileRes } = useGetProfileQuery();
+  console.log(userProfileRes);
 
   // Function to handle the file input click
   const handleFileInputClick = () => {
@@ -117,7 +120,7 @@ export default function ChatContainer() {
    */
   useEffect(() => {
     if (socket && userId) {
-      socket.emit("message-page", {});
+      socket?.emit("message-page", {});
     }
   }, [socket, userId]);
 
@@ -162,7 +165,7 @@ export default function ChatContainer() {
       }
 
       if (socket && userId) {
-        socket.emit("send-message", payload, async () => {});
+        socket?.emit("send-message", payload, async () => {});
       }
 
       setImgPreviews([]);
@@ -199,12 +202,12 @@ export default function ChatContainer() {
   useEffect(() => {
     if (isSenderTyping) {
       if (socket && chatReceiverId) {
-        socket.emit(`typing`, {
+        socket?.emit(`typing`, {
           receiverId: chatReceiverId,
         });
       }
     } else if (!isSenderTyping) {
-      socket.emit(`stop-typing`, {
+      socket?.emit(`stop-typing`, {
         receiverId: chatReceiverId,
       });
     }
@@ -281,7 +284,7 @@ export default function ChatContainer() {
                     ))}
 
                     {isReceiverTyping && (
-                      <div className={cn("ml-12 mt-5 h-10 w-32 rounded-xl")}>
+                      <div className={cn("my-5 ml-12 h-10 w-32 rounded-xl")}>
                         <TypingLottie />
                       </div>
                     )}

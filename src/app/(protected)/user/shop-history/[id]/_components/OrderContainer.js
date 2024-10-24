@@ -23,10 +23,10 @@ export default function OrderContainer({ orderId }) {
   });
 
   const order = orderRes?.data || {};
-  console.log("order:", order);
+  console.log(order);
 
   return (
-    <div className="flex min-h-[75vh] items-center lg:w-full lg:gap-x-10">
+    <div className="flex min-h-[75vh] items-center lg:w-full lg:gap-x-20">
       {/* Left */}
       <div className="lg:w-[60%]">
         <Link
@@ -72,8 +72,13 @@ export default function OrderContainer({ orderId }) {
           </div>
         </div>
 
-        {/* size & color */}
-        <div className="flex-center-start mt-20 gap-x-16">
+        {/* quantity & size & color */}
+        <div className="flex-center-start mt-20 gap-x-10">
+          <div className="flex-center-start gap-x-5 text-xl font-semibold">
+            <h4>Quantity: </h4>
+            <Tag color="lime-inverse">{order?.quantity}</Tag>
+          </div>
+
           <div className="flex-center-start gap-x-5 text-xl font-semibold">
             <h4>Size: </h4>
             <Tag color="blue-inverse">{order?.size}</Tag>
@@ -99,7 +104,7 @@ export default function OrderContainer({ orderId }) {
 
       {/* Right */}
       <div className="h-[400px] lg:w-1/3">
-        <div className="mx-auto h-full max-w-max rounded-xl bg-gray-300 px-20">
+        <div className="mx-auto h-full max-w-max rounded-xl bg-gray-300">
           <Carousel className="h-full">
             <CarouselContent className="h-full">
               {order?.product?.images?.length > 0 ? (
@@ -114,7 +119,7 @@ export default function OrderContainer({ orderId }) {
                         alt="product image"
                         width={1200}
                         height={1200}
-                        className="mx-auto max-w-max"
+                        className="mx-auto h-auto w-auto"
                       />
                     </CarouselItem>
                   ))}

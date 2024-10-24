@@ -11,7 +11,10 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
-import { useGetAllCategoriesQuery } from "@/redux/api/Shop Page Api/shopApi";
+import {
+  useGetAllCategoriesQuery,
+  useGetShopCategoriesQuery,
+} from "@/redux/api/Shop Page Api/shopApi";
 import { motion } from "framer-motion";
 
 // Motion Variants
@@ -32,8 +35,7 @@ const fadeIn = {
 };
 
 export default function Categories() {
-  const { data: categoryRes, isLoading } = useGetAllCategoriesQuery();
-  const categories = categoryRes?.data || [];
+  const { data: categories, isLoading } = useGetShopCategoriesQuery();
 
   return (
     <section className="text-primary-black">

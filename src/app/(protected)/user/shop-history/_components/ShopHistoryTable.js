@@ -60,6 +60,8 @@ export default function ShopHistoryTable() {
   const orders = ordersRes?.data || [];
   const meta = ordersRes?.meta || {};
 
+  console.log(orders);
+
   return (
     <div
       className="my-8 rounded-xl p-6"

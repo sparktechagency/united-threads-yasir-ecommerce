@@ -11,11 +11,12 @@ export default function OwnerMsgCard({ message }) {
           <Image.PreviewGroup>
             {message?.file?.map((img) => (
               <Image
+                key={img}
                 src={img}
                 alt={img}
                 height={200}
                 width={200}
-                className="h-[80px] w-auto rounded-xl border"
+                className="h-[80px] w-auto rounded-xl border border-primary-black/50"
               />
             ))}
           </Image.PreviewGroup>
@@ -23,7 +24,7 @@ export default function OwnerMsgCard({ message }) {
       )}
 
       {message?.text && (
-        <p className="ml-auto w-max rounded-xl bg-gray-200 px-3 py-2 font-medium text-primary-black">
+        <p className="ml-auto w-max rounded-3xl bg-gray-200 px-3 py-2 font-medium text-primary-black">
           {message?.text}
         </p>
       )}

@@ -35,7 +35,7 @@ export default function ReceiverMsgCard({ message, isDifferentSender }) {
         )}
 
         {message?.text && (
-          <p className="rounded-full border bg-primary-black px-3 py-2 font-medium text-primary-white">
+          <p className="rounded-3xl border bg-primary-black px-3 py-2 font-medium text-primary-white">
             {message?.text}
           </p>
         )}

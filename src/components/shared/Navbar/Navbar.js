@@ -78,7 +78,7 @@ export default function Navbar() {
   };
 
   // ============== Get User Profile Info ====================
-  const { data: userProfileRes } = useGetProfileQuery();
+  const { data: userProfileRes } = useGetProfileQuery(null, { skip: !userId });
   const userProfile = userProfileRes?.data || "";
 
   // =================== Listen to `new-message`socket event for notification ============
