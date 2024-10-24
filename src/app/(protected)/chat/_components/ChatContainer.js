@@ -6,7 +6,7 @@ import logo from "/public/logos/logo-normal.svg";
 import { useUploadImageMutation } from "@/redux/api/messageApi";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "@/redux/features/authSlice";
 import MessageCard from "./MessageCard";
@@ -19,6 +19,8 @@ import { SendHorizontal } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { SmilePlus } from "lucide-react";
 import { errorToast } from "@/utils/customToast";
+import { useOnClickOutside } from "usehooks-ts";
+import TypingLottie from "@/components/TypingLottie/TypingLottie";
 
 export default function ChatContainer() {
   const {
@@ -40,6 +42,9 @@ export default function ChatContainer() {
   const [images, setImages] = useState(null);
   const fileInputRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef(null);
+  const [isSenderTyping, setIsSenderTyping] = useState(null);
+  const [isReceiverTyping, setIsReceiverTyping] = useState(false);
 
   // Function to handle the file input click
   const handleFileInputClick = () => {
@@ -55,9 +60,14 @@ export default function ChatContainer() {
     // Set react hook form input value
     const currentMessage = getValues("message");
     setValue("message", currentMessage + emoji);
-
-    setShowEmojiPicker(false);
   };
+
+  // Set chat ID
+  const chatId = useMemo(() => {
+    if (messages?.length > 0) {
+      return messages[0]?.chat;
+    }
+  }, [messages]);
 
   // Scroll to bottom of chat box
   useEffect(() => {
@@ -165,6 +175,41 @@ export default function ChatContainer() {
     }
   };
 
+  // ------------------- Listen to `typing` socket event -------------------
+  useEffect(() => {
+    if (socket && userId) {
+      socket.on(`typing::${userId}`, async (res) => {
+        if (res?.success) {
+          setIsReceiverTyping(true);
+        }
+      });
+    }
+  }, [socket, userId]);
+
+  useEffect(() => {
+    if (socket && userId) {
+      socket.on(`stop-typing::${userId}`, async (res) => {
+        if (res?.success) {
+          setIsReceiverTyping(false);
+        }
+      });
+    }
+  }, [socket, userId]);
+
+  useEffect(() => {
+    if (isSenderTyping) {
+      if (socket && chatReceiverId) {
+        socket.emit(`typing`, {
+          receiverId: chatReceiverId,
+        });
+      }
+    } else if (!isSenderTyping) {
+      socket.emit(`stop-typing`, {
+        receiverId: chatReceiverId,
+      });
+    }
+  }, [isSenderTyping, socket, chatReceiverId]);
+
   // Image preview
   const [imgPreviews, setImgPreviews] = useState([]);
   useEffect(() => {
@@ -174,6 +219,9 @@ export default function ChatContainer() {
       });
     }
   }, [images]);
+
+  // =============== Click on outside event handler ===============
+  useOnClickOutside(emojiPickerRef, () => setShowEmojiPicker(false));
 
   return (
     <div className="border-t-primary-green relative z-10 flex flex-col rounded-xl rounded-t-xl border-t-8 bg-primary-white px-2 py-6 lg:flex-row">
@@ -222,14 +270,22 @@ export default function ChatContainer() {
             ) : (
               <>
                 {messages?.length > 0 ? (
-                  messages?.map((msg, index) => (
-                    <MessageCard
-                      key={msg?._id}
-                      message={msg}
-                      userId={userId}
-                      previousMessage={index > 0 ? messages[index - 1] : null}
-                    />
-                  ))
+                  <>
+                    {messages?.map((msg, index) => (
+                      <MessageCard
+                        key={msg?._id}
+                        message={msg}
+                        userId={userId}
+                        previousMessage={index > 0 ? messages[index - 1] : null}
+                      />
+                    ))}
+
+                    {isReceiverTyping && (
+                      <div className={cn("ml-12 mt-5 h-10 w-32 rounded-xl")}>
+                        <TypingLottie />
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="flex-center min-h-[65vh] w-full gap-x-2 text-2xl font-bold">
                     <CirclePlus />
@@ -259,6 +315,7 @@ export default function ChatContainer() {
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3 lg:grid-cols-7">
                 {imgPreviews?.map((imgPreview) => (
                   <Image
+                    key={imgPreview}
                     src={imgPreview}
                     alt="image preview"
                     height={250}
@@ -286,6 +343,8 @@ export default function ChatContainer() {
                 {...register("message", {
                   required: imgPreviews ? false : true,
                 })}
+                onFocus={() => setIsSenderTyping(true)}
+                onBlur={() => setIsSenderTyping(false)}
               />
 
               {/* Send Button */}
@@ -333,7 +392,7 @@ export default function ChatContainer() {
                 <SmilePlus size={20} />
               </button>
 
-              <div className="absolute bottom-16 right-0">
+              <div ref={emojiPickerRef} className="absolute bottom-16 right-0">
                 <EmojiPicker
                   open={showEmojiPicker}
                   onEmojiClick={handleEmojiClick}

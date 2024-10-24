@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "/public/logos/logo-normal.svg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import userImg from "/public/images/navbar/user.png";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,13 +21,17 @@ import { History } from "lucide-react";
 import { LogOut } from "lucide-react";
 import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { MessageCircleMore } from "lucide-react";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { logout, selectUser } from "@/redux/features/authSlice";
 import { useDispatch } from "react-redux";
 import { MessageSquareText } from "lucide-react";
+import { Badge } from "antd";
+import { useSocket } from "@/context/SocketContextApi";
+import { useGetProfileQuery } from "@/redux/api/userApi";
+import { transformNameInitials } from "@/utils/transformNameInitials";
 
 // Links
 const LINKS = [
@@ -63,12 +67,45 @@ export default function Navbar() {
   const userId = useSelector(selectUser)?._id;
   const router = useRouter();
   const dispatch = useDispatch();
+  const { socket } = useSocket();
+  const [showNotificationDot, setShowNotificationDot] = useState(false);
+  const pathName = usePathname();
 
   const handleLogout = () => {
     dispatch(logout());
     toast.success("Logout successful");
     router.push("/");
   };
+
+  // ============== Get User Profile Info ====================
+  const { data: userProfileRes } = useGetProfileQuery();
+  const userProfile = userProfileRes?.data || "";
+
+  // =================== Listen to `new-message`socket event for notification ============
+  const newMessageHandler = async (res) => {
+    console.log(res);
+
+    if (res?.sender !== userId && pathName !== "/chat" && res?.seen === false) {
+      setShowNotificationDot(true);
+    }
+  };
+
+  useEffect(() => {
+    if (socket && userId) {
+      socket.on(`new-message::${userId}`, newMessageHandler);
+    }
+
+    return () => {
+      socket?.off(`new-message::${userId}`, newMessageHandler);
+    };
+  }, [socket, userId]);
+
+  // Clear notification dot if pathname /chat
+  useEffect(() => {
+    if (pathName === "/chat") {
+      setShowNotificationDot(false);
+    }
+  }, [pathName]);
 
   return (
     <header className="mb-20 mt-8">
@@ -98,7 +135,7 @@ export default function Navbar() {
         <div className="flex w-[20%] items-center justify-center">
           {userId ? (
             <div className="flex items-center gap-x-6">
-              <Link
+              {/* <Link
                 href="/notification"
                 className="relative"
                 title="notifications"
@@ -107,22 +144,37 @@ export default function Navbar() {
                 <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
                   4
                 </Badge>
-              </Link>
+              </Link> */}
 
-              <Link href="/chat" className="relative" title="notifications">
-                <MessageSquareText size={24} />
-                <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
-                  2
+              <button
+                onClick={() => {
+                  router.push("/chat");
+                  setShowNotificationDot(false);
+                }}
+                className="relative"
+                title="notifications"
+              >
+                <Badge
+                  dot={showNotificationDot}
+                  style={{ height: "10px", width: "10px" }}
+                >
+                  <MessageSquareText size={24} />
                 </Badge>
-              </Link>
+              </button>
 
               {/* ---------- User profile --------------- */}
               <div>
                 <DropdownMenu>
                   <DropdownMenuTrigger className="border-none outline-none ring-0">
                     <Avatar className="">
-                      <AvatarImage src={userImg?.src} />
-                      <AvatarFallback>AK</AvatarFallback>
+                      <AvatarImage src={userProfile?.profilePicture} />
+                      <AvatarFallback className="border border-primary-black/25 bg-slate-50">
+                        {transformNameInitials(
+                          "",
+                          userProfile?.firstName,
+                          userProfile?.lastName,
+                        )}
+                      </AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="space-y-1 rounded-xl p-2 lg:mr-20">

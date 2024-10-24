@@ -152,23 +152,6 @@ export default function CustomTShirtDesigner() {
       selection: true,
     });
 
-    // Create a rectangle overlay for the T-shirt color
-    const overlay = new window.fabric.Rect({
-      left: 0, // Start at top-left corner of the canvas
-      top: 0, // Start at top-left corner of the canvas
-      width: 400, // Width of the T-shirt (same as canvas width)
-      height: 400, // Height of the T-shirt (same as canvas height)
-      fill: "#FF0000", // Default color
-      selectable: false, // Prevent user from moving the overlay
-      hasControls: false, // Disable resizing controls
-    });
-
-    // Add the overlay to the canvas
-    initCanvas.add(overlay);
-
-    // Set the canvas and overlay state
-    setTshirtOverlay(overlay);
-
     setCanvas(canvasInstance);
 
     // Update activeObject on object selection

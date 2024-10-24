@@ -1,11 +1,10 @@
 import React from "react";
 import logo from "/public/logos/logo-normal.svg";
-// import Image from "next/image";
-import { Image } from "antd";
+import Image from "next/image";
+import { Image as AntImage } from "antd";
 // import { showImage } from "@/utils/fileHelper";
 
 export default function ReceiverMsgCard({ message, isDifferentSender }) {
-  console.log(message?.file);
   return (
     <div className="flex-center-start gap-x-2">
       {isDifferentSender ? (
@@ -21,9 +20,10 @@ export default function ReceiverMsgCard({ message, isDifferentSender }) {
       )}
       <div className="relative mt-2 max-w-max">
         {message?.file?.length > 0 && (
-          <Image.PreviewGroup className="grid grid-cols-4 gap-4">
+          <AntImage.PreviewGroup className="grid grid-cols-4 gap-4">
             {message?.file?.map((img) => (
-              <Image
+              <AntImage
+                key={img}
                 src={img}
                 alt={img}
                 height={200}
@@ -31,7 +31,7 @@ export default function ReceiverMsgCard({ message, isDifferentSender }) {
                 className="h-[160px] w-auto"
               />
             ))}
-          </Image.PreviewGroup>
+          </AntImage.PreviewGroup>
         )}
 
         {message?.text && (
