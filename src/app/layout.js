@@ -20,6 +20,7 @@ const uncutSans = localFont({
   variable: "--font-uncut-sans",
   weight: "200 800",
 });
+``;
 
 export const metadata = {
   title: {

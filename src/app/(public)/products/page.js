@@ -5,8 +5,8 @@ import ProductsContainer from "./_components/ProductsContainer";
 import QuoteProductsPageProvider from "@/context/QuoteProductsPageContext";
 
 export const metadata = {
-  title: "Products",
-  description: "Products page",
+  title: "Custom Apparels",
+  description: "Custom apparels page",
 };
 
 export default function ProductsPage() {
@@ -14,7 +14,7 @@ export default function ProductsPage() {
     <QuoteProductsPageProvider>
       <div>
         <CommonPageHeader
-          pageTitle="Products"
+          pageTitle="Custom Apparels"
           previousPage={{
             pageTitle: "Home",
             pageRoute: "/",

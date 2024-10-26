@@ -7,7 +7,7 @@ import Testimonials from "@/components/homeSections/Testimonials/Testimonials";
 import Products from "@/components/homeSections/Products/Products";
 
 export const metadata = {
-  title: "Home",
+  title: "Home | United Threads",
   description: "Home page of United Threads - Wear The Change",
 };
 

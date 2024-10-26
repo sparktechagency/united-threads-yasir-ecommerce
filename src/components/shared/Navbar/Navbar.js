@@ -42,8 +42,8 @@ const LINKS = [
   },
 
   {
-    key: "products",
-    label: "Products",
+    key: "customApparels",
+    label: "Custom Apparels",
     route: "/products",
   },
   {

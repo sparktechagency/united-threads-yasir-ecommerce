@@ -1371,7 +1371,7 @@ export default function CustomTShirtDesigner() {
           disabled={isQuoteLoading}
           className="group mt-10 h-[2.8rem] w-full gap-x-2 rounded-xl bg-primary-black font-semibold"
         >
-          Send Quote <AnimatedArrow />
+          Request for a Quote <AnimatedArrow />
         </Button>
       </form>
 
