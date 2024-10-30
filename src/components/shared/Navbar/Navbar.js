@@ -33,6 +33,8 @@ import { useSocket } from "@/context/SocketContextApi";
 import { useGetProfileQuery } from "@/redux/api/userApi";
 import { transformNameInitials } from "@/utils/transformNameInitials";
 import * as NProgress from "nprogress";
+import { AlignJustify } from "lucide-react";
+import MobileSidebar from "./Components/MobileSidebar";
 
 // Links
 const LINKS = [
@@ -70,8 +72,9 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const { socket } = useSocket();
   const [showNotificationCount, setShowNotificationCount] = useState(0);
-  const [showMsgNotificationDot, setShowMsgNotificationDot] = useState(true);
+  const [showMsgNotificationDot, setShowMsgNotificationDot] = useState(false);
   const pathName = usePathname();
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -85,9 +88,11 @@ export default function Navbar() {
 
   // =================== Listen to `new-message`socket event for notification ============
   const newMessageHandler = async (res) => {
-    console.log(res);
+    console.log("new message ========> ", res);
     if (res?.sender !== userId && pathName !== "/chat" && res?.seen === false) {
       setShowMsgNotificationDot(true);
+    } else {
+      setShowMsgNotificationDot(false);
     }
   };
 
@@ -99,7 +104,7 @@ export default function Navbar() {
     return () => {
       socket?.off(`new-message::${userId}`, newMessageHandler);
     };
-  });
+  }, [socket, userId]);
 
   // ================== Listen to `notification::userId` notifications ============
   const notificationCountHandler = async (res) => {
@@ -122,7 +127,7 @@ export default function Navbar() {
     return () => {
       socket?.off(`notification::${userId}`, notificationCountHandler);
     };
-  });
+  }, [socket, userId]);
 
   // Clear message notification dot if pathname /chat
   useEffect(() => {
@@ -132,9 +137,9 @@ export default function Navbar() {
   }, [pathName]);
 
   return (
-    <header className="mb-20 mt-8">
+    <header className="mb-10 mt-8 lg:mb-20">
       {/* -------------- Desktop Version ------------- */}
-      <div className="mx-auto flex w-3/4 items-center justify-between rounded-2xl bg-lightGray px-4 py-5">
+      <div className="mx-auto hidden items-center justify-between rounded-2xl bg-lightGray px-4 py-5 lg:flex lg:w-[85%] 2xl:w-3/4">
         {/* Left ----- Logo */}
         <Link href="/" className="w-1/4">
           <Image src={logo} alt="Logo" className="mx-auto w-[70%]" />
@@ -247,6 +252,149 @@ export default function Navbar() {
           )}
         </div>
       </div>
+
+      {/* Mobile & Tablet Version */}
+      <>
+        <div className="block h-14 w-full px-5 md:px-10 lg:hidden">
+          <div className="flex-center-between h-full w-full rounded-full bg-lightGray px-3">
+            {/* Left - Menu Icon */}
+            <button
+              className="flex h-full w-[30%] items-center"
+              onClick={() => setShowMobileSidebar(true)}
+            >
+              <AlignJustify size={22} />
+            </button>
+
+            {/* Center - Logo */}
+            <div className="flex-center h-full w-1/3 md:p-8">
+              <Image
+                src={logo}
+                alt="Logo of United Threads"
+                height={1200}
+                width={1200}
+                className="h-auto w-auto"
+              />{" "}
+            </div>
+
+            {/* Right */}
+            <div className="flex h-full w-1/3 items-center justify-end">
+              {userId ? (
+                <div className="flex items-center gap-x-3">
+                  {/* Notification */}
+                  <Link
+                    href="/notification"
+                    className="relative"
+                    title="notifications"
+                  >
+                    <Badge
+                      count={showNotificationCount}
+                      showZero={false}
+                      overflowCount={10}
+                    >
+                      <Bell size={16} />
+                    </Badge>
+                  </Link>
+
+                  {/* Message */}
+                  <button
+                    onClick={() => {
+                      NProgress.start(); // to show top progress bar
+                      router.push("/chat");
+                      setShowMsgNotificationDot(false);
+                    }}
+                    className="relative"
+                    title="notifications"
+                  >
+                    <Badge
+                      dot={showMsgNotificationDot}
+                      style={{ height: "5px", width: "5px" }}
+                    >
+                      <MessageSquareText size={16} />
+                    </Badge>
+                  </button>
+
+                  {/* ---------- User profile --------------- */}
+                  <div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="border-none outline-none ring-0">
+                        <Avatar className="h-7 w-7">
+                          <AvatarImage src={userProfile?.profilePicture} />
+                          <AvatarFallback className="border border-primary-black/25 bg-slate-50">
+                            {transformNameInitials(
+                              "",
+                              userProfile?.firstName,
+                              userProfile?.lastName,
+                            )}
+                          </AvatarFallback>
+                        </Avatar>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="space-y-1 rounded-xl p-2 lg:mr-20">
+                        <DropdownMenuItem asChild>
+                          <Link href="/user/profile">
+                            <User
+                              size={20}
+                              strokeWidth={1.5}
+                              className="mr-2"
+                            />
+                            Personal Details
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/user/shop-history">
+                            <Shirt
+                              size={20}
+                              strokeWidth={1.5}
+                              className="mr-2"
+                            />
+                            Shop History
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/user/quote-history">
+                            <History
+                              size={20}
+                              strokeWidth={1.5}
+                              className="mr-2"
+                            />
+                            Quote History
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogout}>
+                          <LogOut
+                            size={20}
+                            strokeWidth={1.5}
+                            className="mr-2"
+                          />
+                          Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  size="lg"
+                  className="primary-button ml-auto w-3/4 rounded-full py-4"
+                  asChild
+                >
+                  <Link
+                    href="/login"
+                    className="group flex items-center gap-x-1 transition-all duration-200"
+                  >
+                    Sign In
+                  </Link>
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Sidebar */}
+        <MobileSidebar
+          open={showMobileSidebar}
+          setOpen={setShowMobileSidebar}
+        />
+      </>
     </header>
   );
 }

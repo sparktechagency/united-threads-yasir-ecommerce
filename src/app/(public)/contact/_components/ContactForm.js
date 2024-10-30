@@ -37,9 +37,12 @@ export default function ContactForm() {
     }
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mx-auto md:w-[500px] 2xl:w-[800px]"
+    >
       <div className="space-y-8">
-        <div className="grid grid-cols-1 gap-x-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-8 lg:grid-cols-2 lg:gap-y-0">
           {/* first name */}
           <div className="grid w-full items-center gap-2">
             <Label

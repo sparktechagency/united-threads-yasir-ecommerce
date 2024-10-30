@@ -13,7 +13,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <div className="relative z-10 space-y-40 lg:mx-auto lg:w-3/4">
+    <div className="relative z-10 space-y-32 overflow-hidden px-5 md:px-10 lg:mx-auto lg:w-[85%] lg:space-y-40 lg:px-0 2xl:w-3/4">
       <Hero />
       <Categories />
       <Products />

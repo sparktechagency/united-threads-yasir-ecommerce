@@ -38,9 +38,10 @@ const FILTERS = [
 export default function Products() {
   const [selectedFilter, setSelectedFilter] = useState("");
   const query = {};
+  query["limit"] = 6; // limit 6 products for home page
   query[`sort`] = selectedFilter;
 
-  const { data: productsRes, isLoading } = useGetShopProductsQuery(query);
+  const { data: productsRes, isFetching } = useGetShopProductsQuery(query);
   const products = productsRes?.data || [];
 
   const handleFilter = (filter) => {
@@ -51,17 +52,17 @@ export default function Products() {
 
   return (
     <section className="text-primary-black">
-      <h2 className="px-10 py-1 text-center text-6xl font-extrabold">
+      <h2 className="py-1 text-center text-5xl font-extrabold lg:px-10 lg:text-6xl">
         Wear The Change
       </h2>
 
       <Separator className="my-5 w-full" />
 
       <div className="flex items-center justify-between">
-        <h4 className="text-3xl font-semibold">Products</h4>
+        <h4 className="w-1/2 text-2xl font-semibold lg:text-3xl">Products</h4>
 
         {/* Filters */}
-        <div className="flex items-center gap-x-2">
+        <div className="hide-scroll flex w-1/2 items-center gap-x-2 overflow-auto md:justify-end">
           {FILTERS.map((filter) => (
             <Button
               key={filter?.value}
@@ -78,10 +79,10 @@ export default function Products() {
         </div>
       </div>
 
-      {isLoading ? (
+      {isFetching ? (
         <div className="mt-10">
           {/* Skeleton Loader */}
-          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-10">
+          <div className="grid grid-cols-1 gap-y-10 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-10">
             {Array.from({ length: 6 }).map((_, idx) => (
               <ProductCardSkeleton key={idx} />
             ))}
@@ -93,9 +94,9 @@ export default function Products() {
           initial="initial"
           whileInView="animate"
           viewport={{ once: true }}
-          className="mx-auto mt-10 grid grid-cols-1 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-10"
+          className="mx-auto mt-10 grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-10"
         >
-          {products?.slice(0, 6)?.map((product) => (
+          {products?.map((product) => (
             <motion.div variants={fadeUpVariants} key={product?._id}>
               <ShopProductsCard product={product} />
             </motion.div>

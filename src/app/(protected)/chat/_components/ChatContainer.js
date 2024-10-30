@@ -275,14 +275,14 @@ export default function ChatContainer() {
   return (
     <div className="border-t-primary-green relative z-10 flex flex-col rounded-xl rounded-t-xl border-t-8 bg-primary-white px-2 py-6 lg:flex-row">
       <div className="flex flex-col justify-between lg:flex-grow lg:px-8">
-        <div className="flex-center-between border-b border-b-primary-black/20 pb-1">
+        <div className="flex-center-between border-b border-b-primary-black/20 pb-2">
           <div className="flex-center-start gap-x-4">
             <Image
               src={logo}
               alt="United Threads logo"
               height={100}
               width={100}
-              className=" "
+              className="aspect-square h-16 w-16 rounded-full border border-primary-black/20 p-1"
             />
 
             <div className="lg:flex-grow">
