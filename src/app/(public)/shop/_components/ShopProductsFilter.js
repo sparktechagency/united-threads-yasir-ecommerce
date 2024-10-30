@@ -18,6 +18,7 @@ import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 import { Loader } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useOnClickOutside } from "usehooks-ts";
 
 // motion variants
 const fadeVariants = {
@@ -87,7 +88,8 @@ export default function ShopProductsFilter() {
     setSelectedCategory(categoryIdFromSearchUrl);
   }, [categoryIdFromSearchUrl]);
 
-  console.log(sizes);
+  // Toggle filter when clicked outside
+  useOnClickOutside(mobileFiltersRef, () => setShowMobileFilters(false));
 
   return (
     <div className="w-full pb-10 lg:w-[25%] 2xl:w-[30%]">

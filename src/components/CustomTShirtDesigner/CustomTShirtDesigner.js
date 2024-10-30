@@ -33,7 +33,7 @@ import {
   setToSessionStorage,
 } from "@/utils/sessionStorage";
 import { useGetSingleQuoteProductQuery } from "@/redux/api/Products Page Api/quoteProductsApi";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import CountryStateCitySelector from "../CountryStateCitySelector/CountryStateCitySelector";
 import { ErrorModal } from "@/utils/customModal";
@@ -100,6 +100,7 @@ export default function CustomTShirtDesigner() {
   const [colorCollapsed, setColorCollapsed] = useState(false);
   const [pantoneColorCollapsed, setPantoneColorCollapsed] = useState(false);
   const productId = useParams()?.id;
+  const router = useRouter();
 
   // ========= Currently active image side based on product data response ============
   const [activeImageSide, setActiveImageSide] = useState("front");
@@ -577,6 +578,8 @@ export default function CustomTShirtDesigner() {
     try {
       await createQuote(formData).unwrap();
       successToast("Quote sent successfully!", toastId);
+
+      router.push("/user/quote-history");
     } catch (error) {
       errorToast(error?.data?.message || error?.error, toastId);
     }

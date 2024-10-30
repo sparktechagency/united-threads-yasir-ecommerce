@@ -101,13 +101,17 @@ export default function ShadeApprovedTable() {
               key={quote?._id}
               className="border-b border-primary-black/15"
             >
-              <TableCell className="py-5 font-medium">#{quote?._id}</TableCell>
-              <TableCell className="py-5 font-medium">{quote?.name}</TableCell>
-              <TableCell className="py-5 font-medium">
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
+                #{quote?._id}
+              </TableCell>
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
+                {quote?.name}
+              </TableCell>
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
                 {quote?.category?.name}
               </TableCell>
 
-              <TableCell className="flex items-center gap-x-2 py-5 font-medium">
+              <TableCell className="flex w-full items-center gap-x-2 whitespace-nowrap py-5 font-medium">
                 <div
                   className="h-5 w-5 rounded-full"
                   style={{
@@ -120,12 +124,12 @@ export default function ShadeApprovedTable() {
                 {quote?.pantoneColor}
               </TableCell>
 
-              <TableCell className="py-5 font-medium">
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
                 {quote?.createdAt &&
                   format(quote?.createdAt, "dd MM yyyy, hh:mm a")}
               </TableCell>
 
-              <TableCell className="py-5 font-medium">
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
                 <div className="flex-center-start gap-x-4">
                   <div>
                     <button

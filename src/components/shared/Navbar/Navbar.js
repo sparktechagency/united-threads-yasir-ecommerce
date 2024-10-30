@@ -266,7 +266,7 @@ export default function Navbar() {
             </button>
 
             {/* Center - Logo */}
-            <div className="flex-center h-full w-1/3 md:p-8">
+            <Link href="/" className="flex-center h-full w-1/3 md:p-8">
               <Image
                 src={logo}
                 alt="Logo of United Threads"
@@ -274,10 +274,10 @@ export default function Navbar() {
                 width={1200}
                 className="h-auto w-auto"
               />{" "}
-            </div>
+            </Link>
 
             {/* Right */}
-            <div className="flex h-full w-1/3 items-center justify-end">
+            <div className="flex h-full w-1/3 items-center justify-end pt-1">
               {userId ? (
                 <div className="flex items-center gap-x-3">
                   {/* Notification */}

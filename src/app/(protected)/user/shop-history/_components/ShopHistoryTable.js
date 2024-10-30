@@ -60,8 +60,6 @@ export default function ShopHistoryTable() {
   const orders = ordersRes?.data || [];
   const meta = ordersRes?.meta || {};
 
-  console.log(orders);
-
   return (
     <div
       className="my-8 rounded-xl p-6"
@@ -114,24 +112,28 @@ export default function ShopHistoryTable() {
               key={order?._id}
               className="border-b border-primary-black/15"
             >
-              <TableCell className="py-5 font-medium">#{order?._id}</TableCell>
-              <TableCell className="py-5 font-medium">
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
+                #{order?._id}
+              </TableCell>
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
                 {order?.quote?.name || order?.product?.name}
               </TableCell>
-              <TableCell className="py-5 font-medium">
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
                 {order?.quote?.category?.name || order?.product?.category?.name}
               </TableCell>
-              <TableCell className="py-5 font-medium">
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
                 {order?.quantity}
               </TableCell>
-              <TableCell className="py-5 font-medium">
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
                 {order?.createdAt &&
                   format(order?.createdAt, "dd MMM yyyy, hh:mm a")}
               </TableCell>
-              <TableCell className="py-5 font-medium">
+              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
                 ${Number(order?.amount * order?.quantity)?.toFixed(2)}
               </TableCell>
-              <TableCell className={cn("py-5 font-medium")}>
+              <TableCell
+                className={cn("w-full whitespace-nowrap py-5 font-medium")}
+              >
                 <Tag
                   color={getTableTagColor(order?.status)}
                   style={{ fontWeight: "bold" }}
@@ -160,7 +162,7 @@ export default function ShopHistoryTable() {
       </Table>
 
       {orders?.length > 9 && (
-        <div className="ml-auto mt-10 max-w-max">
+        <div className="ml-auto mt-10 max-w-full whitespace-nowrap">
           <CustomPagination
             currentPage={currentPage}
             pageSize={pageSize}

@@ -33,7 +33,7 @@ export default function ReceiverMsgCard({
                 alt={img}
                 height={200}
                 width={200}
-                className="h-[160px] w-auto"
+                className="!h-[100px] !w-[100px] rounded-xl border border-primary-black/50 md:!h-[150px] md:!w-[150px] lg:!h-[200px] lg:!w-[200px]"
               />
             ))}
           </AntImage.PreviewGroup>

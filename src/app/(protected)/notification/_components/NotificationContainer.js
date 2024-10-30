@@ -12,7 +12,7 @@ import {
 } from "@/redux/api/notificationApi";
 import { selectUser } from "@/redux/features/authSlice";
 import { errorToast, successToast } from "@/utils/customToast";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { Loader } from "lucide-react";
 import { CheckCheck } from "lucide-react";
 import { BellDot } from "lucide-react";
@@ -130,16 +130,20 @@ export default function NotificationContainer() {
                 <div>
                   <div className="flex items-center gap-x-4">
                     {/* title and date */}
-                    <h5 className="mb-1 text-xl font-medium">
+                    <h5 className="mb-1 text-base font-medium md:text-xl">
                       {notification.title}
                     </h5>
 
                     <div className="h-1 w-1 rounded-full bg-primary-black" />
 
-                    <p className="text-primary-black/80">
+                    <p className="hidden text-primary-black/80 md:block">
                       {formatDistanceToNow(new Date(notification.createdAt), {
                         addSuffix: true,
                       })}
+                    </p>
+
+                    <p className="block md:hidden">
+                      {format(new Date(notification.createdAt), "dd/MMM/yy")}
                     </p>
                   </div>
 

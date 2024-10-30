@@ -26,9 +26,9 @@ export default function OrderContainer({ orderId }) {
   console.log(order);
 
   return (
-    <div className="flex min-h-[75vh] items-center lg:w-full lg:gap-x-20">
+    <div className="flex min-h-[75vh] flex-col items-center gap-y-10 lg:w-full lg:flex-row lg:gap-x-20">
       {/* Left */}
-      <div className="lg:w-[60%]">
+      <div className="w-full lg:w-[60%]">
         <Link
           href="/user/shop-history"
           className="flex-center mb-10 h-8 w-8 rounded-full border border-primary-black transition-all duration-300 ease-in-out hover:bg-primary-black hover:text-white"
@@ -37,8 +37,8 @@ export default function OrderContainer({ orderId }) {
         </Link>
 
         <div>
-          <div className="flex-center-between">
-            <h3 className="text-2xl font-bold">
+          <div className="flex flex-col items-start justify-between gap-y-3 lg:flex-row lg:items-center lg:gap-y-0">
+            <h3 className="text-lg font-bold md:text-2xl">
               Order ID: <span className="text-orange-400">#{order?._id}</span>
             </h3>
 
@@ -54,26 +54,28 @@ export default function OrderContainer({ orderId }) {
 
           <div className="text-muted-foreground mt-5 space-y-1 font-medium">
             <p className="flex items-center justify-between">
-              <span className="font-semibold">Date:</span>
+              <span className="w-1/2 font-semibold">Date:</span>
               {order?.createdAt &&
                 format(order?.createdAt, "dd MMM yyyy, hh:mm a")}
             </p>
             <p className="flex items-center justify-between">
-              <span className="font-semibold">Contact No:</span>
+              <span className="w-1/2 font-semibold">Contact No:</span>
               {order?.user?.contact}
             </p>
 
             <p className="flex items-center justify-between">
-              <span className="font-semibold">Shipping Address:</span>
-              {order?.houseNo && `${order?.houseNo},`}{" "}
-              {order?.area && `${order?.area},`} {order?.city}, {order?.state},{" "}
-              {order?.country}
+              <span className="w-1/2 font-semibold">Shipping Address:</span>
+              <span>
+                {order?.houseNo && `${order?.houseNo},`}{" "}
+                {order?.area && `${order?.area},`} {order?.city}, {order?.state}
+                , {order?.country}
+              </span>
             </p>
           </div>
         </div>
 
         {/* quantity & size & color */}
-        <div className="flex-center-start mt-20 gap-x-10">
+        <div className="flex-center-start mt-20 flex-wrap gap-x-10">
           <div className="flex-center-start gap-x-5 text-xl font-semibold">
             <h4>Quantity: </h4>
             <Tag color="lime-inverse">{order?.quantity}</Tag>
@@ -103,7 +105,7 @@ export default function OrderContainer({ orderId }) {
       </div>
 
       {/* Right */}
-      <div className="h-[400px] lg:w-1/3">
+      <div className="h-[400px] w-full md:w-1/2 lg:w-1/3">
         <div className="mx-auto h-full max-w-max rounded-xl bg-gray-300">
           <Carousel className="h-full">
             <CarouselContent className="h-full">
@@ -145,8 +147,11 @@ export default function OrderContainer({ orderId }) {
                 </>
               )}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+
+            <div className="hidden lg:block">
+              <CarouselPrevious />
+              <CarouselNext />
+            </div>
           </Carousel>
         </div>
       </div>

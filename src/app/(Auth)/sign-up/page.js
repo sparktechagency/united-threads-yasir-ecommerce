@@ -10,10 +10,14 @@ export const metadata = {
 
 export default function SignUpPage() {
   return (
-    <div className="flex-center w-full gap-x-20 rounded-xl border border-gray-200 p-10 shadow-[0px_0px_2px_lightGray]">
+    <div className="flex-center w-full flex-col gap-x-20 rounded-xl border border-gray-200 p-10 shadow-[0px_0px_2px_lightGray] lg:flex-row">
       {/* Left */}
-      <div>
-        <Image src={signUpGraphic} alt="sign up graphic" />
+      <div className="w-full md:w-3/4 lg:w-1/2">
+        <Image
+          src={signUpGraphic}
+          alt="sign up graphic"
+          className="mx-auto w-full md:w-3/4 lg:w-full"
+        />
       </div>
 
       {/* Right */}

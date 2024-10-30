@@ -131,7 +131,7 @@ export default function ShopContainer() {
           variants={fadeUpVariants}
           initial="initial"
           animate="animate"
-          className="mt-6 grid grid-cols-1 gap-y-7 md:grid-cols-2 md:gap-7 lg:gap-y-0 2xl:grid-cols-3"
+          className="mt-6 grid grid-cols-1 gap-y-7 md:grid-cols-2 md:gap-7 2xl:grid-cols-3"
         >
           {products?.map((product) => (
             <motion.div variants={fadeUpVariants} key={product?._id}>

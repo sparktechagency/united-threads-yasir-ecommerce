@@ -23,9 +23,7 @@ export default function OwnerMsgCard({ message }) {
                   key={img}
                   src={img}
                   alt={img}
-                  height={200}
-                  width={200}
-                  className="h-[80px] w-auto rounded-xl border border-primary-black/50"
+                  className="!h-[100px] !w-[100px] rounded-xl border border-primary-black/50 md:!h-[150px] md:!w-[150px] lg:!h-[200px] lg:!w-[200px]"
                 />
 
                 <button

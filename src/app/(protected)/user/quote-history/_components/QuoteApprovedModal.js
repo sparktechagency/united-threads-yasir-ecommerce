@@ -99,7 +99,7 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
 
         <div>
           <h4 className="mb-1 text-lg font-medium">Pantone Color</h4>
-          <h5 className="flex-center-start gap-x-2 text-lg font-extrabold text-black">
+          <h5 className="flex items-center justify-center gap-x-2 text-lg font-extrabold text-black lg:justify-start">
             <div
               className="h-5 w-5 rounded-full"
               style={{
@@ -122,7 +122,7 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
 
       <div>
         <h4 className="mb-1 text-lg font-medium">Material Preferences</h4>
-        <h5 className="rounded-lg bg-slate-100 p-2 text-lg font-extrabold text-black">
+        <h5 className="break-all rounded-lg bg-slate-100 p-2 text-lg font-extrabold text-black">
           {quote?.materialPreferences}
         </h5>
       </div>
