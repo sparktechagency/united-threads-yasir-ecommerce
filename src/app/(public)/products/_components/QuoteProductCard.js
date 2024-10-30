@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
-import Link from "next/link";
 import { useSelector } from "react-redux";
 import { selectUser } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ContinueToLoginModal from "@/components/ContinueToLoginModal/ContinueToLoginModal";
 import { Tag } from "antd";
+import * as NProgress from "nprogress";
 
 export default function QuoteProductCard({ product }) {
   const userId = useSelector(selectUser)?._id;
@@ -20,6 +20,8 @@ export default function QuoteProductCard({ product }) {
     if (!userId) {
       setShowLoginModal(true);
     } else {
+      // Shop top progress bar
+      NProgress.start();
       router.push(`/products/${product._id}`);
     }
   };

@@ -2,9 +2,14 @@ import React from "react";
 import logo from "/public/logos/logo-normal.svg";
 import Image from "next/image";
 import { Image as AntImage } from "antd";
+import TypingLottie from "@/components/TypingLottie/TypingLottie";
 // import { showImage } from "@/utils/fileHelper";
 
-export default function ReceiverMsgCard({ message, isDifferentSender }) {
+export default function ReceiverMsgCard({
+  message,
+  isDifferentSender,
+  isReceiverTyping,
+}) {
   return (
     <div className="flex-center-start gap-x-2">
       {isDifferentSender ? (
@@ -39,6 +44,8 @@ export default function ReceiverMsgCard({ message, isDifferentSender }) {
             {message?.text}
           </p>
         )}
+
+        {isReceiverTyping && <TypingLottie />}
       </div>
     </div>
   );

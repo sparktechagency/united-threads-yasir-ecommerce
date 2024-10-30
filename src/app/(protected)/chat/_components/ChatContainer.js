@@ -20,8 +20,11 @@ import EmojiPicker from "emoji-picker-react";
 import { SmilePlus } from "lucide-react";
 import { errorToast } from "@/utils/customToast";
 import { useOnClickOutside } from "usehooks-ts";
-import TypingLottie from "@/components/TypingLottie/TypingLottie";
 import { useGetProfileQuery } from "@/redux/api/userApi";
+import TypingLottie from "@/components/TypingLottie/TypingLottie";
+import { Pencil } from "lucide-react";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 export default function ChatContainer() {
   const {
@@ -46,8 +49,8 @@ export default function ChatContainer() {
   const emojiPickerRef = useRef(null);
   const [isSenderTyping, setIsSenderTyping] = useState(null);
   const [isReceiverTyping, setIsReceiverTyping] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
   const { data: userProfileRes } = useGetProfileQuery();
-  console.log(userProfileRes);
 
   // Function to handle the file input click
   const handleFileInputClick = () => {
@@ -65,12 +68,14 @@ export default function ChatContainer() {
     setValue("message", currentMessage + emoji);
   };
 
-  // Set chat ID
-  const chatId = useMemo(() => {
-    if (messages?.length > 0) {
-      return messages[0]?.chat;
+  // Set block status
+  useEffect(() => {
+    if (userProfileRes?.data?.isMessageBlock) {
+      return setIsBlocked(true);
     }
-  }, [messages]);
+
+    setIsBlocked(false);
+  }, [userProfileRes]);
 
   // Scroll to bottom of chat box
   useEffect(() => {
@@ -95,6 +100,12 @@ export default function ChatContainer() {
       });
     };
   }, [socket, userId]);
+
+  const chatId = useMemo(() => {
+    if (messages?.length > 0) {
+      return messages[0]?.chat;
+    }
+  }, [messages]);
 
   // -------------------- Check if admin is online --------------------
   const onlineUserHandler = (response) => {
@@ -141,6 +152,13 @@ export default function ChatContainer() {
         setIsLoading(false);
       });
     };
+  }, [socket, userId]);
+
+  // ------------------ Emit `seen` event ------------------
+  useEffect(() => {
+    if (socket && userId) {
+      socket?.emit("seen", { chatId });
+    }
   }, [socket, userId]);
 
   // Send message
@@ -213,6 +231,34 @@ export default function ChatContainer() {
     }
   }, [isSenderTyping, socket, chatReceiverId]);
 
+  // ----------------- Listen to block/unblock event to check if user is blocked -----------------
+  const blockUnblockHandler = (res) => {
+    if (res?.data?.isMessageBlock) {
+      return setIsBlocked(true);
+    }
+
+    setIsBlocked(false);
+  };
+  useEffect(() => {
+    if (socket && userId) {
+      socket.on(`block::${userId}`, blockUnblockHandler);
+    }
+
+    return () => {
+      socket?.off(`block::${userId}`, blockUnblockHandler);
+    };
+  }, [socket, userId]);
+
+  useEffect(() => {
+    if (socket && userId) {
+      socket.on(`unblock::${userId}`, blockUnblockHandler);
+    }
+
+    return () => {
+      socket?.off(`unblock::${userId}`, blockUnblockHandler);
+    };
+  }, [socket, userId]);
+
   // Image preview
   const [imgPreviews, setImgPreviews] = useState([]);
   useEffect(() => {
@@ -236,7 +282,7 @@ export default function ChatContainer() {
               alt="United Threads logo"
               height={100}
               width={100}
-              className="h-16 w-16 rounded-full border border-primary-black/30 p-1"
+              className=" "
             />
 
             <div className="lg:flex-grow">
@@ -244,17 +290,24 @@ export default function ChatContainer() {
                 United Threads
               </h3>
 
-              <div className="flex-center-start gap-x-1">
-                {/* Active/Online Indicator */}
-                <div
-                  className={cn(
-                    "h-2 w-2 rounded-full",
-                    isReceiverOnline ? "bg-green-500" : "bg-yellow-500",
-                  )}
-                />
-                <p className="text-muted-foreground text-sm font-medium">
-                  {isReceiverOnline ? "Online" : "Offline"}
-                </p>
+              <div className="flex-center-start gap-x-3">
+                <div className="flex-center-start gap-x-1">
+                  {/* Active/Online Indicator */}
+                  <div
+                    className={cn(
+                      "h-2 w-2 rounded-full",
+                      isReceiverOnline ? "bg-green-500" : "bg-yellow-500",
+                    )}
+                  />
+                  <p className="text-muted-foreground text-sm font-medium">
+                    {isReceiverOnline ? "Online" : "Offline"}
+                  </p>
+                </div>
+                {isReceiverTyping && (
+                  <span className="flex-center-start text-sm font-semibold text-primary-black/50">
+                    Typing... <Pencil size={13} className="ml-2" />
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -282,12 +335,6 @@ export default function ChatContainer() {
                         previousMessage={index > 0 ? messages[index - 1] : null}
                       />
                     ))}
-
-                    {isReceiverTyping && (
-                      <div className={cn("my-5 ml-12 h-10 w-32 rounded-xl")}>
-                        <TypingLottie />
-                      </div>
-                    )}
                   </>
                 ) : (
                   <div className="flex-center min-h-[65vh] w-full gap-x-2 text-2xl font-bold">
@@ -300,110 +347,139 @@ export default function ChatContainer() {
           </div>
         </div>
 
-        <div>
-          {/* Image preview */}
-          {imgPreviews?.length > 0 && (
-            <div className="border-b-none relative rounded-2xl border-x border-t border-primary-black p-2 lg:w-[89%]">
-              <button
-                className="absolute right-1 top-1 rounded-full bg-danger p-1 text-white"
-                onClick={() => {
-                  setImages(null);
-                  setImgPreviews([]);
-                  fileInputRef.current.value = null;
-                }}
-              >
-                <X size={16} />
-              </button>
+        {/* Chat Input Form */}
+        {isBlocked ? (
+          <div>
+            <Separator className="mb-4 w-full bg-primary-black/50" />
+            <div className="text-center">
+              <h4 className="text-lg font-bold">
+                You are <span className="text-danger">blocked</span> by the
+                Administrator
+              </h4>
+              <p className="text-primary-black/60">
+                Please contact{" "}
+                <Link href="/contact" className="font-bold underline">
+                  here
+                </Link>{" "}
+                for more information
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {/* Image preview */}
+            {imgPreviews?.length > 0 && (
+              <div className="border-b-none relative rounded-2xl border-x border-t border-primary-black p-2 lg:w-[89%]">
+                <button
+                  className="absolute right-1 top-1 rounded-full bg-danger p-1 text-white"
+                  onClick={() => {
+                    setImages(null);
+                    setImgPreviews([]);
+                    fileInputRef.current.value = null;
+                  }}
+                >
+                  <X size={16} />
+                </button>
 
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-3 lg:grid-cols-7">
-                {imgPreviews?.map((imgPreview) => (
-                  <Image
-                    key={imgPreview}
-                    src={imgPreview}
-                    alt="image preview"
-                    height={250}
-                    width={250}
-                    className="h-[120px] w-auto rounded-2xl"
-                  />
-                ))}
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-3 lg:grid-cols-7">
+                  {imgPreviews?.map((imgPreview) => (
+                    <Image
+                      key={imgPreview}
+                      src={imgPreview}
+                      alt="image preview"
+                      height={250}
+                      width={250}
+                      className="h-[120px] w-auto rounded-2xl"
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <form
-            onSubmit={handleSubmit(handleSendMsg)}
-            className="flex-center gap-x-4"
-          >
-            {/* Message Input */}
-            <div className="relative flex-grow">
-              <Input
-                placeholder="Type a message"
-                type="text"
-                className={cn(
-                  "w-full rounded-full border-[2px] border-primary-black bg-transparent px-4 py-6 pr-14 text-lg font-medium text-primary-black",
-                  errors?.message && "outline-red-500",
-                )}
-                {...register("message", {
-                  required: imgPreviews ? false : true,
-                })}
-                onFocus={() => setIsSenderTyping(true)}
-                onBlur={() => setIsSenderTyping(false)}
-              />
+            {isReceiverTyping && (
+              <div className="mb-5 mr-auto max-w-max">
+                <TypingLottie />
+              </div>
+            )}
 
-              {/* Send Button */}
-              <button
-                disabled={isLoading}
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border-none bg-black p-2.5 text-primary-white shadow-none disabled:text-gray-400"
-              >
-                {isLoading ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : (
-                  <SendHorizontal size={18} />
-                )}
-              </button>
-            </div>
-
-            {/* Buttons */}
-            {/* File Input */}
-            <button
-              type="button"
-              disabled={isLoading}
-              className="rounded-full bg-slate-200 p-3 disabled:text-gray-400"
-              onClick={handleFileInputClick}
+            <form
+              onSubmit={handleSubmit(handleSendMsg)}
+              className="flex-center gap-x-4"
             >
-              <input
-                type="file"
-                ref={fileInputRef}
-                multiple={true}
-                className="hidden"
-                onChange={(e) => {
-                  setImages([...e.target.files]);
-                }}
-              />
+              {/* Message Input */}
+              <div className="relative flex-grow">
+                <Input
+                  placeholder="Type a message"
+                  type="text"
+                  className={cn(
+                    "w-full rounded-full border-[2px] border-primary-black bg-transparent px-4 py-6 pr-14 text-lg font-medium text-primary-black",
+                    errors?.message && "outline-red-500",
+                  )}
+                  {...register("message", {
+                    required: imgPreviews ? false : true,
+                  })}
+                  onFocus={() => setIsSenderTyping(true)}
+                  onBlur={() => setIsSenderTyping(false)}
+                />
 
-              <Images size={20} />
-            </button>
+                {/* Send Button */}
+                <button
+                  disabled={isLoading}
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border-none bg-black p-2.5 text-primary-white shadow-none disabled:text-gray-400"
+                >
+                  {isLoading ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <SendHorizontal size={18} />
+                  )}
+                </button>
+              </div>
 
-            {/* Emoji */}
-            <div className="relative">
+              {/* Buttons */}
+              {/* File Input */}
               <button
                 type="button"
+                disabled={isLoading}
                 className="rounded-full bg-slate-200 p-3 disabled:text-gray-400"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                onClick={handleFileInputClick}
               >
-                <SmilePlus size={20} />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  multiple={true}
+                  className="hidden"
+                  onChange={(e) => {
+                    setImages([...e.target.files]);
+                  }}
+                />
+
+                <Images size={20} />
               </button>
 
-              <div ref={emojiPickerRef} className="absolute bottom-16 right-0">
-                <EmojiPicker
-                  open={showEmojiPicker}
-                  onEmojiClick={handleEmojiClick}
-                />
+              {/* Emoji */}
+              <div className="relative">
+                <button
+                  type="button"
+                  className="rounded-full bg-slate-200 p-3 disabled:text-gray-400"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                >
+                  <SmilePlus size={20} />
+                </button>
+
+                <div
+                  ref={emojiPickerRef}
+                  className="absolute bottom-16 right-0"
+                >
+                  <EmojiPicker
+                    open={showEmojiPicker}
+                    onEmojiClick={handleEmojiClick}
+                  />
+                </div>
               </div>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

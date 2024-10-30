@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Instagram } from "lucide-react";
 import { Twitter } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Mail } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -37,17 +38,14 @@ export default function Footer() {
           {/* Center */}
           <div className="space-y-6 lg:w-[30%]">
             <h5 className="text-lg font-semibold">
-              Subscribe to stay tuned for latest updates. Let&apos;s do it!
+              Subscribe to stay tuned for latest updates. <br />
+              Let&apos;s do it!
             </h5>
 
             <div className="flex-center-start gap-x-2">
               <p className="flex rounded-lg bg-primary-black p-3 text-center text-sm text-primary-white">
-                hello@theunitedthreads.com
+                <Mail size={18} className="mr-2" /> hello@theunitedthreads.com
               </p>
-
-              <Button className="rounded-lg border bg-primary-white px-5 py-[21px] text-primary-black hover:bg-primary-white">
-                Email Us
-              </Button>
             </div>
           </div>
 

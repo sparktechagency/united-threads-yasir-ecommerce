@@ -53,7 +53,6 @@ export default function ShopProductsFilter() {
 
   // ============ Get size & category selector from context ============
   const {
-    searchText,
     setSearchText,
     setSelectedCategory,
     setSelectedSize,
@@ -82,6 +81,8 @@ export default function ShopProductsFilter() {
   useEffect(() => {
     setSelectedCategory(categoryIdFromSearchUrl);
   }, [categoryIdFromSearchUrl]);
+
+  console.log(sizes);
 
   return (
     <div className="pb-10">
@@ -137,7 +138,10 @@ export default function ShopProductsFilter() {
                         role="button"
                         size={18}
                         className="absolute -left-8 top-1/2 -translate-y-1/2"
-                        onClick={() => setSelectedCategory("")}
+                        onClick={() => {
+                          setSelectedCategory("");
+                          setCategoryIdFromSearchUrl("");
+                        }}
                       />
                     )}
                     <motion.button
@@ -184,7 +188,7 @@ export default function ShopProductsFilter() {
           />
         ) : (
           <>
-            {sizeExpanded && sizes?.length > 0 && (
+            {sizeExpanded && (
               <motion.div
                 className="my-5 flex w-full flex-col items-start gap-y-3 px-2"
                 variants={fadeVariants}
@@ -212,7 +216,7 @@ export default function ShopProductsFilter() {
                       onClick={() => setSelectedSize(size)}
                     >
                       <p>{size}</p>
-                      <p>{sizes[size]?.productCount || 0}</p>
+                      <p>{(sizes && sizes[size]?.productCount) || 0}</p>
                     </motion.button>
                   </div>
                 ))}

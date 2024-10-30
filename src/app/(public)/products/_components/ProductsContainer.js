@@ -14,11 +14,13 @@ const fadeUpVariants = {
   initial: {
     y: 10,
     opacity: 0,
+    filter: "blur(2px)",
   },
 
   animate: {
     y: 0,
     opacity: 1,
+    filter: "blur(0px)",
     transition: {
       stiffness: 190,
       damping: 35,

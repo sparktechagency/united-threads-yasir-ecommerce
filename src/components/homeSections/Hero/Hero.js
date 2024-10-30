@@ -1,51 +1,126 @@
+"use client";
+
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import "./Hero.css";
 import apparelDesignIllustration from "/public/images/hero/hero-illustration.png";
+import { motion } from "framer-motion";
+
+// Motion Variants
+const fadeUp = {
+  initial: {
+    y: 10,
+    opacity: 0,
+    filter: "blur(0.5px)",
+  },
+
+  animate: {
+    y: 0,
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: {
+      stiffness: 500,
+      damping: 10,
+      mass: 30,
+      staggerChildren: 0.15,
+      when: "beforeChildren",
+    },
+  },
+};
+
+const getToFullWidth = {
+  initial: {
+    width: "0",
+  },
+  animate: {
+    width: "100%",
+    transition: {
+      duration: 0.4,
+      ease: "easeInOut",
+      delay: 0.2,
+    },
+  },
+};
+
+const slideLeft = {
+  initial: {
+    y: 10,
+    opacity: 0,
+  },
+  animate: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: "easeInOut",
+    },
+  },
+};
 
 export default function Hero() {
   return (
     <div className="flex-center-between">
       {/* Left */}
-      <div className="text-primary-black lg:w-1/2">
-        <h1 className="font-extrabold lg:text-7xl lg:leading-[1.35]">
+      <motion.div
+        variants={fadeUp}
+        initial="initial"
+        animate="animate"
+        className="text-primary-black lg:w-1/2"
+      >
+        <motion.h1
+          variants={fadeUp}
+          className="font-extrabold lg:text-7xl lg:leading-[1.35]"
+        >
           Design Your Own{" "}
           <div className="relative z-10 w-max px-5 text-white">
-            <div className="absolute left-0 top-2 -z-10 h-full w-full -rotate-[1deg] bg-primary-black"></div>
+            <motion.div
+              variants={getToFullWidth}
+              className="absolute left-0 top-2 -z-10 h-full w-full -rotate-[1deg] bg-primary-black"
+            ></motion.div>
             Apparel
           </div>
-        </h1>
+        </motion.h1>
 
-        <h3 className="mb-5 mt-8 text-4xl font-medium">
+        <motion.h3 variants={fadeUp} className="mb-5 mt-8 text-4xl font-medium">
           Unleash Your Creativity
-        </h3>
-        <p className="text-lg font-medium text-secondary-1 lg:w-3/4">
+        </motion.h3>
+        <motion.p
+          variants={fadeUp}
+          className="text-lg font-medium text-secondary-1 lg:w-3/4"
+        >
           We pride ourselves in providing a curated collection of custom apparel
           designed to inspire and empower
-        </p>
+        </motion.p>
 
-        <Link href={"/products"} className="block lg:w-[43%]">
-          <button
-            className="flex-center-between hover-bubble mt-10 w-full rounded-full border border-primary-black bg-transparent px-4 py-2 text-lg text-primary-black"
-            id="request-quote-btn"
-          >
-            Request to quote
-            <div className="rounded-full border border-primary-black p-[6px]">
-              <ArrowRight size={20} className="-rotate-45" />
-            </div>
-          </button>
-        </Link>
-      </div>
+        <motion.div variants={fadeUp} className="lg:w-[43%]">
+          <Link href={"/products"} className="block w-full">
+            <button
+              className="flex-center-between hover-bubble mt-10 w-full rounded-full border border-primary-black bg-transparent px-4 py-2 text-lg text-primary-black"
+              id="request-quote-btn"
+            >
+              Request to quote
+              <div className="rounded-full border border-primary-black p-[6px]">
+                <ArrowRight size={20} className="-rotate-45" />
+              </div>
+            </button>
+          </Link>
+        </motion.div>
+      </motion.div>
 
       {/* Right */}
-      <div className="lg:w-1/2">
+      <motion.div
+        variants={slideLeft}
+        initial="initial"
+        animate="animate"
+        className="lg:w-1/2"
+      >
         <Image
           src={apparelDesignIllustration}
           alt="Hero section banner image"
           className="lg:ml-auto lg:w-[90%]"
         />
-      </div>
+      </motion.div>
     </div>
   );
 }

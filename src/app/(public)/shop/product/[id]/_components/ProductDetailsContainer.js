@@ -170,7 +170,7 @@ export default function ProductDetailsContainer({ id }) {
                       <Button
                         key={size}
                         className={cn(
-                          "hover:bg-foundation-orange-normal h-8 w-8 rounded-full font-semibold shadow md:h-9 md:w-9 lg:h-10 lg:w-10",
+                          "hover:bg-foundation-orange-normal h-8 w-8 rounded-full text-[10px] font-semibold shadow md:h-9 md:w-9 md:text-[13px] lg:h-10 lg:w-10",
                           selectedSize === size
                             ? "border-none bg-primary-black text-primary-white"
                             : "border border-black/50 bg-transparent text-black",
@@ -196,7 +196,7 @@ export default function ProductDetailsContainer({ id }) {
                         key={clr}
                         style={{ backgroundColor: `${clr}` }}
                         className={cn(
-                          `h-8 w-8 rounded-full md:h-9 md:w-9 lg:h-10 lg:w-10`,
+                          `h-8 w-8 rounded-full md:h-10 md:w-10`,
                           selectedClr === clr
                             ? "border-4 border-yellow-600 p-2"
                             : "border-none p-0",

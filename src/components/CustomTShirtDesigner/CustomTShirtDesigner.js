@@ -35,15 +35,12 @@ import {
 import { useGetSingleQuoteProductQuery } from "@/redux/api/Products Page Api/quoteProductsApi";
 import { useParams } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
 import CountryStateCitySelector from "../CountryStateCitySelector/CountryStateCitySelector";
 import { ErrorModal } from "@/utils/customModal";
 import { errorToast, successToast } from "@/utils/customToast";
 import { useCreateQuoteMutation } from "@/redux/api/quoteApi";
 import { Sparkles } from "lucide-react";
 import { Images } from "lucide-react";
-import tempImg from "./front.jpg";
-import { X } from "lucide-react";
 import { Tag } from "antd";
 import { SendHorizontal } from "lucide-react";
 import { useGetLibraryQuery } from "@/redux/api/libraryApi";
@@ -55,9 +52,8 @@ import { Trash } from "lucide-react";
 import fileDownload from "js-file-download";
 import axios from "axios";
 import EmptyContainer from "../EmptyContainer/EmptyContainer";
-import { Share } from "lucide-react";
-import { Share2 } from "lucide-react";
-import { message } from "antd";
+import { X } from "lucide-react";
+import { useGetProfileQuery } from "@/redux/api/userApi";
 
 // Motion variants
 const fadeVariants = {
@@ -119,7 +115,7 @@ export default function CustomTShirtDesigner() {
 
   // ================= Get Library api handler =========================
   const { data: libraryRes, isLoading: libraryLoading } = useGetLibraryQuery();
-  console.log(libraryRes);
+
   const library = libraryRes?.data || [];
 
   // ================= Get product api handler ======================
@@ -131,6 +127,10 @@ export default function CustomTShirtDesigner() {
     }
     return {};
   }, [productDataRes]);
+
+  // ================= Get user profile data ======================
+  const { data: userProfileRes, refetch: promptRefetch } = useGetProfileQuery();
+  const promptCount = userProfileRes?.data?.promptCount || 0;
 
   // Initialize active image on canvas
   useEffect(() => {
@@ -465,66 +465,6 @@ export default function CustomTShirtDesigner() {
   };
 
   // ================== Set form default values ======================= //
-  // const handleExportImageOnSave = () => {
-  //   const tempCanvas = document.createElement("canvas");
-  //   tempCanvas.width = canvas.getWidth();
-  //   tempCanvas.height = canvas.getHeight();
-  //   const context = tempCanvas.getContext("2d");
-
-  //   const imgElement = new window.Image();
-  //   imgElement.crossOrigin = "anonymous";
-  //   imgElement.src = activeImage;
-
-  //   imgElement.onload = () => {
-  //     context.fillStyle = "#FFFFFF";
-  //     context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-  //     context.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
-
-  //     if (overlayColor) {
-  //       context.globalCompositeOperation = "lighten";
-  //       context.fillStyle = overlayColor;
-  //       context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-  //       context.globalCompositeOperation = "lighten";
-  //     }
-
-  //     const canvasDataUrl = canvas.toDataURL();
-  //     const canvasImage = new window.Image();
-  //     canvasImage.src = canvasDataUrl;
-  //     canvasImage.onload = () => {
-  //       context.drawImage(canvasImage, 0, 0);
-  //       const finalImageUrl = tempCanvas.toDataURL();
-
-  //       // Convert image url to Blob for file conversion
-  //       const blob = base64ToBlob(finalImageUrl);
-
-  //       // Convert Blob to File
-  //       const file = new File([blob], `tshirt-${activeImageSide}.png`, {
-  //         type: "image/png",
-  //       });
-
-  //       if (activeImageSide === "front") {
-  //         setSavedFrontImageUrl(finalImageUrl);
-  //         setFrontImageFile(file);
-
-  //         successToast("Image saved successfully!");
-  //       } else {
-  //         setSavedBackImageUrl(finalImageUrl);
-  //         setBackImageFile(file);
-
-  //         successToast("Image saved successfully!");
-  //       }
-
-  //       // Clear the canvas but retain functionality
-  //       canvas.clear();
-  //     };
-  //   };
-
-  //   imgElement.onerror = (error) => {
-  //     console.error(error);
-  //     errorToast("Failed to load image. Check CORS settings.", toastId);
-  //   };
-  // };
 
   // Set form default value
   useEffect(() => {
@@ -551,6 +491,8 @@ export default function CustomTShirtDesigner() {
       const res = await generateWithAi({ prompt }).unwrap();
       if (res?.success) {
         setAiGeneratedImage(res?.data[0]);
+
+        promptRefetch();
       }
     } catch (error) {
       errorToast(error?.data?.message || error?.error);
@@ -728,8 +670,8 @@ export default function CustomTShirtDesigner() {
                       {/* Prompt Count */}
                       <div className="">
                         <Tag color="green" className="rounded-full">
-                          10 Prompts{" "}
-                          <span className="text-[10px] font-medium">/day</span>
+                          {10 - Number(promptCount)} Prompts{" "}
+                          <span className="text-[10px] font-medium">/24hr</span>
                         </Tag>
                       </div>
                       {/* Close Button */}

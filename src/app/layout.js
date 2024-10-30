@@ -60,7 +60,12 @@ export default function RootLayout({ children }) {
 
           <Footer />
 
-          <Toaster position="bottom-center" richColors duration={1800} />
+          <Toaster
+            position="bottom-center"
+            richColors
+            duration={1800}
+            closeButton
+          />
         </Providers>
       </body>
     </html>

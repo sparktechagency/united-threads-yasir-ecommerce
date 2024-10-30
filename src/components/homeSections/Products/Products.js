@@ -104,7 +104,7 @@ export default function Products() {
       )}
 
       <Link href={"/shop"} className="mx-auto mt-16 block lg:w-[40%]">
-        <button className="group w-full rounded-xl border border-primary-black bg-white px-4 py-3 text-center text-primary-black transition-all duration-300 ease-in-out hover:bg-primary-black hover:text-primary-white">
+        <button className="group w-full rounded-xl border border-primary-black bg-white px-4 py-3 text-center font-medium text-primary-black transition-all duration-300 ease-in-out hover:bg-primary-black hover:text-primary-white">
           Explore Our Shop
         </button>
       </Link>

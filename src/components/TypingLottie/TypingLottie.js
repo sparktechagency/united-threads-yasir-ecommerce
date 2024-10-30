@@ -14,5 +14,9 @@ export default function TypingLottie() {
     },
   };
 
-  return <Lottie options={lottieSettings} speed={0.5} />;
+  return (
+    <div className="h-[20px] w-[100px]">
+      <Lottie options={lottieSettings} speed={1} />
+    </div>
+  );
 }

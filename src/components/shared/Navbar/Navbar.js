@@ -32,6 +32,7 @@ import { Badge } from "antd";
 import { useSocket } from "@/context/SocketContextApi";
 import { useGetProfileQuery } from "@/redux/api/userApi";
 import { transformNameInitials } from "@/utils/transformNameInitials";
+import * as NProgress from "nprogress";
 
 // Links
 const LINKS = [
@@ -68,7 +69,8 @@ export default function Navbar() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { socket } = useSocket();
-  const [showNotificationDot, setShowNotificationDot] = useState(false);
+  const [showNotificationCount, setShowNotificationCount] = useState(0);
+  const [showMsgNotificationDot, setShowMsgNotificationDot] = useState(true);
   const pathName = usePathname();
 
   const handleLogout = () => {
@@ -84,9 +86,8 @@ export default function Navbar() {
   // =================== Listen to `new-message`socket event for notification ============
   const newMessageHandler = async (res) => {
     console.log(res);
-
     if (res?.sender !== userId && pathName !== "/chat" && res?.seen === false) {
-      setShowNotificationDot(true);
+      setShowMsgNotificationDot(true);
     }
   };
 
@@ -98,12 +99,35 @@ export default function Navbar() {
     return () => {
       socket?.off(`new-message::${userId}`, newMessageHandler);
     };
-  }, [socket, userId]);
+  });
 
-  // Clear notification dot if pathname /chat
+  // ================== Listen to `notification::userId` notifications ============
+  const notificationCountHandler = async (res) => {
+    setShowNotificationCount(res?.meta?.total);
+
+    if (res?.meta?.total > 0) {
+      toast.info(res?.data?.title, {
+        description: res?.data?.message,
+        duration: 2500,
+        position: "top-right",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (socket && userId) {
+      socket.on(`notification::${userId}`, notificationCountHandler);
+    }
+
+    return () => {
+      socket?.off(`notification::${userId}`, notificationCountHandler);
+    };
+  });
+
+  // Clear message notification dot if pathname /chat
   useEffect(() => {
     if (pathName === "/chat") {
-      setShowNotificationDot(false);
+      setShowMsgNotificationDot(false);
     }
   }, [pathName]);
 
@@ -135,30 +159,36 @@ export default function Navbar() {
         <div className="flex w-[20%] items-center justify-center">
           {userId ? (
             <div className="flex items-center gap-x-6">
-              {/* <Link
+              {/* Notification */}
+              <Link
                 href="/notification"
                 className="relative"
                 title="notifications"
               >
-                <Bell size={24} />
-                <Badge className="flex-center absolute -right-2 -top-2 h-5 w-2 rounded-full bg-red-600 text-xs">
-                  4
+                <Badge
+                  count={showNotificationCount}
+                  showZero={false}
+                  overflowCount={10}
+                >
+                  <Bell />
                 </Badge>
-              </Link> */}
+              </Link>
 
+              {/* Message */}
               <button
                 onClick={() => {
+                  NProgress.start(); // to show top progress bar
                   router.push("/chat");
-                  setShowNotificationDot(false);
+                  setShowMsgNotificationDot(false);
                 }}
                 className="relative"
                 title="notifications"
               >
                 <Badge
-                  dot={showNotificationDot}
+                  dot={showMsgNotificationDot}
                   style={{ height: "10px", width: "10px" }}
                 >
-                  <MessageSquareText size={24} />
+                  <MessageSquareText />
                 </Badge>
               </button>
 

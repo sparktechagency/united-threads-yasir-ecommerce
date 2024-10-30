@@ -44,7 +44,9 @@ export default function ShopProductsCard({ product }) {
               ></path>
             </svg>
 
-            <p className="pt-1 font-medium">({product?.averageRating}/5)</p>
+            <p className="pt-1 font-medium">
+              {product?.averageRating}({product?.ratingCount})
+            </p>
           </div>
         )}
       </div>
