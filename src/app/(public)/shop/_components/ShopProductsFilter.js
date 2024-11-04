@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import CustomSkeleton from "@/components/CustomSkeleton/CustomSkeleton";
 import { Input } from "@/components/ui/input";

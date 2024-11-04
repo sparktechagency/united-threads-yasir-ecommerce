@@ -18,9 +18,8 @@ export default function OwnerMsgCard({ message }) {
         <div className="mb-2 grid grid-cols-2 gap-2 rounded-xl border p-2">
           <Image.PreviewGroup>
             {message?.file?.map((img) => (
-              <div className="relative">
+              <div className="relative" key={img}>
                 <Image
-                  key={img}
                   src={img}
                   alt={img}
                   className="!h-[100px] !w-[100px] rounded-xl border border-primary-black/50 md:!h-[150px] md:!w-[150px] lg:!h-[200px] lg:!w-[200px]"

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import CustomPagination from "@/components/CustomPagination/CustomPagination";

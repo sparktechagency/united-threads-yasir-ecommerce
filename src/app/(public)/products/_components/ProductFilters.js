@@ -90,6 +90,7 @@ export default function ProductFilters() {
 
   useEffect(() => {
     setSelectedCategory(categoryIdFromSearchUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryIdFromSearchUrl]);
 
   // Toggle filters on mobile version

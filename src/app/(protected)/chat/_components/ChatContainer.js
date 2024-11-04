@@ -159,7 +159,7 @@ export default function ChatContainer() {
     if (socket && userId) {
       socket?.emit("seen", { chatId });
     }
-  }, [socket, userId]);
+  }, [socket, userId, chatId]);
 
   // Send message
   const handleSendMsg = async (data) => {

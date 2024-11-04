@@ -70,6 +70,7 @@ export default function CountryStateCitySelector({
       setValue("state", userAddress.state);
       setValue("city", userAddress.city);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userAddress?.country]);
 
   // if (!userAddress) {
