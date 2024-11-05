@@ -5,7 +5,7 @@ export async function generateMetadata({ params }) {
   const { id } = params;
 
   const res = await fetch(
-    `${getBackendBaseUrl()}/api/v1/product/single-product/${id}`,
+    `${getBackendBaseUrl()}/product/single-product/${id}`,
   ).then((res) => res.json());
 
   return {

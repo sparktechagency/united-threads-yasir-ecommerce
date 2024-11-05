@@ -75,7 +75,7 @@ export default function ProductsContainer() {
         variants={fadeUpVariants}
         initial="initial"
         animate="animate"
-        className="grid grid-cols-1 gap-y-7 md:grid-cols-2 md:gap-7 lg:gap-y-0 2xl:grid-cols-3"
+        className="grid grid-cols-1 gap-y-7 md:grid-cols-2 md:gap-7 2xl:grid-cols-3"
       >
         {quoteProducts?.map((product) => (
           <motion.div key={product?._id} variants={fadeUpVariants}>
