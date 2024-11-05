@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
 import Link from "next/link";
 import { Tag } from "antd";
+import pantoneToHex from "@/utils/pantoneToHex";
 
 export default function ShopProductsCard({ product }) {
   return (
@@ -64,7 +65,7 @@ export default function ShopProductsCard({ product }) {
             >
               <div
                 style={{
-                  backgroundColor: color?.includes("#") ? color : `#${color}`,
+                  backgroundColor: pantoneToHex(color),
                 }}
                 className="h-5 w-5 rounded-full"
               />
