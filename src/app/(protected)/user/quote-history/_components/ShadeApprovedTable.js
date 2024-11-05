@@ -22,6 +22,9 @@ import { useGetQuotesQuery } from "@/redux/api/quoteApi";
 import { format } from "date-fns";
 import QuoteApprovedModal from "./QuoteApprovedModal";
 import CustomPagination from "@/components/CustomPagination/CustomPagination";
+import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
+import { Button } from "@/components/ui/button";
+import pantoneToHex from "@/utils/pantoneToHex";
 
 const TABLE_HEADERS = [
   "Order ID",
@@ -101,45 +104,44 @@ export default function ShadeApprovedTable() {
               key={quote?._id}
               className="border-b border-primary-black/15"
             >
-              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
-                #{quote?._id}
-              </TableCell>
-              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
+              <TableCell className="py-5 font-medium">#{quote?._id}</TableCell>
+              <TableCell className="w-max whitespace-nowrap py-5 font-medium">
                 {quote?.name}
               </TableCell>
-              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
+              <TableCell className="w-max whitespace-nowrap py-5 font-medium">
                 {quote?.category?.name}
               </TableCell>
 
-              <TableCell className="flex w-full items-center gap-x-2 whitespace-nowrap py-5 font-medium">
+              <TableCell className="flex w-max items-center gap-x-2 whitespace-nowrap py-8 font-medium">
                 <div
                   className="h-5 w-5 rounded-full"
                   style={{
-                    backgroundColor: quote?.hexColor?.includes("#")
-                      ? quote?.hexColor
-                      : `#${quote?.hexColor}`,
+                    backgroundColor: pantoneToHex(quote?.pantoneColor),
                   }}
                 />
 
                 {quote?.pantoneColor}
               </TableCell>
 
-              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
+              <TableCell className="w-max whitespace-nowrap py-5 font-medium">
                 {quote?.createdAt &&
                   format(quote?.createdAt, "dd MM yyyy, hh:mm a")}
               </TableCell>
 
-              <TableCell className="w-full whitespace-nowrap py-5 font-medium">
+              <TableCell className="w-max whitespace-nowrap py-5 font-medium">
                 <div className="flex-center-start gap-x-4">
                   <div>
-                    <button
+                    <Button
+                      variant="success"
                       onClick={() => {
                         setShowApprovedQuoteModal(!showApprovedQuoteModal);
                         setSelectedQuote(quote);
                       }}
+                      className="group gap-x-2"
                     >
-                      <EyeIcon size={20} color="#292929" />
-                    </button>
+                      {/* <EyeIcon size={20} color="#292929" /> */}
+                      Pay <AnimatedArrow arrowSize={16} />
+                    </Button>
                   </div>
 
                   {/* <button className="relative">

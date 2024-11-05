@@ -32,6 +32,7 @@ import {
 } from "@/utils/sessionStorage";
 import { errorToast } from "@/utils/customToast";
 import { sizeSorter } from "@/utils/sizeSorter";
+import pantoneToHex from "@/utils/pantoneToHex";
 
 export default function ProductDetailsContainer({ id }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -194,7 +195,7 @@ export default function ProductDetailsContainer({ id }) {
                     {product?.colorsPreferences?.map((clr) => (
                       <Button
                         key={clr}
-                        style={{ backgroundColor: `${clr}` }}
+                        style={{ backgroundColor: `${pantoneToHex(clr)}` }} // convert pantone to hex for bg color
                         className={cn(
                           `h-8 w-8 rounded-full md:h-10 md:w-10`,
                           selectedClr === clr
@@ -204,6 +205,7 @@ export default function ProductDetailsContainer({ id }) {
                         onClick={() => {
                           setSelectedClr(clr);
                         }}
+                        title={clr}
                       ></Button>
                     ))}
                   </div>

@@ -55,6 +55,12 @@ import axios from "axios";
 import EmptyContainer from "../EmptyContainer/EmptyContainer";
 import { X } from "lucide-react";
 import { useGetProfileQuery } from "@/redux/api/userApi";
+import pantoneToHex from "@/utils/pantoneToHex";
+import { useOnClickOutside } from "usehooks-ts";
+import { useMediaQuery } from "usehooks-ts";
+import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Edit } from "lucide-react";
 
 // Motion variants
 const fadeVariants = {
@@ -84,10 +90,10 @@ export default function CustomTShirtDesigner() {
     setValue,
   } = useForm();
 
-  const [showAiGenerateBox, setShowAiGenerateBox] = useState(false);
   const [aiGeneratedImageLink, setAiGeneratedImage] = useState("");
-  const [showLibraryBox, setShowLibraryBox] = useState(false);
+
   const [showSteps, setShowSteps] = useState(true);
+  const [showLeftToolBox, setShowLeftToolBox] = useState(false);
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
@@ -110,7 +116,17 @@ export default function CustomTShirtDesigner() {
   const [frontImageFile, setFrontImageFile] = useState("");
   const [savedBackImageUrl, setSavedBackImageUrl] = useState("");
   const [backImageFile, setBackImageFile] = useState("");
+
+  const aiGenerateBoxRef = useRef(null);
+  const [showAiGenerateBox, setShowAiGenerateBox] = useState(false);
   const aiPromptRef = useRef(null);
+
+  const libraryBoxRef = useRef(null);
+  const [showLibraryBox, setShowLibraryBox] = useState(false);
+
+  // Make Generate With Ai and Library box invisible on outside click
+  useOnClickOutside(aiGenerateBoxRef, () => setShowAiGenerateBox(false));
+  useOnClickOutside(libraryBoxRef, () => setShowLibraryBox(false));
 
   // =============== Send quote api handler =============
   const [createQuote, { isLoading: isQuoteLoading }] = useCreateQuoteMutation();
@@ -586,13 +602,37 @@ export default function CustomTShirtDesigner() {
     }
   };
 
+  // Show warning prompt when using mobile devices
+
+  const isSmallDevice = useMediaQuery("(max-width: 768px)");
+  useEffect(() => {
+    if (isSmallDevice) {
+      alert(
+        "This page is not optimized for mobile devices. We highly recommend using a computer or a laptop for better accessibility. If at all you still need to use it with mobile phone, please enable desktop mode in your browser. Thank you",
+      );
+    }
+  }, [isSmallDevice]);
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSendQuoteSubmit)} className="space-y-8">
-        <div className="flex-start-between">
+        <div className="relative flex flex-col items-center lg:flex-row lg:items-start lg:justify-between">
           {/* Left */}
-          <div className="lg:w-[25%]">
-            <div className="flex w-max flex-col items-center gap-y-7 rounded bg-lightGray p-3 text-primary-black">
+          {isSmallDevice && (
+            <div className="absolute -left-5 -top-5 z-[9999]">
+              <Edit
+                size={20}
+                onClick={() => setShowLeftToolBox(!showLeftToolBox)}
+              />
+            </div>
+          )}
+          <div
+            className={cn(
+              "absolute -left-0 lg:relative lg:block lg:w-[25%]",
+              isSmallDevice && !showLeftToolBox ? "hidden" : "block",
+            )}
+          >
+            <div className="flex w-max flex-col items-center gap-y-7 rounded bg-gray-200 p-3 text-primary-black lg:bg-lightGray">
               {/* Add Text */}
               <Tooltip placement="right" title="Add Text">
                 <button
@@ -667,6 +707,7 @@ export default function CustomTShirtDesigner() {
                       ? "visible opacity-100"
                       : "invisible opacity-0",
                   )}
+                  ref={aiGenerateBoxRef}
                 >
                   {/* Generated Image */}
                   <div className="flex h-full flex-col">
@@ -791,6 +832,7 @@ export default function CustomTShirtDesigner() {
                       ? "visible opacity-100"
                       : "invisible opacity-0",
                   )}
+                  ref={libraryBoxRef}
                 >
                   <div style={{ height: "calc(100% - 70px)" }}>
                     {/* Close Button */}
@@ -864,9 +906,12 @@ export default function CustomTShirtDesigner() {
               <div className="h-[500px] w-3/4 animate-pulse rounded bg-slate-200" />
             </div>
           ) : (
-            <div className="lg:w-[50%]">
-              <div id="tshirt-div" className="group relative w-3/4 bg-white">
-                <div className="relative">
+            <div className="w-full lg:w-[50%]">
+              <div
+                id="tshirt-div"
+                className="group relative w-full bg-white lg:w-3/4"
+              >
+                <div className="relative h-full">
                   <Image
                     src={
                       activeImageSide === "front"
@@ -876,7 +921,7 @@ export default function CustomTShirtDesigner() {
                     alt={productData?.name}
                     height={1500}
                     width={1500}
-                    className="mx-auto block h-[500px] w-auto"
+                    className="mx-auto block h-[300px] w-auto lg:h-[500px]"
                     priority={true}
                   />
 
@@ -890,7 +935,7 @@ export default function CustomTShirtDesigner() {
                   ></div>
                 </div>
 
-                <div className="absolute inset-0 h-[500px] border border-dashed border-black">
+                <div className="absolute inset-0 h-[300px] border border-dashed border-black lg:h-[500px]">
                   <canvas id="tshirt-canvas" ref={canvasRef}></canvas>
                 </div>
 
@@ -905,7 +950,7 @@ export default function CustomTShirtDesigner() {
               </div>
 
               {/* Change image side buttons */}
-              <div className="my-10 flex w-3/4 items-center justify-center gap-x-5 text-primary-black">
+              <div className="my-10 flex w-full items-center justify-center gap-x-5 text-primary-black lg:w-3/4">
                 <Button
                   type="button"
                   variant="outline"
@@ -935,7 +980,7 @@ export default function CustomTShirtDesigner() {
           )}
 
           {/* Right */}
-          <div className="h-full lg:w-[30%]">
+          <div className="h-full w-full lg:w-[30%]">
             <Tabs defaultValue="options" className="w-full">
               <TabsList className="w-full py-5">
                 <TabsTrigger
@@ -1134,22 +1179,24 @@ export default function CustomTShirtDesigner() {
                         variants={fadeVariants}
                         className="mx-auto grid gap-2 rounded-b-3xl bg-lightGray px-6 py-4 lg:grid-cols-2"
                       >
-                        {productData?.colorsPreferences?.map((hex) => (
+                        {productData?.colorsPreferences?.map((pantone) => (
                           <button
                             type="button"
-                            key={hex}
+                            key={pantone}
                             className="flex-center-start gap-x-2"
-                            onClick={() => handleColorChange(hex)}
+                            onClick={() =>
+                              handleColorChange(pantoneToHex(pantone))
+                            }
                           >
-                            <div
-                              style={{ backgroundColor: hex }}
-                              className={cn(
-                                "h-5 w-5 rounded-full",
-                                overlayColor === hex &&
-                                  "border-2 border-yellow-500",
-                              )}
-                            />
-                            <h5 className="text-lg font-medium">{hex}</h5>
+                            {pantoneToHex(pantone) && (
+                              <div
+                                style={{
+                                  backgroundColor: pantoneToHex(pantone),
+                                }}
+                                className={cn("h-5 w-5 rounded-full")}
+                              />
+                            )}
+                            <h5 className="text-lg font-medium">{pantone}</h5>
                           </button>
                         ))}
                       </motion.div>

@@ -168,7 +168,7 @@ export default function Navbar() {
               {/* Notification */}
               <Link
                 href="/notification"
-                className="relative"
+                className="relative pt-1"
                 title="notifications"
               >
                 <Badge
@@ -187,7 +187,7 @@ export default function Navbar() {
                   router.push("/chat");
                   setShowMsgNotificationDot(false);
                 }}
-                className="relative"
+                className="relative pt-1"
                 title="notifications"
               >
                 <Badge
@@ -259,13 +259,14 @@ export default function Navbar() {
         <div className="block h-14 w-full px-5 md:px-10 lg:hidden">
           <div className="flex-center-between h-full w-full rounded-full bg-lightGray px-3">
             {/* Left - Menu Icon */}
-            <button
-              className="flex h-full w-[30%] items-center"
-              onClick={() => setShowMobileSidebar(true)}
-            >
-              <AlignJustify size={22} />
-            </button>
-
+            <div className="h-full w-[30%]">
+              <button
+                className="flex h-full w-max items-center"
+                onClick={() => setShowMobileSidebar(true)}
+              >
+                <AlignJustify size={22} />
+              </button>
+            </div>
             {/* Center - Logo */}
             <Link href="/" className="flex-center h-full w-1/3 md:p-8">
               <Image
@@ -284,7 +285,7 @@ export default function Navbar() {
                   {/* Notification */}
                   <Link
                     href="/notification"
-                    className="relative"
+                    className="relative pt-1"
                     title="notifications"
                   >
                     <Badge
@@ -303,7 +304,7 @@ export default function Navbar() {
                       router.push("/chat");
                       setShowMsgNotificationDot(false);
                     }}
-                    className="relative"
+                    className="relative pt-1"
                     title="notifications"
                   >
                     <Badge

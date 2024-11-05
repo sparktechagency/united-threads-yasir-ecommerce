@@ -1,11 +1,12 @@
 import Image from "next/image";
 import ModalWrapper from "@/components/shared/ModalWrapper/ModalWrapper";
+import pantoneToHex from "@/utils/pantoneToHex";
 
 export default function ShadePendingModal({ open, setOpen, quote }) {
   return (
     <ModalWrapper open={open} setOpen={setOpen}>
       <div className="mb-10">
-        <div className="flex flex-col items-center gap-x-5 gap-y-5">
+        <div className="flex flex-col items-center gap-x-5 gap-y-5 lg:flex-row">
           <div>
             <Image
               src={quote?.frontSide}
@@ -57,9 +58,7 @@ export default function ShadePendingModal({ open, setOpen, quote }) {
             <div
               className="h-5 w-5 rounded-full"
               style={{
-                backgroundColor: quote?.hexColor?.includes("#")
-                  ? quote?.hexColor
-                  : `#${quote?.hexColor}`,
+                backgroundColor: pantoneToHex(quote?.pantoneColor),
               }}
             />
             <p>{quote?.pantoneColor}</p>

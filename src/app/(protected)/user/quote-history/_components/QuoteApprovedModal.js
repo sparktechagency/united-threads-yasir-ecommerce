@@ -10,6 +10,7 @@ import { useAcceptQuoteByCustomerMutation } from "@/redux/api/quoteApi";
 import { useCreatePaymentMutation } from "@/redux/api/paymentApi";
 import { errorToast, successToast } from "@/utils/customToast";
 import { Loader } from "lucide-react";
+import pantoneToHex from "@/utils/pantoneToHex";
 
 export default function QuoteApprovedModal({ open, setOpen, quote }) {
   // ================ Accept quote api handler ===================
@@ -103,9 +104,7 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
             <div
               className="h-5 w-5 rounded-full"
               style={{
-                backgroundColor: quote?.hexColor?.includes("#")
-                  ? quote?.hexColor
-                  : `#${quote?.hexColor}`,
+                backgroundColor: pantoneToHex(quote?.pantoneColor),
               }}
             />
             <p>{quote?.pantoneColor}</p>
@@ -142,7 +141,7 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
           variant="success"
           className="rounded-full py-1 text-base font-bold"
         >
-          ${Number(quote?.quantity * quote?.price)?.toFixed(2)}
+          ${Number(quote?.price)?.toFixed(2)}
         </Badge>
       </div>
 

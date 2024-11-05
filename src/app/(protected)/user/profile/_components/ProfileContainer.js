@@ -137,7 +137,7 @@ export default function ProfileContainer() {
                   <AvatarImage src={user?.profilePicture} />
                 </Avatar>
               ) : (
-                <div className="text-foundation-orange-normal flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gray-800 text-2xl font-bold uppercase lg:h-[80px] lg:w-[80px] 2xl:h-[90px] 2xl:w-[90px]">
+                <div className="text-foundation-orange-normal flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gray-800 text-2xl font-bold uppercase text-white lg:h-[80px] lg:w-[80px] 2xl:h-[90px] 2xl:w-[90px]">
                   <p>
                     {transformNameInitials("", user?.firstName, user?.lastName)}
                   </p>
