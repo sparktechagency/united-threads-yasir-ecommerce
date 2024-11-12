@@ -25,7 +25,7 @@ export default function ContactUsPage() {
 
           <div className="flex-center-start gap-x-3">
             <Phone size={20} />
-            <p className="text-sm lg:text-lg">+1 (234) 8097</p>
+            <p className="text-sm lg:text-lg">+1 (470) 286-4400</p>
           </div>
         </div>
 
