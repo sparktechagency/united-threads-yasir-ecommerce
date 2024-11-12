@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function ContactUsPage() {
   return (
-    <div className="flex-center 2xl:max-w-3/4 mx-auto mt-28 h-screen lg:mt-32 lg:max-w-[85%] 2xl:mt-40">
+    <div className="flex-center 2xl:max-w-3/4 mx-auto mt-28 h-[75vh] lg:mt-32 lg:max-w-[85%] 2xl:mt-40">
       <div className="lg:w-1/2">
         <h1 className="text-center text-4xl font-extrabold text-primary-black lg:text-5xl 2xl:text-6xl">
           Get In Touch

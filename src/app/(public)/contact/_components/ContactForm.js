@@ -51,16 +51,18 @@ export default function ContactForm() {
             >
               First Name *
             </Label>
-            <Input
-              type="text"
-              id="firstName"
-              placeholder="Enter your first name"
-              {...register("firstName", { required: true })}
-              className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none focus:outline-none"
-            />
-            {errors.firstName && (
-              <p className="mt-1 text-danger">First Name is required</p>
-            )}
+            <div>
+              <Input
+                type="text"
+                id="firstName"
+                placeholder="Enter your first name"
+                {...register("firstName", { required: true })}
+                className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none focus:outline-none"
+              />
+              {errors.firstName && (
+                <p className="mt-1 text-danger">First Name is required</p>
+              )}
+            </div>
           </div>
 
           {/* last name */}
@@ -71,16 +73,19 @@ export default function ContactForm() {
             >
               Last Name *
             </Label>
-            <Input
-              type="text"
-              id="lastName"
-              placeholder="Enter your last name"
-              {...register("lastName", { required: true })}
-              className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
-            />
-            {errors.lastName && (
-              <p className="mt-1 text-danger">Last Name is required</p>
-            )}
+
+            <div>
+              <Input
+                type="text"
+                id="lastName"
+                placeholder="Enter your last name"
+                {...register("lastName", { required: true })}
+                className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
+              />
+              {errors.lastName && (
+                <p className="mt-1 text-danger">Last Name is required</p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -92,18 +97,21 @@ export default function ContactForm() {
           >
             Email *
           </Label>
-          <Input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            {...register("email", {
-              required: true,
-            })}
-            className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
-          />
-          {errors.email && (
-            <p className="mt-1 text-danger">Email is required</p>
-          )}
+
+          <div>
+            <Input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              {...register("email", {
+                required: true,
+              })}
+              className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
+            />
+            {errors.email && (
+              <p className="mt-1 text-danger">Email is required</p>
+            )}
+          </div>
         </div>
 
         {/* Subject */}
@@ -114,18 +122,21 @@ export default function ContactForm() {
           >
             Subject *
           </Label>
-          <Input
-            type="subject"
-            id="subject"
-            placeholder="Enter your subject of discussion"
-            {...register("subject", {
-              required: true,
-            })}
-            className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
-          />
-          {errors.subject && (
-            <p className="mt-1 text-danger">Subject is required</p>
-          )}
+
+          <div>
+            <Input
+              type="subject"
+              id="subject"
+              placeholder="Enter your subject of discussion"
+              {...register("subject", {
+                required: true,
+              })}
+              className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
+            />
+            {errors.subject && (
+              <p className="mt-1 text-danger">Subject is required</p>
+            )}
+          </div>
         </div>
 
         {/* Description */}
@@ -136,25 +147,28 @@ export default function ContactForm() {
           >
             Description *
           </Label>
-          <Textarea
-            id="description"
-            placeholder="Tell us about your queries"
-            {...register("description", {
-              required: {
-                value: true,
-                message: "Description is required",
-              },
-              minLength: {
-                value: 100,
-                message:
-                  "Description must be at least 100 characters long so that we can understand about your queries better!",
-              },
-            })}
-            className="min-h-28 rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
-          />
-          {errors.description && (
-            <p className="mt-1 text-danger">{errors.description.message}</p>
-          )}
+
+          <div>
+            <Textarea
+              id="description"
+              placeholder="Tell us about your queries"
+              {...register("description", {
+                required: {
+                  value: true,
+                  message: "Description is required",
+                },
+                minLength: {
+                  value: 100,
+                  message:
+                    "Description must be at least 100 characters long so that we can understand about your queries better!",
+                },
+              })}
+              className="min-h-28 rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
+            />
+            {errors.description && (
+              <p className="mt-1 text-danger">{errors.description.message}</p>
+            )}
+          </div>
         </div>
       </div>
 

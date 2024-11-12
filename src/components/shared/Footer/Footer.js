@@ -1,14 +1,12 @@
 import Image from "next/image";
 import footerBg from "/public/images/footer/flowers.png";
 import logo from "/public/images/footer/logo-black.png";
-import sparkTechLogo from "/public/images/footer/sparktech.png";
-import { Button } from "@/components/ui/button";
 import { Facebook } from "lucide-react";
 import Link from "next/link";
 import { Instagram } from "lucide-react";
-import { Twitter } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Mail } from "lucide-react";
+import { LinkedinSvg, TwitterSvg } from "@/utils/svgContainer";
 
 export default function Footer() {
   return (
@@ -38,8 +36,8 @@ export default function Footer() {
           {/* Center */}
           <div className="space-y-6 lg:w-[30%]">
             <h5 className="text-lg font-semibold">
-              Subscribe to stay tuned for latest updates. <br />
-              Let&apos;s do it!
+              Email us about your queries. <br />
+              We&apos;ll get back to you!
             </h5>
 
             <div className="flex-center-start gap-x-2">
@@ -59,7 +57,14 @@ export default function Footer() {
                   href="#"
                   className="rounded-full bg-primary-black p-[6px] text-primary-white"
                 >
-                  <Facebook size={18} />
+                  <TwitterSvg size={18} />
+                </Link>
+
+                <Link
+                  href="#"
+                  className="rounded-full bg-primary-black p-[6px] text-primary-white"
+                >
+                  <LinkedinSvg />
                 </Link>
 
                 <Link
@@ -73,14 +78,14 @@ export default function Footer() {
                   href="#"
                   className="rounded-full bg-primary-black p-[6px] text-primary-white"
                 >
-                  <Twitter size={18} />
+                  <Facebook size={18} />
                 </Link>
               </div>
             </div>
 
             <div>
               <h4 className="text-lg font-bold">Call Us</h4>
-              <p className="mt-2 font-medium">+1 470 286 4400</p>
+              <p className="mt-2 font-medium">+1 (470) 286-4400</p>
             </div>
           </div>
         </div>
@@ -98,11 +103,11 @@ export default function Footer() {
 
           {/* right */}
           <div className="flex items-center gap-x-5">
-            <Link href="/privacy-policy" className="lg:text-lg">
+            <Link href="/privacy-policy" className="font-medium">
               Privacy Policy
             </Link>
-            <Link href="/terms-conditions" className="lg:text-lg">
-              Terms of Service
+            <Link href="/terms-conditions" className="font-medium">
+              Terms and Conditions
             </Link>
           </div>
         </div>
