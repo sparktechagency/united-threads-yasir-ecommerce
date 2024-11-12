@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadImage";
 // import { showImage } from "@/utils/fileHelper";
 // import Image from "next/image";
@@ -15,7 +16,12 @@ export default function OwnerMsgCard({ message }) {
   return (
     <div className={"mt-4 grid"}>
       {message?.file?.length > 0 && (
-        <div className="mb-2 grid grid-cols-2 gap-2 rounded-xl border p-2">
+        <div
+          className={cn(
+            "mb-2 grid-cols-2 gap-2 rounded-xl border p-2",
+            message?.file?.length > 2 && "grid",
+          )}
+        >
           <Image.PreviewGroup>
             {message?.file?.map((img) => (
               <div className="relative" key={img}>

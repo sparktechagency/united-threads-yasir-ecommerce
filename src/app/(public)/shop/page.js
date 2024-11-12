@@ -19,7 +19,7 @@ export default function ShopPage() {
           }}
         />
 
-        <div className="flex-start-between mx-auto my-16 flex-col px-5 md:px-10 lg:mx-auto lg:w-[85%] lg:flex-row lg:gap-x-16 2xl:w-3/4">
+        <div className="flex-start-between mx-auto my-16 flex-col px-5 md:px-10 lg:mx-auto lg:w-[85%] lg:flex-row lg:gap-x-16 lg:px-0 2xl:w-3/4">
           <ShopProductsFilter />
 
           <div className="w-full lg:flex-grow">

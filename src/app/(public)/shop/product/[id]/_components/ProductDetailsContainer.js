@@ -68,8 +68,6 @@ export default function ProductDetailsContainer({ id }) {
     router.push("/checkout");
   };
 
-  console.log(product);
-
   return (
     <div>
       {/* Breadcrumb */}

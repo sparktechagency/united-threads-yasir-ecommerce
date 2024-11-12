@@ -11,6 +11,7 @@ import "yet-another-react-lightbox/styles.css";
 import Providers from "@/utils/Providers";
 import { Toaster } from "sonner";
 import "react-pagination-bar/dist/index.css";
+import TopNotificationMarquee from "@/components/TopNotificationMarquee/TopNotificationMarquee";
 
 // Custom font
 const uncutSans = localFont({
@@ -32,6 +33,10 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  // Under maintenance message toggler state
+  // Only change when the site is under maintenance/update
+  const isUnderMaintenance = true;
+
   return (
     <html lang="en" className={`${uncutSans.variable}`}>
       <head>
@@ -51,6 +56,7 @@ export default function RootLayout({ children }) {
 
       <body className="font-uncut-sans antialiased">
         <Providers>
+          {isUnderMaintenance && <TopNotificationMarquee />}
           <TopLoader />
           <ScrollToTop />
 

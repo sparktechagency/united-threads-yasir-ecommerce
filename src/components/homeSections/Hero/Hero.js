@@ -105,7 +105,7 @@ export default function Hero() {
               className="flex-center-between lg:hover-bubble mt-10 w-full rounded-full border border-primary-black bg-transparent px-4 py-2 text-lg text-primary-black"
               id="request-quote-btn"
             >
-              Request to quote
+              Request a quote
               <div className="rounded-full border border-primary-black p-[6px]">
                 <ArrowRight size={20} className="-rotate-45" />
               </div>

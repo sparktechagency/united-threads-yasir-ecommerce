@@ -30,6 +30,8 @@ export default function RatingsReviews({ productId, isProductLoading }) {
   const [rating, setRating] = useState(0);
   const userId = useSelector(selectUser)?._id;
 
+  console.log(isOrderComplete);
+
   // ================= Get product reviews =================
   const { data: reviewsRes, isLoading: isReviewsLoading } =
     useGetShopProductReviewsQuery({ product: productId }, { skip: !productId });
@@ -37,11 +39,14 @@ export default function RatingsReviews({ productId, isProductLoading }) {
   const reviewsMeta = reviewsRes?.meta || {};
 
   // ================ Check if user already reviewed ============
-  const { data: userReviewsRes } = useGetShopProductReviewsQuery(
-    { product: productId, user: userId },
-    { skip: !userId || !productId },
-  );
+  const { data: userReviewsRes, isLoading: isUserReviewsLoading } =
+    useGetShopProductReviewsQuery(
+      { product: productId, user: userId },
+      { skip: !userId || !productId },
+    );
   const userReviews = userReviewsRes?.data || [];
+
+  console.log(isOrderComplete);
 
   // =========== Create review handler =============
   const [createReview, { isLoading: isReviewing }] =
@@ -57,7 +62,7 @@ export default function RatingsReviews({ productId, isProductLoading }) {
     }
   };
 
-  if (userReviews?.length < 1) {
+  if (isUserReviewsLoading) {
     return;
   }
 
@@ -70,7 +75,7 @@ export default function RatingsReviews({ productId, isProductLoading }) {
         <Separator className="mb-10 mt-2 bg-primary-black" />
 
         {/* Share review if order is completed */}
-        {isOrderComplete && userReviews?.length === 0 && (
+        {isOrderComplete && userReviews?.length < 1 && (
           <form className="mb-20" onSubmit={handleSubmit(onSubmit)}>
             <h4 className="text-2xl font-bold">What do you rate?</h4>
 

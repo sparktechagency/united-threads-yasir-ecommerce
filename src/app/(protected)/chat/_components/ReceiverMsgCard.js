@@ -3,6 +3,7 @@ import logo from "/public/logos/logo-normal.svg";
 import Image from "next/image";
 import { Image as AntImage } from "antd";
 import TypingLottie from "@/components/TypingLottie/TypingLottie";
+import { cn } from "@/lib/utils";
 // import { showImage } from "@/utils/fileHelper";
 
 export default function ReceiverMsgCard({
@@ -25,7 +26,12 @@ export default function ReceiverMsgCard({
       )}
       <div className="relative mt-2 max-w-max">
         {message?.file?.length > 0 && (
-          <AntImage.PreviewGroup className="grid grid-cols-4 gap-4">
+          <AntImage.PreviewGroup
+            className={cn(
+              "",
+              message?.file?.length > 2 && "grid grid-cols-4 gap-4",
+            )}
+          >
             {message?.file?.map((img) => (
               <AntImage
                 key={img}

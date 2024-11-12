@@ -192,29 +192,27 @@ export default function CustomTShirtDesigner() {
   // ======== Handle changing the image side on button click ==========
   const handleChangeImageSide = async (whichSide) => {
     Swal.fire({
-      title: "Save Changes?",
-      text: "Save this before editing the other part or the progress will be lost!",
+      title: "Saved Your Changes?",
+      text: "Have you saved your changes? If not, please save them before switching sides. Otherwise, they will be lost.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Save",
-      cancelButtonText: "Already Saved",
+      confirmButtonText: "Yes, I saved it",
+      cancelButtonText: "Close",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        try {
-          await handleExportImageOnSave();
-        } catch (error) {
-          console.error(error);
-        }
+        // try {
+        //   await handleExportImageOnSave();
+        // } catch (error) {
+        //   console.error(error);
+        // }
 
         if (activeImageSide !== whichSide) {
           setActiveImageSide(activeImageSide === "front" ? "back" : "front");
         }
       } else {
-        if (activeImageSide !== whichSide) {
-          setActiveImageSide(activeImageSide === "front" ? "back" : "front");
-        }
+        // do nothing
       }
     });
   };
@@ -615,7 +613,11 @@ export default function CustomTShirtDesigner() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSendQuoteSubmit)} className="space-y-8">
+      <form
+        onSubmit={handleSubmit(onSendQuoteSubmit)}
+        className="space-y-8"
+        onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
+      >
         <div className="relative flex flex-col items-center lg:flex-row lg:items-start lg:justify-between">
           {/* Left */}
           {isSmallDevice && (
@@ -795,6 +797,11 @@ export default function CustomTShirtDesigner() {
                         }
                         placeholder="Enter prompt..."
                         ref={aiPromptRef}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleGenerateWithAI();
+                          }
+                        }}
                       />
                       {/* Send Button */}
                       <Button
@@ -959,7 +966,10 @@ export default function CustomTShirtDesigner() {
                     activeImageSide === "front" &&
                       "bg-primary-black text-primary-white",
                   )}
-                  onClick={() => handleChangeImageSide("front")}
+                  onClick={() => {
+                    if (activeImageSide === "front") return;
+                    handleChangeImageSide("front");
+                  }}
                 >
                   Front Side
                 </Button>
@@ -971,7 +981,10 @@ export default function CustomTShirtDesigner() {
                     activeImageSide === "back" &&
                       "bg-primary-black text-primary-white",
                   )}
-                  onClick={() => handleChangeImageSide("back")}
+                  onClick={() => {
+                    if (activeImageSide === "back") return;
+                    handleChangeImageSide("back");
+                  }}
                 >
                   Back Side
                 </Button>

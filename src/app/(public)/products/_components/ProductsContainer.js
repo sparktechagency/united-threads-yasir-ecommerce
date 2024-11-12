@@ -78,7 +78,11 @@ export default function ProductsContainer() {
         className="grid grid-cols-1 gap-y-7 md:grid-cols-2 md:gap-7 2xl:grid-cols-3"
       >
         {quoteProducts?.map((product) => (
-          <motion.div key={product?._id} variants={fadeUpVariants}>
+          <motion.div
+            key={product?._id}
+            variants={fadeUpVariants}
+            className="h-full"
+          >
             <QuoteProductCard product={product} />
           </motion.div>
         ))}

@@ -4,9 +4,10 @@ import { baseApi } from "./baseApi";
 const notificationApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getNotifications: builder.query({
-      query: () => ({
+      query: (query) => ({
         url: "/notification/notifications",
         method: "GET",
+        params: query,
       }),
       providesTags: [tagTypes.notifications],
     }),

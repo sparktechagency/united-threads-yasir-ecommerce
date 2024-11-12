@@ -27,6 +27,7 @@ import EmptyContainer from "@/components/EmptyContainer/EmptyContainer";
 import CustomPagination from "@/components/CustomPagination/CustomPagination";
 import { Tag } from "antd";
 import { getTableTagColor } from "@/utils/getTableTagColor";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const TABLE_HEADERS = [
   "Order ID",
@@ -113,7 +114,7 @@ export default function ShopHistoryTable() {
               className="border-b border-primary-black/15"
             >
               <TableCell className="py-5 font-medium">#{order?._id}</TableCell>
-              <TableCell className="w-max whitespace-nowrap py-5 font-medium">
+              <TableCell className="y-5 font-medium">
                 {order?.quote?.name || order?.product?.name}
               </TableCell>
               <TableCell className="w-max whitespace-nowrap py-5 font-medium">
@@ -127,7 +128,10 @@ export default function ShopHistoryTable() {
                   format(order?.createdAt, "dd MMM yyyy, hh:mm a")}
               </TableCell>
               <TableCell className="w-max whitespace-nowrap py-5 font-medium">
-                ${Number(order?.amount * order?.quantity)?.toFixed(2)}
+                $
+                {formatCurrency(
+                  Number(order?.amount * order?.quantity)?.toFixed(2),
+                )}
               </TableCell>
               <TableCell
                 className={cn("w-max whitespace-nowrap py-5 font-medium")}
@@ -144,7 +148,9 @@ export default function ShopHistoryTable() {
                 <Button variant="outline" asChild className="group gap-x-2">
                   {order?.status === "DELIVERED" &&
                   order?.orderType === "SHOP" ? (
-                    <Link href={`/user/shop-history/${order?.product?._id}`}>
+                    <Link
+                      href={`/shop/product/${order?.product?._id}?review=true`}
+                    >
                       Share Review <AnimatedArrow />
                     </Link>
                   ) : (

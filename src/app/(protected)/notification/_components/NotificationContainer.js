@@ -33,6 +33,11 @@ export default function NotificationContainer() {
   const { socket } = useSocket();
   const userId = useSelector(selectUser)?._id;
 
+  // ================ Pagination ===============
+  const pageSize = 5;
+  query["page"] = currentPage;
+  query["limit"] = pageSize;
+
   // ============ Get notifications api handler =============
   const {
     data: notificationsRes,
@@ -68,6 +73,9 @@ export default function NotificationContainer() {
     };
   }, [socket, userId]);
 
+  // Show mark as read handler
+  const showMarkAsRead = notifications?.some((item) => item?.seen === false);
+
   if (isNotificationsLoading) {
     return (
       <div className="space-y-5">
@@ -86,32 +94,20 @@ export default function NotificationContainer() {
       <div className="flex-center-between">
         <h3 className="text-3xl font-semibold">Notifications</h3>
 
-        {notifications?.length > 0 && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  variant="success"
-                  className="rounded-full"
-                  onClick={handleMarkAsRead}
-                >
-                  {isMarkReadLoading ? (
-                    <Loader size={18} className="animate-spin" />
-                  ) : (
-                    <>
-                      Mark as read <CheckCheck size={18} className="ml-2" />
-                    </>
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="flex items-center gap-x-2 text-base font-semibold">
-                  {" "}
-                  <CircleAlert size={18} /> Read notifications will disappear!
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        {showMarkAsRead && (
+          <Button
+            variant="success"
+            className="rounded-full"
+            onClick={handleMarkAsRead}
+          >
+            {isMarkReadLoading ? (
+              <Loader size={18} className="animate-spin" />
+            ) : (
+              <>
+                Mark as read <CheckCheck size={18} className="ml-2" />
+              </>
+            )}
+          </Button>
         )}
       </div>
 
@@ -163,6 +159,7 @@ export default function NotificationContainer() {
 
           <div className="ml-auto mt-10 max-w-max">
             <CustomPagination
+              pageSize={pageSize}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
               total={meta?.total}
