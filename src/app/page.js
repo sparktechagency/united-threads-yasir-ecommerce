@@ -8,7 +8,8 @@ import Products from "@/components/homeSections/Products/Products";
 
 export const metadata = {
   title: "Home | United Threads",
-  description: "Home page of United Threads - Wear The Change",
+  description:
+    "The official home page of The UnitedThreads - Wear The Change. ❝Design Your Own Apparel, Unleash Your Creativity❞. We pride ourselves in providing a curated collection of custom apparel designed to inspire and empower",
 };
 
 export default function Home() {

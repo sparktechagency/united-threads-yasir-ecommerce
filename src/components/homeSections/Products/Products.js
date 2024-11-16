@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton/ProductCardSkeleton";
+import EmptyContainer from "@/components/EmptyContainer/EmptyContainer";
 
 const fadeUpVariants = {
   initial: {
@@ -89,19 +90,28 @@ export default function Products() {
           </div>
         </div>
       ) : (
-        <motion.div
-          variants={fadeUpVariants}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          className="mx-auto mt-10 grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-10"
-        >
-          {products?.map((product) => (
-            <motion.div variants={fadeUpVariants} key={product?._id}>
-              <ShopProductsCard product={product} />
+        <>
+          {/* Show empty if product not found */}
+          {products?.length < 1 ? (
+            <div className="my-32">
+              <EmptyContainer message="No products found" />
+            </div>
+          ) : (
+            <motion.div
+              variants={fadeUpVariants}
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              className="mx-auto mt-10 grid grid-cols-1 gap-y-8 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-10"
+            >
+              {products?.map((product) => (
+                <motion.div variants={fadeUpVariants} key={product?._id}>
+                  <ShopProductsCard product={product} />
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
+          )}
+        </>
       )}
 
       <Link href={"/shop"} className="mx-auto mt-16 block lg:w-[40%]">

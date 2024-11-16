@@ -123,21 +123,6 @@ body {
 .hover-bubble:hover::before {
   transform: translate3d(50%, -50%, 0) scale3d(15, 15, 15);
 }
-
-@media screen and (max-width: 768px) {
-  .hover-bubble {
-  }
-
-  .hover-bubble::before {
-  }
-
-  .hover-bubble:hover {
-  }
-
-  .hover-bubble:hover::before {
-  }
-}
-
 /* Underline on Hover effect */
 .hover-underline {
   position: relative;
@@ -292,4 +277,8 @@ textarea {
 .hide-scroll {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+.ant-empty {
+  font-family: var(--font-uncut-sans) !important;
 }

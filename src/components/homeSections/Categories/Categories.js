@@ -37,8 +37,6 @@ const fadeIn = {
 export default function Categories() {
   const { data: categories, isLoading } = useGetShopCategoriesQuery();
 
-  console.log(categories);
-
   return (
     <section className="text-primary-black">
       <h2 className="py-1 text-center text-5xl font-extrabold lg:px-10 lg:text-6xl">

@@ -223,7 +223,7 @@ export default function Navbar() {
                     <DropdownMenuItem asChild>
                       <Link href="/user/shop-history">
                         <Shirt size={20} strokeWidth={1.5} className="mr-2" />
-                        Shop History
+                        Order History
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -348,7 +348,7 @@ export default function Navbar() {
                               strokeWidth={1.5}
                               className="mr-2"
                             />
-                            Shop History
+                            Order History
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>

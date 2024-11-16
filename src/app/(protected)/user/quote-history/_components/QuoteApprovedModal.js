@@ -1,25 +1,20 @@
 import Image from "next/image";
-import uploadedDesign from "/public/images/order-history/Group 47486.png";
 import { Button } from "@/components/ui/button";
 import ModalWrapper from "@/components/shared/ModalWrapper/ModalWrapper";
-import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
-import Link from "next/link";
 import { Tag } from "antd";
 import { Badge } from "@/components/ui/badge";
 import { useAcceptQuoteByCustomerMutation } from "@/redux/api/quoteApi";
-import { useCreatePaymentMutation } from "@/redux/api/paymentApi";
 import { errorToast, successToast } from "@/utils/customToast";
 import { Loader } from "lucide-react";
 import pantoneToHex from "@/utils/pantoneToHex";
+import { useRouter } from "next/navigation";
 
 export default function QuoteApprovedModal({ open, setOpen, quote }) {
+  const router = useRouter();
+
   // ================ Accept quote api handler ===================
   const [acceptQuote, { isLoading: isAccepting }] =
     useAcceptQuoteByCustomerMutation();
-
-  // ============== Payment api handler =================
-  const [createPaymentLink, { isLoading: isCreatingPayment }] =
-    useCreatePaymentMutation();
 
   const handleAcceptQuote = async () => {
     try {
@@ -27,21 +22,11 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
 
       if (acceptQuoteRes?.success) {
         // Accepted quote becomes an Order
-        // so, proceed to pay for the order
+        // so, proceed to order/shopping history page
 
-        handlePaymentForQuote(acceptQuoteRes?.data[0]?._id);
+        successToast("Quote accepted");
+        router.push("/user/shop-history");
       }
-    } catch (error) {
-      errorToast(error?.data?.message || error?.error);
-    }
-  };
-
-  const handlePaymentForQuote = async (orderId) => {
-    try {
-      const createPaymentRes = await createPaymentLink(orderId).unwrap();
-
-      successToast("Proceed to payment....");
-      window.location.href = createPaymentRes?.data?.paymentLink;
     } catch (error) {
       errorToast(error?.data?.message || error?.error);
     }
@@ -94,7 +79,9 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
         <div>
           <h4 className="mb-1 text-lg font-medium">Approved Size</h4>
           <h5 className="text-lg font-extrabold text-black">
-            <Tag color="magenta">{quote?.size}</Tag>
+            <Tag color="magenta" className="!text-base">
+              {quote?.size}
+            </Tag>
           </h5>
         </div>
 
@@ -114,7 +101,9 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
         <div>
           <h4 className="mb-1 text-lg font-medium">Approved Quantity</h4>
           <h5 className="text-lg font-extrabold text-black">
-            <Tag color="geekblue">{quote?.quantity}pcs</Tag>
+            <Tag color="geekblue" className="!text-base">
+              {quote?.quantity}pcs
+            </Tag>
           </h5>
         </div>
       </div>
@@ -153,9 +142,7 @@ export default function QuoteApprovedModal({ open, setOpen, quote }) {
         {isAccepting ? (
           <Loader size={26} className="animate-spin" />
         ) : (
-          <>
-            Accept & Proceed to Payment <AnimatedArrow />
-          </>
+          <>Accept Quote</>
         )}
       </Button>
     </ModalWrapper>

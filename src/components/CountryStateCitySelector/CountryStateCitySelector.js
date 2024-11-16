@@ -257,7 +257,7 @@ export default function CountryStateCitySelector({
         <Input
           type="text"
           id="area"
-          placeholder="Type Area"
+          placeholder="Street Address"
           className="border border-primary-black bg-transparent text-primary-black outline-none focus:outline-none"
           {...register("area")}
         />
@@ -265,9 +265,9 @@ export default function CountryStateCitySelector({
 
       <div>
         <Input
-          type="text"
+          type="number"
           id="house"
-          placeholder="Type House No"
+          placeholder="Zip Code"
           className="border border-primary-black bg-transparent text-primary-black outline-none focus:outline-none"
           {...register("houseNo")}
         />

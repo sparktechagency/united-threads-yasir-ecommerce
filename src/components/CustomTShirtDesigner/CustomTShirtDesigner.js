@@ -1101,7 +1101,7 @@ export default function CustomTShirtDesigner() {
                         }
                       >
                         <h5 className="flex-center-start gap-x-2 text-base font-semibold">
-                          Pantone Palette{" "}
+                          Selected Color
                           <Popover
                             content={
                               <div>

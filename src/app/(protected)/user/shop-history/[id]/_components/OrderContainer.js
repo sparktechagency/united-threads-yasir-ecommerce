@@ -15,6 +15,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
+import { Loader } from "lucide-react";
 
 export default function OrderContainer({ orderId }) {
   // ================ Get single order details ================
@@ -23,7 +24,14 @@ export default function OrderContainer({ orderId }) {
   });
 
   const order = orderRes?.data || {};
-  console.log(order);
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto w-max">
+        <Loader className="animate-spin" size={30} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-[75vh] flex-col items-center gap-y-10 lg:w-full lg:flex-row lg:gap-x-20">
@@ -92,6 +100,13 @@ export default function OrderContainer({ orderId }) {
               className="h-6 w-6 rounded-full border shadow-md"
               style={{ backgroundColor: order?.color }}
             />
+          </div>
+
+          <div className="flex-center-start gap-x-5 text-xl font-semibold">
+            <h4>Payment: </h4>
+            <Tag color={getTableTagColor(order?.paymentStatus)}>
+              {order?.paymentStatus}
+            </Tag>
           </div>
         </div>
 
