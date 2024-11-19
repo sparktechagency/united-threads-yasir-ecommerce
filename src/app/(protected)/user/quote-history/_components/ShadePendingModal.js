@@ -1,31 +1,33 @@
 import Image from "next/image";
 import ModalWrapper from "@/components/shared/ModalWrapper/ModalWrapper";
 import pantoneToHex from "@/utils/pantoneToHex";
+import { Tag } from "antd";
 
 export default function ShadePendingModal({ open, setOpen, quote }) {
   return (
     <ModalWrapper open={open} setOpen={setOpen}>
       <div className="mb-10">
         <div className="flex flex-col items-center gap-x-5 gap-y-5 lg:flex-row">
-          <div>
+          <div className="h-[320px] lg:w-1/2">
             <Image
               src={quote?.frontSide}
               alt="user uploaded front design"
               height={1200}
               width={1200}
-              className="mx-auto block h-auto w-auto rounded-lg border border-primary-black/50 p-2"
+              className="mx-auto block h-full w-auto rounded-lg border border-primary-black/50 p-2"
             />
             <h3 className="text-center font-medium text-green-500/75">
               Front Design
             </h3>
           </div>
-          <div>
+
+          <div className="h-[320px] lg:w-1/2">
             <Image
               src={quote?.backSide}
               alt="user uploaded back design"
               height={1200}
               width={1200}
-              className="mx-auto block h-auto w-auto rounded-lg border border-primary-black/50 p-2"
+              className="mx-auto block h-full w-auto rounded-lg border border-primary-black/50 p-2"
             />
             <h3 className="text-center font-medium text-green-500/75">
               Back Design
@@ -49,7 +51,18 @@ export default function ShadePendingModal({ open, setOpen, quote }) {
 
         <div>
           <h4 className="text-lg font-medium">Size</h4>
-          <h5 className="text-lg font-extrabold text-black">{quote?.size}</h5>
+
+          <div className="flex flex-row flex-wrap gap-2">
+            {quote?.sizesAndQuantities?.map((item) => (
+              <Tag
+                color="geekblue"
+                key={item._id}
+                className="!text-sm !font-semibold"
+              >
+                {item.size} - {item.quantity}pcs
+              </Tag>
+            ))}
+          </div>
         </div>
 
         <div>

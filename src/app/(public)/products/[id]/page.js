@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function DynamicProductPage() {
   return (
-    <div className="px-7 lg:mx-auto lg:w-3/4 lg:px-0">
+    <div className="px-7 lg:mx-auto lg:w-[90%] lg:px-0 2xl:w-3/4">
       <CustomTShirtDesigner />
     </div>
   );

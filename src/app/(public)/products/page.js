@@ -21,7 +21,7 @@ export default function ProductsPage() {
           }}
         />
 
-        <section className="flex-start-between my-16 flex-col px-5 md:px-10 lg:mx-auto lg:w-[85%] lg:flex-row lg:gap-x-16 lg:px-0 2xl:w-3/4">
+        <section className="flex-start-between my-16 flex-col px-5 md:px-10 lg:mx-auto lg:w-[90%] lg:flex-row lg:gap-x-16 lg:px-0 2xl:w-3/4">
           {/* Left -------> Filters */}
           <ProductFilters />
 

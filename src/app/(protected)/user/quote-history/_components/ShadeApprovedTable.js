@@ -57,8 +57,6 @@ export default function ShadeApprovedTable() {
   const approvedQuotes = approvedQuotesRes?.data || [];
   const meta = approvedQuotesRes?.data?.meta || {};
 
-  console.log(approvedQuotes);
-
   return (
     <>
       <Table>

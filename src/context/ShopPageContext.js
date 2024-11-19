@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useState } from "react";
+import { redirect } from "next/navigation";
+import { createContext, useEffect, useState } from "react";
 
 export const ShopPageContext = createContext(null);
 
@@ -10,7 +11,14 @@ export default function ShopPageProvider({ children }) {
   const [selectedSize, setSelectedSize] = useState("");
   const [searchText, setSearchText] = useState("");
 
-  console.log(searchText);
+  {
+    /**
+    Note: Client don't need shop page at the moment, so redirect user to /not-found page when they try to access this page    
+  */
+  }
+  useEffect(() => {
+    redirect("/not-found");
+  }, []);
 
   return (
     <ShopPageContext.Provider

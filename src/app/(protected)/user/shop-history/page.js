@@ -14,7 +14,7 @@ export default function ShopHistoryPage() {
         previousPage={{ pageTitle: "Home" }}
       />
 
-      <div className="my-10 px-5 md:px-10 lg:mx-auto lg:w-[85%] lg:px-0">
+      <div className="my-10 px-5 md:px-10 lg:mx-auto lg:w-[90%] lg:px-0">
         <ShopHistoryTable />
       </div>
     </div>

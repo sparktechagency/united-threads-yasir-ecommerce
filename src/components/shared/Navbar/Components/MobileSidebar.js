@@ -41,11 +41,11 @@ const LINKS = [
     label: "Custom Apparels",
     route: "/products",
   },
-  {
-    key: "shop",
-    label: "Shop",
-    route: "/shop",
-  },
+  // {
+  //   key: "shop",
+  //   label: "Shop",
+  //   route: "/shop",
+  // },
   {
     key: "about",
     label: "About",

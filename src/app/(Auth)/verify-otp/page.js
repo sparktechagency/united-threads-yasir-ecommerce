@@ -15,7 +15,7 @@ export default function VerifyOtpPage() {
         <CustomImageWithBlur
           src={verifyGraphic}
           alt="Verify Otp Graphic"
-          className="mx-auto block lg:w-[85%]"
+          className="mx-auto block lg:w-[90%]"
         />
       </div>
 

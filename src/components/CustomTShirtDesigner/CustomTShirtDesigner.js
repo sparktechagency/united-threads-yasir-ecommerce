@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { Controller, useForm } from "react-hook-form";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { Input as AntInput } from "antd";
 import { Textarea } from "../ui/textarea";
 import AnimatedArrow from "../AnimatedArrow/AnimatedArrow";
 import { Image as AntImage } from "antd";
@@ -61,6 +62,10 @@ import { useMediaQuery } from "usehooks-ts";
 import { ArrowLeft } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import { Edit } from "lucide-react";
+import { Plus } from "lucide-react";
+import { PlusCircle } from "lucide-react";
+import { ConfigProvider } from "antd";
+import SizeSelectComponent from "./_components/SizeSelectComponent";
 
 // Motion variants
 const fadeVariants = {
@@ -81,6 +86,13 @@ const fadeVariants = {
   },
 };
 
+const colorInputStyle = {
+  width: 64,
+  height: 22,
+  marginInlineEnd: 8,
+  verticalAlign: "top",
+};
+
 export default function CustomTShirtDesigner() {
   const {
     register,
@@ -97,12 +109,8 @@ export default function CustomTShirtDesigner() {
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
   const [activeObject, setActiveObject] = useState(null);
-  const [overlayColor, setOverlayColor] = useState("#000000");
-  const [pantoneColorObject, setPantoneColorObject] = useState({
-    pantone: "419C",
-    hex: "000000",
-    distance: "16",
-  });
+  const [overlayColor, setOverlayColor] = useState("419C");
+  const [pantoneColorObject, setPantoneColorObject] = useState({});
   const [sizeCollapsed, setSizeCollapsed] = useState(false);
   const [colorCollapsed, setColorCollapsed] = useState(false);
   const [pantoneColorCollapsed, setPantoneColorCollapsed] = useState(false);
@@ -241,6 +249,73 @@ export default function CustomTShirtDesigner() {
     }
   };
 
+  // Transform hex to pantone color code
+  // useEffect(() => {
+  //   // Works if overlayColor is hex
+  //   if (overlayColor) {
+  //     const pantoneColor = new simpleColorConverter({
+  //       hex6: overlayColor,
+  //       to: "pantone",
+  //     });
+
+  //     if (pantoneColor) {
+  //       const pantoneToHex = new simpleColorConverter({
+  //         pantone: `pantone ${pantoneColor?.color}`,
+  //         to: "hex6",
+  //       });
+
+  //       // Pantone color distances are 16, 32, 48, 64, 80, 96
+  //       const distances = [16, 32, 48, 64, 80, 96];
+  //       const selectedDistanceIndex = Math.floor(Math.random() * 6);
+
+  //       setPantoneColorObject({
+  //         pantone: pantoneColor?.color,
+  //         hex: pantoneToHex?.color,
+  //         distance: distances[selectedDistanceIndex],
+  //       });
+  //     }
+  //   }
+  // }, [overlayColor]);
+
+  // Transform pantone to hex
+  useEffect(() => {
+    // Works if overlay color is in pantone code
+    if (overlayColor) {
+      const pantoneToHex = new simpleColorConverter({
+        pantone: `pantone ${overlayColor}`,
+        to: "hex6",
+      });
+
+      setPantoneColorObject({
+        pantone: overlayColor,
+        hex: pantoneToHex?.color,
+      });
+    }
+  }, [overlayColor]);
+
+  // Handle color input
+  const [addColorInputVisible, setAddColorInputVisible] = useState(false);
+  const addColorInputRef = useRef(null);
+
+  useEffect(() => {
+    if (addColorInputVisible) {
+      addColorInputRef.current?.focus();
+    }
+  }, [addColorInputVisible]);
+
+  const handleClose = () => {
+    setOverlayColor(false);
+    setAddColorInputVisible(false);
+  };
+
+  const handleAddColor = (e) => {
+    setOverlayColor(e.target.value);
+  };
+
+  const handleColorConfirmOnEnter = () => {
+    setAddColorInputVisible(false);
+  };
+
   // =============== Function to add text on apparel =================
   const handleAddText = () => {
     const text = new fabric.IText("Double click to edit", {
@@ -302,33 +377,6 @@ export default function CustomTShirtDesigner() {
     }
   };
 
-  // Transform hex to pantone color code
-  useEffect(() => {
-    if (overlayColor) {
-      const pantoneColor = new simpleColorConverter({
-        hex6: overlayColor,
-        to: "pantone",
-      });
-
-      if (pantoneColor) {
-        const pantoneToHex = new simpleColorConverter({
-          pantone: `pantone ${pantoneColor?.color}`,
-          to: "hex6",
-        });
-
-        // Pantone color distances are 16, 32, 48, 64, 80, 96
-        const distances = [16, 32, 48, 64, 80, 96];
-        const selectedDistanceIndex = Math.floor(Math.random() * 6);
-
-        setPantoneColorObject({
-          pantone: pantoneColor?.color,
-          hex: pantoneToHex?.color,
-          distance: distances[selectedDistanceIndex],
-        });
-      }
-    }
-  }, [overlayColor]);
-
   // ================== Ant design steps =========================
   const textBtnRef = useRef(null);
   const textStyleBoxRef = useRef(null);
@@ -362,11 +410,11 @@ export default function CustomTShirtDesigner() {
         "Click upload button to upload logo or image for your design.",
       target: () => uploadBtnRef?.current,
     },
-    {
-      title: "Add color",
-      description: "Click color button to add color to your design.",
-      target: () => colorBtnRef?.current,
-    },
+    // {
+    //   title: "Add color",
+    //   description: "Click color button to add color to your design.",
+    //   target: () => colorBtnRef?.current,
+    // },
     {
       title: "Generate with AI",
       description:
@@ -562,8 +610,8 @@ export default function CustomTShirtDesigner() {
       );
     }
 
-    if (!data?.size) {
-      return ErrorModal("Please select size!");
+    if (data?.sizeAndQuantities?.length < 1) {
+      return ErrorModal("Size and quantities are required!");
     }
 
     const toastId = toast.loading("Sending Quote...");
@@ -576,8 +624,6 @@ export default function CustomTShirtDesigner() {
     const payload = {
       name: productData?.name,
       category: productData?.category?._id,
-      quantity: Number(data.quantity),
-      size: data.size,
       pantoneColor: pantoneColorObject?.pantone,
       hexColor: `#${pantoneColorObject?.hex}`,
       materialPreferences: data.materials,
@@ -586,6 +632,7 @@ export default function CustomTShirtDesigner() {
       city: data.city,
       area: data.area,
       houseNo: data.houseNo,
+      sizesAndQuantities: data.sizeAndQuantities,
     };
 
     formData.append("data", JSON.stringify(payload));
@@ -594,14 +641,13 @@ export default function CustomTShirtDesigner() {
       await createQuote(formData).unwrap();
       successToast("Quote sent successfully!", toastId);
 
-      router.push("/user/quote-history");
+      // router.push("/user/quote-history");
     } catch (error) {
       errorToast(error?.data?.message || error?.error, toastId);
     }
   };
 
   // Show warning prompt when using mobile devices
-
   const isSmallDevice = useMediaQuery("(max-width: 768px)");
   useEffect(() => {
     if (isSmallDevice) {
@@ -671,7 +717,7 @@ export default function CustomTShirtDesigner() {
               </Tooltip>
 
               {/* Color */}
-              <button
+              {/* <button
                 type="button"
                 className="flex flex-col items-center gap-y-1 font-medium text-primary-black hover:text-primary-black/80"
                 ref={colorBtnRef}
@@ -685,7 +731,7 @@ export default function CustomTShirtDesigner() {
                   />
                 </Tooltip>
                 Color
-              </button>
+              </button> */}
 
               {/* AI Generate */}
               <div className="relative">
@@ -913,10 +959,10 @@ export default function CustomTShirtDesigner() {
               <div className="h-[500px] w-3/4 animate-pulse rounded bg-slate-200" />
             </div>
           ) : (
-            <div className="w-full lg:w-[50%]">
+            <div className="w-full lg:w-[60%] 2xl:w-1/2">
               <div
                 id="tshirt-div"
-                className="group relative w-full bg-white lg:w-3/4"
+                className="group relative bg-white lg:w-[80%] 2xl:w-3/4"
               >
                 <div className="relative h-full">
                   <Image
@@ -1013,163 +1059,8 @@ export default function CustomTShirtDesigner() {
               </TabsList>
               <TabsContent value="options" className="py-4">
                 <AnimatePresence key={"options"} initial={false}>
-                  {/* Size options */}
-                  <motion.div
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className={cn(errors?.size && "border-600 rounded-3xl")}
-                  >
-                    <button
-                      type="button"
-                      className="flex-center-between w-full rounded-t-3xl bg-lightGray p-3"
-                      onClick={() => setSizeCollapsed(!sizeCollapsed)}
-                    >
-                      <h5 className="text-base font-semibold">
-                        Available Sizes
-                      </h5>
-                      <ChevronsUpDown size={20} />
-                    </button>
-                    <Separator className="bg-primary-black/50" />
-
-                    {!sizeCollapsed && (
-                      <motion.div
-                        variants={fadeVariants}
-                        className="mx-auto rounded-b-3xl bg-lightGray px-6 py-4 transition-all duration-300 ease-in-out"
-                      >
-                        <Controller
-                          control={control}
-                          name="size"
-                          rules={{
-                            required: {
-                              value: true,
-                              message: "Please select a size!",
-                            },
-                          }}
-                          render={({ field }) => (
-                            <>
-                              <RadioGroup
-                                onValueChange={field.onChange}
-                                className="grid grid-cols-2 gap-5"
-                              >
-                                {productData?.size?.map((size) => (
-                                  <div
-                                    key={size}
-                                    className="flex items-center space-x-2"
-                                  >
-                                    <RadioGroupItem
-                                      value={size}
-                                      id={size}
-                                      className="h-[19px] w-[19px]"
-                                    />
-                                    <Label
-                                      htmlFor={size}
-                                      className="cursor-pointer text-[17px]"
-                                    >
-                                      {size}
-                                    </Label>
-                                  </div>
-                                ))}
-                              </RadioGroup>
-
-                              {errors?.size && (
-                                <p className="mt-2 text-danger">
-                                  {errors?.size?.message}
-                                </p>
-                              )}
-                            </>
-                          )}
-                        />
-                      </motion.div>
-                    )}
-                  </motion.div>
-
-                  {/* Pantone color pallette */}
-                  {pantoneColorObject?.pantone && (
-                    <motion.div
-                      className="mt-8"
-                      layout="position"
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                    >
-                      <button
-                        type="button"
-                        className="flex-center-between w-full rounded-t-3xl bg-lightGray p-3"
-                        onClick={() =>
-                          setPantoneColorCollapsed(!pantoneColorCollapsed)
-                        }
-                      >
-                        <h5 className="flex-center-start gap-x-2 text-base font-semibold">
-                          Selected Color
-                          <Popover
-                            content={
-                              <div>
-                                <p>
-                                  United Threads accepts only
-                                  <i> Pantone Color Code</i>
-                                  (e.g Pantone C-1305) for apparel colors.
-                                </p>
-                                <p>
-                                  Our Pantone code follows distance from 16-96
-                                  and provides nearest color matches.
-                                </p>
-                              </div>
-                            }
-                            title={<strong>What is Pantone Color Code?</strong>}
-                          >
-                            <Info size={16} className="text-blue-600" />
-                          </Popover>
-                        </h5>
-                        <ChevronsUpDown size={20} />
-                      </button>
-                      <Separator className="bg-primary-black/50" />
-
-                      {!pantoneColorCollapsed && (
-                        <motion.div
-                          variants={fadeVariants}
-                          className="flex-center-start mx-auto gap-x-2 rounded-b-3xl bg-lightGray px-6 py-4"
-                          ref={pantoneColorRef}
-                        >
-                          <Tooltip
-                            placement="top"
-                            title={"#" + pantoneColorObject?.hex}
-                          >
-                            <div
-                              style={{
-                                backgroundColor: `#${pantoneColorObject?.hex}`,
-                              }}
-                              className={cn(
-                                "aspect-square h-6 w-6 rounded-full",
-                                overlayColor === "#" + pantoneColorObject.hex &&
-                                  "border-2 border-yellow-500",
-                              )}
-                            />
-                          </Tooltip>
-
-                          <div className="flex-center-between w-full">
-                            <button
-                              type="button"
-                              className="text-lg font-medium"
-                              onClick={() =>
-                                setOverlayColor("#" + pantoneColorObject?.hex)
-                              }
-                            >
-                              Pantone {pantoneColorObject?.pantone}
-                            </button>
-
-                            <div className="h-1 w-1 rounded-full bg-primary-black" />
-
-                            <p>(d: 16/{pantoneColorObject?.distance})</p>
-                          </div>
-                        </motion.div>
-                      )}
-                    </motion.div>
-                  )}
-
                   {/* Color options */}
                   <motion.div
-                    className="mt-8"
                     layout="position"
                     initial="initial"
                     animate="animate"
@@ -1215,6 +1106,143 @@ export default function CustomTShirtDesigner() {
                       </motion.div>
                     )}
                   </motion.div>
+
+                  {/* Input color */}
+                  {pantoneColorObject?.pantone && (
+                    <motion.div
+                      className="mt-8"
+                      layout="position"
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                    >
+                      <button
+                        type="button"
+                        className="flex-center-between w-full rounded-t-3xl bg-lightGray p-3"
+                        onClick={() =>
+                          setPantoneColorCollapsed(!pantoneColorCollapsed)
+                        }
+                      >
+                        <h5 className="flex-center-start gap-x-2 text-base font-semibold">
+                          Select a color
+                          <Popover
+                            content={
+                              <div>
+                                <p>
+                                  United Threads accepts only
+                                  <i> Pantone Color Code</i>
+                                  (e.g Pantone C-1305) for apparel colors.
+                                </p>
+                              </div>
+                            }
+                            title={<strong>What is Pantone Color Code?</strong>}
+                          >
+                            <Info size={16} className="text-blue-600" />
+                          </Popover>
+                        </h5>
+                        <ChevronsUpDown size={20} />
+                      </button>
+                      <Separator className="bg-primary-black/50" />
+
+                      {!pantoneColorCollapsed && (
+                        <motion.div
+                          variants={fadeVariants}
+                          className="rounded-b-3xl bg-lightGray px-6 py-4"
+                          ref={pantoneColorRef}
+                        >
+                          <div className="flex-center-between w-full">
+                            {!addColorInputVisible && (
+                              <div className="flex-center-start gap-x-2">
+                                <Tooltip
+                                  placement="top"
+                                  title={"#" + pantoneColorObject?.hex}
+                                >
+                                  {typeof pantoneColorObject?.hex ===
+                                    "string" && (
+                                    <div
+                                      style={{
+                                        backgroundColor: `#${pantoneColorObject?.hex}`,
+                                      }}
+                                      className={cn(
+                                        "aspect-square h-6 w-6 rounded-full",
+                                        overlayColor ===
+                                          "#" + pantoneColorObject.hex &&
+                                          "border-2 border-yellow-500",
+                                      )}
+                                    />
+                                  )}
+
+                                  {typeof pantoneColorObject?.hex !==
+                                    "string" && (
+                                    <p className="aspect-square rounded-full border border-red-300 p-1 text-sm text-red-500">
+                                      N/A
+                                    </p>
+                                  )}
+                                </Tooltip>
+
+                                <button
+                                  type="button"
+                                  className="text-lg font-medium"
+                                >
+                                  Pantone {pantoneColorObject?.pantone}
+                                </button>
+                              </div>
+                            )}
+
+                            {addColorInputVisible ? (
+                              <ConfigProvider
+                                theme={{
+                                  components: {
+                                    Input: {
+                                      colorBorder: "rgb(0,0,0)",
+                                      hoverBorderColor: "rgb(0,0,0)",
+                                      activeBorderColor: "rgba(0,0,0,0.48)",
+                                    },
+                                  },
+                                }}
+                              >
+                                <AntInput
+                                  ref={addColorInputRef}
+                                  type="text"
+                                  size="small"
+                                  value={overlayColor}
+                                  onChange={handleAddColor}
+                                  onPressEnter={handleColorConfirmOnEnter}
+                                  onBlur={() => setAddColorInputVisible(false)}
+                                  style={{
+                                    height: "40px",
+                                    borderRadius: "10px",
+                                    paddingInline: "16px",
+                                  }}
+                                  placeholder="Enter pantone color code"
+                                />
+                              </ConfigProvider>
+                            ) : (
+                              <Tag
+                                // icon={<Plus size={20} />}
+                                onClick={() => setAddColorInputVisible(true)}
+                                onClose={handleClose}
+                                style={{
+                                  paddingBlock: "8px",
+                                  borderStyle: "dashed",
+                                  display: "flex",
+                                  gap: "3px",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontWeight: "bold",
+                                  color: "gray",
+                                  borderRadius: "10px",
+                                }}
+                              >
+                                <PlusCircle size={18} color="gray" /> Change
+                                Color
+                              </Tag>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
                 </AnimatePresence>
               </TabsContent>
 
@@ -1292,8 +1320,8 @@ export default function CustomTShirtDesigner() {
           </div>
         </div>
 
-        {/* Bottom --- Additional options */}
-        <h3 className="mb-8 mt-20 text-2xl font-bold">Additional Options</h3>
+        {/* Bottom --- Request Quote Form */}
+        <h3 className="mb-8 mt-20 text-2xl font-bold">Request Quote Form</h3>
 
         <div className="grid w-full items-center gap-2">
           <Label
@@ -1312,26 +1340,13 @@ export default function CustomTShirtDesigner() {
           />
         </div>
 
-        <div className="grid w-full items-center gap-2">
-          <Label
-            htmlFor="quantity"
-            className="mb-1 block font-semibold text-primary-black"
-          >
-            Quantity(pcs)
-          </Label>
-          <Input
-            type="number"
-            id="quantity"
-            placeholder="Enter your quantity"
-            {...register("quantity", {
-              required: true,
-            })}
-            className="rounded-xl border border-primary-black bg-transparent text-primary-black outline-none"
-          />
-          {errors.quantity && (
-            <p className="mt-1 text-danger">Quantity is required</p>
-          )}
-        </div>
+        {/* Size and quantity */}
+        <SizeSelectComponent
+          control={control}
+          sizes={productData?.size}
+          setValue={setValue}
+          errors={errors}
+        />
 
         <div className="grid w-full items-center gap-2">
           <Label

@@ -50,11 +50,12 @@ const LINKS = [
     label: "Custom Apparels",
     route: "/products",
   },
-  {
-    key: "shop",
-    label: "Shop",
-    route: "/shop",
-  },
+  /* Note: Don't remove this link!! Client may need this in future */
+  // {
+  //   key: "shop",
+  //   label: "Shop",
+  //   route: "/shop",
+  // },
   {
     key: "about",
     label: "About",
@@ -140,7 +141,7 @@ export default function Navbar() {
   return (
     <header className="mb-10 mt-8 lg:mb-20">
       {/* -------------- Desktop Version ------------- */}
-      <div className="mx-auto hidden items-center justify-between rounded-2xl bg-lightGray px-4 py-5 lg:flex lg:w-[85%] 2xl:w-3/4">
+      <div className="mx-auto hidden items-center justify-between rounded-2xl bg-lightGray px-4 py-5 lg:flex lg:w-[90%] 2xl:w-3/4">
         {/* Left ----- Logo */}
         <Link href="/" className="w-1/4">
           <Image src={logo} alt="Logo" className="mx-auto w-[70%]" />

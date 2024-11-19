@@ -11,9 +11,9 @@ export const metadata = {
 
 export default function page() {
   return (
-    <div className="flex-center flex-col rounded-xl border border-gray-200 p-5 shadow-[0px_0px_2px_lightGray] md:p-16 md:py-8 lg:flex-row">
+    <div className="flex-center-between flex-col rounded-xl border border-gray-200 p-5 shadow-[0px_0px_2px_lightGray] md:px-5 md:py-5 lg:flex-row">
       {/* Left */}
-      <div className="md:w-3/4 2xl:w-1/2">
+      <div className="w-full lg:w-1/2">
         <CustomImageWithBlur
           src={loginGraphic}
           alt="Login Graphic"
@@ -24,7 +24,7 @@ export default function page() {
       </div>
 
       {/* Right */}
-      <div className="lg:flex-grow">
+      <div className="w-full lg:w-1/2">
         <div className="max-w-1/2">
           <Image
             src={logo}
@@ -39,7 +39,9 @@ export default function page() {
           Great to have you back!
         </h5>
 
-        <LoginForm />
+        <div className="mx-auto 2xl:w-[90%]">
+          <LoginForm />
+        </div>
       </div>
     </div>
   );

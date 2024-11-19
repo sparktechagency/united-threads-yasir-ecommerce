@@ -15,17 +15,14 @@ import { useGetQuotesQuery } from "@/redux/api/quoteApi";
 import { format } from "date-fns";
 import CustomPagination from "@/components/CustomPagination/CustomPagination";
 import pantoneToHex from "@/utils/pantoneToHex";
-import EmptyContainer from "@/components/EmptyContainer/EmptyContainer";
-import CustomLoader from "@/components/CustomLoader/CustomLoader";
-import { Loader } from "lucide-react";
 import TableLoaderWithEmpty from "@/components/TableLoaderWithEmpty/TableLoaderWithEmpty";
 
 const TABLE_HEADERS = [
   "Quote ID",
   "Product",
   "Category",
-  "Quantity",
-  "Size",
+  // "Quantity",
+  // "Size",
   "Pantone",
   "Quote Created",
   "Action",
@@ -47,6 +44,8 @@ export default function ShadePendingTable() {
   const { data: pendingQuotesRes, isLoading } = useGetQuotesQuery(query);
   const pendingQuotes = pendingQuotesRes?.data || [];
   const meta = pendingQuotesRes?.data?.meta || {};
+
+  console.log(pendingQuotes);
 
   return (
     <>
@@ -85,12 +84,6 @@ export default function ShadePendingTable() {
                 <TableCell className="w-max whitespace-nowrap py-5 font-medium">
                   {quote?.category?.name}
                 </TableCell>
-                <TableCell className="w-max whitespace-nowrap py-5 font-medium">
-                  {quote?.quantity}
-                </TableCell>
-                <TableCell className="w-max whitespace-nowrap py-5 font-medium">
-                  {quote?.size}
-                </TableCell>
 
                 <TableCell className="flex w-max items-center gap-x-2 whitespace-nowrap py-5 font-medium">
                   <div
@@ -120,13 +113,6 @@ export default function ShadePendingTable() {
                         <EyeIcon size={20} color="#292929" />
                       </button>
                     </div>
-
-                    {/* <button className="relative">
-                  <Badge className="flex-center absolute -right-3 -top-2 h-4 w-[1px] rounded-full bg-danger py-0 text-[10px]">
-                    5
-                  </Badge>
-                  <MessageSquareText size={20} color="#292929" />
-                </button> */}
                   </div>
                 </TableCell>
               </TableRow>

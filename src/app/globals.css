@@ -282,3 +282,8 @@ textarea {
 .ant-empty {
   font-family: var(--font-uncut-sans) !important;
 }
+
+.ant-input,
+.ant-input * {
+  font-family: var(--font-uncut-sans);
+}

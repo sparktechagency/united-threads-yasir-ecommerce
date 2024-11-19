@@ -33,6 +33,8 @@ export default function OrderContainer({ orderId }) {
     );
   }
 
+  console.log(order);
+
   return (
     <div className="flex min-h-[75vh] flex-col items-center gap-y-10 lg:w-full lg:flex-row lg:gap-x-20">
       {/* Left */}
@@ -82,18 +84,8 @@ export default function OrderContainer({ orderId }) {
           </div>
         </div>
 
-        {/* quantity & size & color */}
+        {/* Color and payment Status */}
         <div className="flex-center-start mt-20 flex-wrap gap-x-10">
-          <div className="flex-center-start gap-x-5 text-xl font-semibold">
-            <h4>Quantity: </h4>
-            <Tag color="lime-inverse">{order?.quantity}</Tag>
-          </div>
-
-          <div className="flex-center-start gap-x-5 text-xl font-semibold">
-            <h4>Size: </h4>
-            <Tag color="blue-inverse">{order?.size}</Tag>
-          </div>
-
           <div className="flex-center-start gap-x-5 text-xl font-semibold">
             <h4>Color: </h4>
             <div

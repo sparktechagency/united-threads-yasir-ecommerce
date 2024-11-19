@@ -12,7 +12,7 @@ export default function Features() {
       <div className="flex-center gap-x-2">
         <Image src={droplet} alt="droplet" height={20} width={20} />
         <p className="text-center text-xl font-medium text-primary-black lg:text-2xl">
-          All the features you need
+          All the solutions you need
         </p>
       </div>
 

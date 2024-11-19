@@ -21,7 +21,7 @@ export default function OrderHistoryPage() {
         }}
       />
 
-      <div className="my-10 px-5 md:px-10 lg:mx-auto lg:w-[85%] lg:px-0 2xl:w-3/4">
+      <div className="my-10 px-5 md:px-10 lg:mx-auto lg:w-[90%] lg:px-0 2xl:w-3/4">
         <Tabs defaultValue="shadeApprovalPending" className="w-full">
           <TabsList className="px-2 py-6 shadow">
             <TabsTrigger value="shadeApprovalPending" className="py-2 text-sm">
