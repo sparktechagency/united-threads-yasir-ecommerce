@@ -16,9 +16,9 @@ export default function ShopPageProvider({ children }) {
     Note: Client don't need shop page at the moment, so redirect user to /not-found page when they try to access this page    
   */
   }
-  // useEffect(() => {
-  //   redirect("/not-found");
-  // }, []);
+  useEffect(() => {
+    redirect("/not-found");
+  }, []);
 
   return (
     <ShopPageContext.Provider
