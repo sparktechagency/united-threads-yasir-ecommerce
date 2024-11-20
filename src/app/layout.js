@@ -35,7 +35,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   // Under maintenance message toggler state
   // Only change when the site is under maintenance/update
-  const isUnderMaintenance = true;
+  const isUnderMaintenance = false;
 
   return (
     <html lang="en" className={`${uncutSans.variable}`}>

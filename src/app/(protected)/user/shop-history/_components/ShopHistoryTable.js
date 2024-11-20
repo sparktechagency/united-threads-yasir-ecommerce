@@ -79,14 +79,11 @@ export default function ShopHistoryTable() {
       successToast("Proceed to payment....");
       window.location.href = createPaymentRes?.data?.paymentLink;
     } catch (error) {
-      console.log(error);
       errorToast(error?.data?.message || error?.error || error?.message);
     } finally {
       setPayingOrderId(null);
     }
   };
-
-  console.log(orders);
 
   return (
     <div
