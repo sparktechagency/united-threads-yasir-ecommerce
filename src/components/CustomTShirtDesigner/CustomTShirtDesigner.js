@@ -66,6 +66,7 @@ import { Plus } from "lucide-react";
 import { PlusCircle } from "lucide-react";
 import { ConfigProvider } from "antd";
 import SizeSelectComponent from "./_components/SizeSelectComponent";
+import { sizeSorter } from "@/utils/sizeSorter";
 
 // Motion variants
 const fadeVariants = {
@@ -226,27 +227,29 @@ export default function CustomTShirtDesigner() {
   };
 
   // ============= Function to change apparel color ==============
-  const handleColorChange = (e) => {
-    if (typeof e === "string") {
-      setOverlayColor(e);
-      return;
-    }
+  const handleColorChange = (pantoneCode) => {
+    setOverlayColor(pantoneCode);
 
-    if (e.target.value) {
-      const pantoneColor = new simpleColorConverter({
-        hex6: e.target.value,
-        to: "pantone",
-      });
+    // if (typeof e === "string") {
+    //   setOverlayColor(e);
+    //   return;
+    // }
 
-      if (pantoneColor) {
-        const pantoneToHex = new simpleColorConverter({
-          pantone: `pantone ${pantoneColor?.color}`,
-          to: "hex6",
-        });
+    // if (e.target.value) {
+    //   const pantoneColor = new simpleColorConverter({
+    //     hex6: e.target.value,
+    //     to: "pantone",
+    //   });
 
-        setOverlayColor(`#${pantoneToHex?.color}`);
-      }
-    }
+    //   if (pantoneColor) {
+    //     const pantoneToHex = new simpleColorConverter({
+    //       pantone: `pantone ${pantoneColor?.color}`,
+    //       to: "hex6",
+    //     });
+
+    //     setOverlayColor(`#${pantoneToHex?.color}`);
+    //   }
+    // }
   };
 
   // Transform hex to pantone color code
@@ -481,9 +484,9 @@ export default function CustomTShirtDesigner() {
           tempCanvas.height,
         );
 
-        if (overlayColor) {
+        if (pantoneColorObject?.hex) {
           context.globalCompositeOperation = "lighten";
-          context.fillStyle = overlayColor;
+          context.fillStyle = `#${pantoneColorObject?.hex}`;
           context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
           context.globalCompositeOperation = "source-over";
         }
@@ -641,7 +644,7 @@ export default function CustomTShirtDesigner() {
       await createQuote(formData).unwrap();
       successToast("Quote sent successfully!", toastId);
 
-      // router.push("/user/quote-history");
+      router.push("/user/quote-history");
     } catch (error) {
       errorToast(error?.data?.message || error?.error, toastId);
     }
@@ -981,7 +984,7 @@ export default function CustomTShirtDesigner() {
                   <div
                     className="absolute inset-0"
                     style={{
-                      backgroundColor: overlayColor,
+                      backgroundColor: `#${pantoneColorObject?.hex}`,
                       mixBlendMode: "lighten",
                       pointerEvents: "none",
                     }}
@@ -1088,9 +1091,7 @@ export default function CustomTShirtDesigner() {
                             type="button"
                             key={pantone}
                             className="flex-center-start gap-x-2"
-                            onClick={() =>
-                              handleColorChange(pantoneToHex(pantone))
-                            }
+                            onClick={() => handleColorChange(pantone)}
                           >
                             {pantoneToHex(pantone) && (
                               <div
@@ -1155,7 +1156,11 @@ export default function CustomTShirtDesigner() {
                               <div className="flex-center-start gap-x-2">
                                 <Tooltip
                                   placement="top"
-                                  title={"#" + pantoneColorObject?.hex}
+                                  title={
+                                    typeof pantoneColorObject?.hex !== "string"
+                                      ? "No matching color found!"
+                                      : "#" + pantoneColorObject?.hex
+                                  }
                                 >
                                   {typeof pantoneColorObject?.hex ===
                                     "string" && (
@@ -1343,7 +1348,7 @@ export default function CustomTShirtDesigner() {
         {/* Size and quantity */}
         <SizeSelectComponent
           control={control}
-          sizes={productData?.size}
+          sizes={productData?.size ? sizeSorter(productData?.size) : []}
           setValue={setValue}
           errors={errors}
         />

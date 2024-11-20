@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import { Loader } from "lucide-react";
+import pantoneToHex from "@/utils/pantoneToHex";
 
 export default function OrderContainer({ orderId }) {
   // ================ Get single order details ================
@@ -32,8 +33,6 @@ export default function OrderContainer({ orderId }) {
       </div>
     );
   }
-
-  console.log(order);
 
   return (
     <div className="flex min-h-[75vh] flex-col items-center gap-y-10 lg:w-full lg:flex-row lg:gap-x-20">
@@ -86,28 +85,83 @@ export default function OrderContainer({ orderId }) {
 
         {/* Color and payment Status */}
         <div className="flex-center-start mt-20 flex-wrap gap-x-10">
-          <div className="flex-center-start gap-x-5 text-xl font-semibold">
+          <div className="flex-center-start gap-x-3 text-xl font-semibold">
             <h4>Color: </h4>
-            <div
-              className="h-6 w-6 rounded-full border shadow-md"
-              style={{ backgroundColor: order?.color }}
-            />
+            <div className="flex-center-start gap-x-2">
+              <div
+                className="h-6 w-6 rounded-full border shadow-md"
+                style={{
+                  backgroundColor:
+                    order?.orderType === "QUOTE"
+                      ? order?.color
+                      : pantoneToHex(order?.color),
+                }}
+              />
+
+              <p>
+                {order?.orderType === "QUOTE"
+                  ? order?.quote?.pantoneColor
+                  : order?.color}
+              </p>
+            </div>
           </div>
 
+          {/* Payment status */}
           <div className="flex-center-start gap-x-5 text-xl font-semibold">
             <h4>Payment: </h4>
             <Tag color={getTableTagColor(order?.paymentStatus)}>
               {order?.paymentStatus}
             </Tag>
           </div>
+
+          {/* Size and quantities for shop order */}
+          {order?.orderType === "SHOP" && (
+            <>
+              <div className="flex-center-start gap-x-5 text-xl font-semibold">
+                <h4>Quantity: </h4>
+
+                {order?.quantity}
+              </div>
+
+              <div className="flex-center-start gap-x-5 text-xl font-semibold">
+                <h4>Size: </h4>
+
+                {order?.size}
+              </div>
+            </>
+          )}
         </div>
+
+        {/* Size and quantities for quote order */}
+        {order?.orderType === "QUOTE" && (
+          <div className="mt-8">
+            <h4 className="text-xl font-semibold">Size & Quantities</h4>
+
+            <div className="mt-2 flex flex-row flex-wrap gap-4">
+              {order?.quote?.sizesAndQuantities?.map((item) => (
+                <Tag
+                  color="geekblue"
+                  key={item._id}
+                  className="!text-base !font-semibold"
+                >
+                  {item.size} - {item.quantity}pcs
+                </Tag>
+              ))}
+            </div>
+          </div>
+        )}
 
         <Separator className="my-5 bg-primary-black" />
 
         {/* Subtotal */}
         <div className="flex-center-between text-2xl font-bold text-primary-black">
           <h4>Subtotal: </h4>
-          <h4>${Number(order?.quantity * order?.amount)?.toFixed(2)}</h4>
+          <h4>
+            $
+            {order?.orderType === "QUOTE"
+              ? order?.amount
+              : (Number(order?.amount) * Number(order?.quantity)).toFixed(2)}
+          </h4>
         </div>
       </div>
 

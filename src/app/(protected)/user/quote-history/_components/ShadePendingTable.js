@@ -45,8 +45,6 @@ export default function ShadePendingTable() {
   const pendingQuotes = pendingQuotesRes?.data || [];
   const meta = pendingQuotesRes?.data?.meta || {};
 
-  console.log(pendingQuotes);
-
   return (
     <>
       <Table>

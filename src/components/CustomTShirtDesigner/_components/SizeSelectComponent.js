@@ -74,7 +74,7 @@ export default function SizeSelectComponent({
             <div key={item.size}>
               <div className="flex flex-col items-center gap-4 p-2 lg:flex-row">
                 {/* Sizes checkbox */}
-                <div className="flex-center-start w-[60px] gap-2">
+                <div className="flex-center-start w-[80px] gap-2">
                   <Checkbox
                     id={item.size}
                     checked={item.selected}

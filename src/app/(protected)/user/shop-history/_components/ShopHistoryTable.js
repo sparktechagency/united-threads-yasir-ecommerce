@@ -36,7 +36,6 @@ const TABLE_HEADERS = [
   "Order ID",
   "Product",
   "Category",
-  "Quantity",
   "Order Created",
   "Total Amount",
   "Status",
@@ -47,6 +46,7 @@ const TABLE_HEADERS = [
 const ORDER_STATUS = ["All", "Pending", "Shipped", "Delivered"];
 
 export default function ShopHistoryTable() {
+  const [payingOrderId, setPayingOrderId] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("All");
   const query = {};
 
@@ -71,6 +71,8 @@ export default function ShopHistoryTable() {
 
   // Handle payment
   const handlePaymentForQuote = async (orderId) => {
+    setPayingOrderId(orderId);
+
     try {
       const createPaymentRes = await createPaymentLink(orderId).unwrap();
 
@@ -79,8 +81,12 @@ export default function ShopHistoryTable() {
     } catch (error) {
       console.log(error);
       errorToast(error?.data?.message || error?.error || error?.message);
+    } finally {
+      setPayingOrderId(null);
     }
   };
+
+  console.log(orders);
 
   return (
     <div
@@ -148,9 +154,7 @@ export default function ShopHistoryTable() {
                   {order?.quote?.category?.name ||
                     order?.product?.category?.name}
                 </TableCell>
-                <TableCell className="w-max whitespace-nowrap py-5 font-medium">
-                  {order?.quantity}
-                </TableCell>
+
                 <TableCell className="w-max whitespace-nowrap py-5 font-medium">
                   {order?.createdAt &&
                     format(order?.createdAt, "dd MMM yyyy, hh:mm a")}
@@ -217,7 +221,7 @@ export default function ShopHistoryTable() {
                           className="group gap-x-2"
                           onClick={() => handlePaymentForQuote(order?._id)}
                         >
-                          {isCreatingPayment ? (
+                          {isCreatingPayment && payingOrderId === order?._id ? (
                             "loading..."
                           ) : (
                             <>

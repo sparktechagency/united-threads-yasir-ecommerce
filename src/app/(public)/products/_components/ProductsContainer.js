@@ -44,7 +44,7 @@ export default function ProductsContainer() {
 
   // ================= Pagination ===============
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 12;
+  const pageSize = 9;
   query["page"] = currentPage;
   query["limit"] = pageSize;
 

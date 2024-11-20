@@ -50,14 +50,14 @@ export default function ShadePendingModal({ open, setOpen, quote }) {
         </div>
 
         <div>
-          <h4 className="text-lg font-medium">Size</h4>
+          <h4 className="text-lg font-medium">Size & Quantities</h4>
 
-          <div className="flex flex-row flex-wrap gap-2">
+          <div className="mt-2 flex flex-row flex-wrap gap-4">
             {quote?.sizesAndQuantities?.map((item) => (
               <Tag
                 color="geekblue"
                 key={item._id}
-                className="!text-sm !font-semibold"
+                className="!text-base !font-semibold"
               >
                 {item.size} - {item.quantity}pcs
               </Tag>
@@ -75,13 +75,6 @@ export default function ShadePendingModal({ open, setOpen, quote }) {
               }}
             />
             <p>{quote?.pantoneColor}</p>
-          </h5>
-        </div>
-
-        <div>
-          <h4 className="text-lg font-medium">Quantity</h4>
-          <h5 className="text-lg font-extrabold text-black">
-            {quote?.quantity}pcs
           </h5>
         </div>
       </div>
