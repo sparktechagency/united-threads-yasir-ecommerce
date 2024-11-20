@@ -811,7 +811,7 @@ export default function CustomTShirtDesigner() {
                             alt="Generated Image"
                             height={1200}
                             width={1200}
-                            className="h-auto w-auto"
+                            className="h-[256px] w-auto"
                           />
                         </div>
                       ) : (
