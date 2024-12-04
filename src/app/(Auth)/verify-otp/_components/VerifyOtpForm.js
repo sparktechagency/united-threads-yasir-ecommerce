@@ -44,7 +44,6 @@ export default function VerifyOtpForm() {
 
     try {
       const res = await verifyOtp({ otp: Number(value) }).unwrap();
-      console.log(res);
 
       if (res?.success) {
         SuccessModal("OTP Verified", "Please login to your account.");

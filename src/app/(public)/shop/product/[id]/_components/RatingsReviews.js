@@ -30,7 +30,6 @@ export default function RatingsReviews({ productId, isProductLoading }) {
   const [rating, setRating] = useState(0);
   const userId = useSelector(selectUser)?._id;
 
-  console.log(isOrderComplete);
 
   // ================= Get product reviews =================
   const { data: reviewsRes, isLoading: isReviewsLoading } =
@@ -46,7 +45,6 @@ export default function RatingsReviews({ productId, isProductLoading }) {
     );
   const userReviews = userReviewsRes?.data || [];
 
-  console.log(isOrderComplete);
 
   // =========== Create review handler =============
   const [createReview, { isLoading: isReviewing }] =

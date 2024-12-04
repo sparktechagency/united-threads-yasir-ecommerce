@@ -90,7 +90,6 @@ export default function Navbar() {
 
   // =================== Listen to `new-message`socket event for notification ============
   const newMessageHandler = async (res) => {
-    console.log("new message ========> ", res);
     if (res?.sender !== userId && pathName !== "/chat" && res?.seen === false) {
       setShowMsgNotificationDot(true);
     } else {

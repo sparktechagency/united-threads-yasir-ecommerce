@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-"use client";
+"use client";;
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as fabric from "fabric";
 import { Typewriter } from "react-simple-typewriter";
@@ -17,7 +17,7 @@ import Image from "next/image";
 import { Save } from "lucide-react";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Input as AntInput } from "antd";
@@ -36,7 +36,6 @@ import {
 } from "@/utils/sessionStorage";
 import { useGetSingleQuoteProductQuery } from "@/redux/api/Products Page Api/quoteProductsApi";
 import { useParams, useRouter } from "next/navigation";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import CountryStateCitySelector from "../CountryStateCitySelector/CountryStateCitySelector";
 import { ErrorModal } from "@/utils/customModal";
 import { errorToast, successToast } from "@/utils/customToast";
@@ -59,10 +58,7 @@ import { useGetProfileQuery } from "@/redux/api/userApi";
 import pantoneToHex from "@/utils/pantoneToHex";
 import { useOnClickOutside } from "usehooks-ts";
 import { useMediaQuery } from "usehooks-ts";
-import { ArrowLeft } from "lucide-react";
-import { ArrowRight } from "lucide-react";
 import { Edit } from "lucide-react";
-import { Plus } from "lucide-react";
 import { PlusCircle } from "lucide-react";
 import { ConfigProvider } from "antd";
 import SizeSelectComponent from "./_components/SizeSelectComponent";
@@ -159,6 +155,19 @@ export default function CustomTShirtDesigner() {
   const { data: userProfileRes, refetch: promptRefetch } = useGetProfileQuery();
   const promptCount = userProfileRes?.data?.promptCount || 0;
 
+  // Show warning prompt when using mobile devices
+  const isSmallDevice = useMediaQuery("(max-width: 550px)");
+  const isTabletDevice = useMediaQuery(
+    "only screen and (min-width : 551px) and (max-width : 992px)",
+  );
+  useEffect(() => {
+    if (isSmallDevice) {
+      alert(
+        "This page is not optimized for mobile devices. We highly recommend using a computer or a laptop for better accessibility. If at all you still need to use it with mobile phone, please enable desktop mode in your browser. Thank you",
+      );
+    }
+  }, [isSmallDevice]);
+
   // Initialize active image on canvas
   useEffect(() => {
     if (productData?._id) {
@@ -173,8 +182,8 @@ export default function CustomTShirtDesigner() {
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
     const canvasInstance = new fabric.Canvas(canvasRef.current, {
-      width: 500,
-      height: 500,
+      width: isSmallDevice ? 400 : isTabletDevice ? 800 : 500,
+      height: isSmallDevice ? 300 : 500,
       selection: true,
     });
 
@@ -196,7 +205,7 @@ export default function CustomTShirtDesigner() {
     return () => {
       canvasInstance.dispose();
     };
-  }, [activeImage]);
+  }, [activeImage, isSmallDevice, isTabletDevice]);
 
   // ======== Handle changing the image side on button click ==========
   const handleChangeImageSide = async (whichSide) => {
@@ -365,8 +374,8 @@ export default function CustomTShirtDesigner() {
       imgObj.src = event.target.result;
       imgObj.onload = () => {
         const img = new fabric.Image(imgObj);
-        img.scaleToHeight(300);
-        img.scaleToWidth(300);
+        img.scaleToHeight(isSmallDevice ? 100 : 300);
+        img.scaleToWidth(isSmallDevice ? 100 : 300);
         canvas.centerObject(img);
         canvas.add(img);
         canvas.setActiveObject(img);
@@ -650,16 +659,6 @@ export default function CustomTShirtDesigner() {
     }
   };
 
-  // Show warning prompt when using mobile devices
-  const isSmallDevice = useMediaQuery("(max-width: 768px)");
-  useEffect(() => {
-    if (isSmallDevice) {
-      alert(
-        "This page is not optimized for mobile devices. We highly recommend using a computer or a laptop for better accessibility. If at all you still need to use it with mobile phone, please enable desktop mode in your browser. Thank you",
-      );
-    }
-  }, [isSmallDevice]);
-
   return (
     <div>
       <form
@@ -670,16 +669,17 @@ export default function CustomTShirtDesigner() {
         <div className="relative flex flex-col items-center lg:flex-row lg:items-start lg:justify-between">
           {/* Left */}
           {isSmallDevice && (
-            <div className="absolute -left-5 -top-5 z-[9999]">
+            <div className="absolute -left-5 -top-5">
               <Edit
                 size={20}
                 onClick={() => setShowLeftToolBox(!showLeftToolBox)}
               />
             </div>
           )}
+
           <div
             className={cn(
-              "absolute -left-0 lg:relative lg:block lg:w-[25%]",
+              "absolute -left-0 !z-[9999] lg:relative lg:block lg:w-[25%]",
               isSmallDevice && !showLeftToolBox ? "hidden" : "block",
             )}
           >
@@ -977,7 +977,10 @@ export default function CustomTShirtDesigner() {
                     alt={productData?.name}
                     height={1500}
                     width={1500}
-                    className="mx-auto block h-[300px] w-auto lg:h-[500px]"
+                    className={cn(
+                      "mx-auto block w-auto",
+                      isSmallDevice ? "h-[300px]" : "h-[500px]",
+                    )}
                     priority={true}
                   />
 
@@ -991,8 +994,17 @@ export default function CustomTShirtDesigner() {
                   ></div>
                 </div>
 
-                <div className="absolute inset-0 h-[300px] border border-dashed border-black lg:h-[500px]">
-                  <canvas id="tshirt-canvas" ref={canvasRef}></canvas>
+                <div
+                  className={cn(
+                    "absolute inset-0 border border-dashed border-black",
+                    isSmallDevice ? "h-[300px]" : "h-[500px]",
+                  )}
+                >
+                  <canvas
+                    id="tshirt-canvas"
+                    ref={canvasRef}
+                    className=""
+                  ></canvas>
                 </div>
 
                 <Button
@@ -1006,7 +1018,7 @@ export default function CustomTShirtDesigner() {
               </div>
 
               {/* Change image side buttons */}
-              <div className="my-10 flex w-full items-center justify-center gap-x-5 text-primary-black lg:w-3/4">
+              <div className="!z-[9999] my-10 flex w-full items-center justify-center gap-x-5 text-primary-black lg:w-3/4">
                 <Button
                   type="button"
                   variant="outline"
@@ -1179,7 +1191,7 @@ export default function CustomTShirtDesigner() {
 
                                   {typeof pantoneColorObject?.hex !==
                                     "string" && (
-                                    <p className="aspect-square rounded-full border border-red-300 p-1 text-sm text-red-500">
+                                    <p className="-300 aspect-square rounded-full border p-1 text-sm text-red-500">
                                       N/A
                                     </p>
                                   )}
