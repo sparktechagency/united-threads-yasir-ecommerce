@@ -287,3 +287,7 @@ textarea {
 .ant-input * {
   font-family: var(--font-uncut-sans);
 }
+
+.ant-tour {
+  z-index: 9999 !important;
+}
