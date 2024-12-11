@@ -160,6 +160,10 @@ export default function CustomTShirtDesigner() {
   const isTabletDevice = useMediaQuery(
     "only screen and (min-width : 551px) and (max-width : 992px)",
   );
+  const isLargeDevice = useMediaQuery(
+    "(min-width: 993px) and (max-width: 1440px)",
+  );
+
   useEffect(() => {
     if (isSmallDevice) {
       alert(
@@ -182,7 +186,13 @@ export default function CustomTShirtDesigner() {
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
     const canvasInstance = new fabric.Canvas(canvasRef.current, {
-      width: isSmallDevice ? 400 : isTabletDevice ? 800 : 520,
+      width: isSmallDevice
+        ? 400
+        : isTabletDevice
+          ? 800
+          : isLargeDevice
+            ? 470
+            : 520,
       height: isSmallDevice ? 300 : 520,
       selection: true,
     });
@@ -965,9 +975,31 @@ export default function CustomTShirtDesigner() {
             <div className="w-full lg:w-[60%] 2xl:w-1/2">
               <div
                 id="tshirt-div"
-                className="group relative bg-white lg:w-[80%] 2xl:w-3/4"
+                className="group relative bg-white"
+                style={{
+                  width: isSmallDevice
+                    ? 400
+                    : isTabletDevice
+                      ? 800
+                      : isLargeDevice
+                        ? 470
+                        : 520,
+                  height: isSmallDevice ? 300 : 520,
+                }}
               >
-                <div className="relative h-full">
+                <div
+                  className={cn("relative h-full")}
+                  style={{
+                    width: isSmallDevice
+                      ? 400
+                      : isTabletDevice
+                        ? 800
+                        : isLargeDevice
+                          ? 470
+                          : 520,
+                    height: isSmallDevice ? 300 : 520,
+                  }}
+                >
                   <Image
                     src={
                       activeImageSide === "front"
@@ -977,10 +1009,17 @@ export default function CustomTShirtDesigner() {
                     alt={productData?.name}
                     height={1500}
                     width={1500}
-                    className={cn(
-                      "mx-auto block w-auto",
-                      isSmallDevice ? "h-[300px]" : "h-[500px]",
-                    )}
+                    className={cn("mx-auto !block")}
+                    style={{
+                      width: isSmallDevice
+                        ? 400
+                        : isTabletDevice
+                          ? 800
+                          : isLargeDevice
+                            ? 470
+                            : 520,
+                      height: isSmallDevice ? 300 : 520,
+                    }}
                     priority={true}
                   />
 
@@ -996,14 +1035,18 @@ export default function CustomTShirtDesigner() {
 
                 <div
                   className={cn(
-                    "absolute inset-0 border border-dashed border-black",
-                    isSmallDevice ? "h-[300px]" : "h-[520px]",
-                    isSmallDevice
-                      ? "w-[400px]"
-                      : isTabletDevice
-                        ? "w-[800px]"
-                        : "w-[520px]",
+                    "absolute inset-0 w-full border border-dashed border-black",
                   )}
+                  style={{
+                    width: isSmallDevice
+                      ? 400
+                      : isTabletDevice
+                        ? 800
+                        : isLargeDevice
+                          ? 470
+                          : 520,
+                    height: isSmallDevice ? 300 : 520,
+                  }}
                 >
                   <canvas id="tshirt-canvas" ref={canvasRef}></canvas>
                 </div>
