@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-"use client";;
+"use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as fabric from "fabric";
 import { Typewriter } from "react-simple-typewriter";
@@ -182,8 +182,8 @@ export default function CustomTShirtDesigner() {
   // Initialize the Fabric.js canvas on mount
   useEffect(() => {
     const canvasInstance = new fabric.Canvas(canvasRef.current, {
-      width: isSmallDevice ? 400 : isTabletDevice ? 800 : 500,
-      height: isSmallDevice ? 300 : 500,
+      width: isSmallDevice ? 400 : isTabletDevice ? 800 : 520,
+      height: isSmallDevice ? 300 : 520,
       selection: true,
     });
 
@@ -997,14 +997,15 @@ export default function CustomTShirtDesigner() {
                 <div
                   className={cn(
                     "absolute inset-0 border border-dashed border-black",
-                    isSmallDevice ? "h-[300px]" : "h-[500px]",
+                    isSmallDevice ? "h-[300px]" : "h-[520px]",
+                    isSmallDevice
+                      ? "w-[400px]"
+                      : isTabletDevice
+                        ? "w-[800px]"
+                        : "w-[520px]",
                   )}
                 >
-                  <canvas
-                    id="tshirt-canvas"
-                    ref={canvasRef}
-                    className=""
-                  ></canvas>
+                  <canvas id="tshirt-canvas" ref={canvasRef}></canvas>
                 </div>
 
                 <Button
