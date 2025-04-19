@@ -93,7 +93,7 @@ export default function Hero() {
           className="font-medium text-secondary-1 md:text-lg lg:w-3/4"
         >
           We pride ourselves in providing a curated collection of custom apparel
-          designed to inspire and empower
+          designed to inspire and empower.
         </motion.p>
 
         <motion.div

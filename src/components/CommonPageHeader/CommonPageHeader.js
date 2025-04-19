@@ -7,6 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import Link from "next/link";
 
 export default function CommonPageHeader({ pageTitle, previousPage }) {
   return (
@@ -20,10 +21,14 @@ export default function CommonPageHeader({ pageTitle, previousPage }) {
           <Breadcrumb>
             <BreadcrumbList className="font-medium">
               <BreadcrumbItem>
-                <BreadcrumbLink
-                  href={previousPage?.pageRoute ? previousPage.pageRoute : "/"}
-                >
-                  {previousPage?.pageTitle}
+                <BreadcrumbLink>
+                  <Link
+                    href={
+                      previousPage?.pageRoute ? previousPage.pageRoute : "/"
+                    }
+                  >
+                    {previousPage?.pageTitle}
+                  </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />

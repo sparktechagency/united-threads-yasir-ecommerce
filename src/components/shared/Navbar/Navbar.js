@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { lazy, useEffect, useState } from "react";
 import logo from "/public/logos/logo-normal.svg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,11 @@ import { transformNameInitials } from "@/utils/transformNameInitials";
 import { AlignJustify } from "lucide-react";
 import MobileSidebar from "@/components/MobileSidebar/MobileSidebar";
 import { useRouter } from "nextjs-toploader/app";
+import { UDownloadIcon } from "@/utils/svgIcons";
+
+const DownloadCatalogModal = lazy(
+  () => import("@/components/DownloadCatalogModal/index"),
+);
 
 // Links
 const LINKS = [
@@ -73,6 +78,8 @@ export default function Navbar() {
   const [showMsgNotificationDot, setShowMsgNotificationDot] = useState(false);
   const pathName = usePathname();
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+  const [showDownloadCatalogModal, setShowDownloadCatalogModal] =
+    useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -237,19 +244,13 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-x-6">
-              <Button size="lg" variant="link" className="!px-0">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 1024 1024"
-                  height={25}
-                  width={25}
-                  color="#000"
-                >
-                  <path
-                    id="SVGRepo_iconCarrier"
-                    d="M512 666.5 367.2 521.7l36.2-36.2 83 83V256h51.2v312.5l83-83 36.2 36.2zm-204.8 50.3V768h409.6v-51.2z"
-                  ></path>
-                </svg>
+              <Button
+                size="lg"
+                variant="link"
+                className="!px-0"
+                onClick={() => setShowDownloadCatalogModal(true)}
+              >
+                <UDownloadIcon />
                 Catalog
               </Button>
 
@@ -270,7 +271,7 @@ export default function Navbar() {
       {/* Mobile & Tablet Version */}
       <>
         <div className="block h-14 w-full px-5 md:px-10 lg:hidden">
-          <div className="flex-center-between h-full w-full rounded-full bg-lightGray px-3">
+          <div className="flex-center-between h-full w-full rounded-full bg-lightGray px-3 pl-4">
             {/* Left - Menu Icon */}
             <div className="h-full w-[30%]">
               <button
@@ -407,9 +408,16 @@ export default function Navbar() {
         <MobileSidebar
           open={showMobileSidebar}
           setOpen={setShowMobileSidebar}
+          setShowDownloadCatalogModal={setShowDownloadCatalogModal}
           links={LINKS}
         />
       </>
+
+      {/* Modals */}
+      <DownloadCatalogModal
+        open={showDownloadCatalogModal}
+        setOpen={setShowDownloadCatalogModal}
+      />
     </header>
   );
 }

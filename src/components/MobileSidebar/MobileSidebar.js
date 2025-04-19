@@ -1,12 +1,19 @@
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button } from "../ui/button";
+import { DownloadIcon } from "lucide-react";
 
-const MobileSidebar = ({ open, setOpen, links }) => {
+const MobileSidebar = ({
+  open,
+  setOpen,
+  setShowDownloadCatalogModal,
+  links,
+}) => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTitle className="sr-only">Open Mobile Navigation Menu</SheetTitle>
-      <SheetContent side="left" className="px-4 py-14 md:hidden">
+      <SheetContent side="left" className="space-y-4 px-4 py-14 md:hidden">
         {links.map((link) => (
           <Link
             key={link.key}
@@ -17,9 +24,21 @@ const MobileSidebar = ({ open, setOpen, links }) => {
           >
             {link.label}
 
-            <ArrowRight className="text-gray-600 hover:text-black" />
+            <ArrowRight size={16} className="text-gray-600 hover:text-black" />
           </Link>
         ))}
+
+        <Button
+          size="sm"
+          className="primary-button !mt-6 rounded-lg"
+          onClick={() => {
+            setShowDownloadCatalogModal(true);
+            setOpen(false);
+          }}
+        >
+          <DownloadIcon size={18} />
+          Download Catalog
+        </Button>
       </SheetContent>
     </Sheet>
   );
