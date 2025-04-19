@@ -35,12 +35,12 @@ const TABLE_HEADERS = [
   "Action",
 ];
 
-// const ORDER_STATUS = ["All", "Pending", "Shipped", "Delivered"];
+const ORDER_STATUS = ["All", "Pending", "Shipped", "Delivered"];
 
 export default function ShadeApprovedTable() {
   const [showApprovedQuoteModal, setShowApprovedQuoteModal] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState({});
-  // const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
 
   const query = {};
   query["quoteStatus"] = "processing";

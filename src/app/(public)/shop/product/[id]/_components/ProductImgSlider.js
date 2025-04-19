@@ -10,7 +10,6 @@ import {
   Zoom,
   Slideshow,
 } from "yet-another-react-lightbox/plugins";
-// import { showImage } from "@/utils/fileHelper";
 
 export default function ProductImgSlider({ images, primaryImage }) {
   let imagesArr = [{ url: primaryImage, key: "primary-image" }, ...images];
@@ -40,7 +39,6 @@ export default function ProductImgSlider({ images, primaryImage }) {
     dotsClass: "slick-dots slick-thumb",
     arrows: false,
     infinite: false,
-    speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
     className: "product-img-slider",

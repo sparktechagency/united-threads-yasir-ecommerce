@@ -1,4 +1,3 @@
-import Image from "next/image";
 import verifyGraphic from "/public/images/verify otp/13246824_5191077 2.png";
 import VerifyOtpForm from "./_components/VerifyOtpForm";
 import { CustomImageWithBlur } from "@/components/CustomImageWithBlur/CustomImageWithBlur";

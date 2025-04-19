@@ -6,7 +6,8 @@
     "dev": "next dev -p 5010",
     "build": "next build",
     "start": "next start -p 5010",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettier:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.1",
@@ -75,6 +76,7 @@
     "yet-another-react-lightbox": "^3.21.4"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^15.3.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.7",
     "postcss": "^8",

@@ -1,9 +1,3 @@
-import { Loader } from "lucide-react";
-import { motion } from "framer-motion";
-import React from "react";
-import SuccessLottie from "@/components/SuccessLottie/SuccessLottie";
-import ConfettiLottie from "@/components/ConfettiLottie/ConfettiLottie";
-
 export default function CheckoutErrorContainer() {
   return (
     <div>

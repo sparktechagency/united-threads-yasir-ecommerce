@@ -1,6 +1,5 @@
 "use client";
 
-import EyeIconInverse from "@/components/EyeIconInverse/EyeIconInverse";
 import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +8,7 @@ import { useUpdateProfileMutation } from "@/redux/api/userApi";
 import { errorToast, successToast } from "@/utils/customToast";
 import { Edit } from "lucide-react";
 import { Loader } from "lucide-react";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export default function PersonalInfoForm({ user }) {
@@ -18,7 +16,6 @@ export default function PersonalInfoForm({ user }) {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     control,
     setValue,
   } = useForm();

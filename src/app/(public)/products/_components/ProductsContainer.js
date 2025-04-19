@@ -7,7 +7,6 @@ import { QuoteProductsPageContext } from "@/context/QuoteProductsPageContext";
 import { useContext, useState } from "react";
 import CustomPagination from "@/components/CustomPagination/CustomPagination";
 import { motion } from "framer-motion";
-import { useSearchParams } from "next/navigation";
 
 // Motion Variants
 const fadeUpVariants = {

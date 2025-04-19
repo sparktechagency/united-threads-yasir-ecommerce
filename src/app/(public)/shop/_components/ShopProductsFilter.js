@@ -210,7 +210,7 @@ export default function ShopProductsFilter() {
             />
           ) : (
             <>
-              {sizeExpanded && (
+              {sizeExpanded && sizes?.length > 0 && (
                 <motion.div
                   className="my-5 flex w-full flex-col items-start gap-y-3 px-2"
                   variants={fadeVariants}
@@ -313,7 +313,7 @@ export default function ShopProductsFilter() {
             <div className="flex-center h-full">
               <Loader size={25} className="animate-spin" />
             </div>
-          ) : (
+          ) : sizes?.length > 0 ? (
             <div className="flex-center-start flex-wrap gap-3">
               {SIZES?.map((size) => (
                 <button
@@ -335,6 +335,10 @@ export default function ShopProductsFilter() {
                 </button>
               ))}
             </div>
+          ) : (
+            <p className="text-center text-sm text-primary-black/70">
+              No sizes found
+            </p>
           )}
         </div>
       </div>

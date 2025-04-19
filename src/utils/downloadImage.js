@@ -1,7 +1,3 @@
-import axios from "axios";
-import fileDownload from "js-file-download";
-import { errorToast } from "./customToast";
-
 // Download image with urls
 export const downloadImage = async (url) => {
   if (!url) {

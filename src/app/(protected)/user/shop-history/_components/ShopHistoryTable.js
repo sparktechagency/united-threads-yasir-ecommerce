@@ -23,7 +23,6 @@ import Link from "next/link";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
 import { useGetOrdersQuery } from "@/redux/api/orderApi";
 import { format } from "date-fns";
-import EmptyContainer from "@/components/EmptyContainer/EmptyContainer";
 import CustomPagination from "@/components/CustomPagination/CustomPagination";
 import { Tag } from "antd";
 import { getTableTagColor } from "@/utils/getTableTagColor";

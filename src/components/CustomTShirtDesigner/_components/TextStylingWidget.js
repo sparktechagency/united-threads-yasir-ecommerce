@@ -8,7 +8,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { ALargeSmall } from "lucide-react";
 
 // Font Families (custom fonts are declared in globals.css)
 const FONT_FAMILIES = [

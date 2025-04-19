@@ -13,7 +13,6 @@ import { toast } from "sonner";
 
 export default function UpdateReviewModal({ open, setOpen, review }) {
   const {
-    register,
     handleSubmit,
     formState: { errors },
     control,

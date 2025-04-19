@@ -3,14 +3,8 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import React, { useEffect, useState } from "react";
-import { Controller } from "react-hook-form";
 
-export default function SizeSelectComponent({
-  control,
-  sizes,
-  setValue,
-  errors,
-}) {
+export default function SizeSelectComponent({ sizes, setValue, errors }) {
   const [sizeAndQuantities, setSizeAndQuantities] = useState([]);
 
   // Set initial sizeAndQuantities for the form

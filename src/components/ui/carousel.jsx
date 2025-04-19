@@ -1,4 +1,5 @@
 "use client";
+
 import * as React from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -221,7 +222,9 @@ CarouselNext.displayName = "CarouselNext";
 
 const CarouselDots = React.forwardRef((props, ref) => {
   const { api } = useCarousel();
+  // eslint-disable-next-line no-unused-vars
   const [updateState, setUpdateState] = React.useState(false);
+
   const toggleUpdateState = React.useCallback(
     () => setUpdateState((prevState) => !prevState),
     [],

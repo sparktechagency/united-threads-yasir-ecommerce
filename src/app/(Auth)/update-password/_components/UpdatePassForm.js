@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import EyeIconInverse from "@/components/EyeIconInverse/EyeIconInverse";
 import { useState } from "react";
-import { Loader } from "lucide-react";
 import { SuccessModal } from "@/utils/customModal";
 import { useResetPasswordMutation } from "@/redux/api/authApi";
 import CustomLoader from "@/components/CustomLoader/CustomLoader";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import ProductImgSlider from "./ProductImgSlider";
 import CustomStarRating from "@/components/CustomStarRating/CustomStarRating";
 import Link from "next/link";
@@ -26,10 +26,7 @@ import { useRouter } from "next/navigation";
 import { useGetSingleShopProductQuery } from "@/redux/api/Shop Page Api/shopApi";
 import { ShoppingBag } from "lucide-react";
 import { ErrorModal } from "@/utils/customModal";
-import {
-  getFromSessionStorage,
-  setToSessionStorage,
-} from "@/utils/sessionStorage";
+import { setToSessionStorage } from "@/utils/sessionStorage";
 import { errorToast } from "@/utils/customToast";
 import { sizeSorter } from "@/utils/sizeSorter";
 import pantoneToHex from "@/utils/pantoneToHex";

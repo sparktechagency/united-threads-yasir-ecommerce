@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ShadeApprovedTable from "./_components/ShadeApprovedTable";
 import { CheckCheck } from "lucide-react";
 import ShadePendingTable from "./_components/ShadePendingTable";
-import { Clock } from "lucide-react";
 import { Hourglass } from "lucide-react";
 
 export const metadata = {

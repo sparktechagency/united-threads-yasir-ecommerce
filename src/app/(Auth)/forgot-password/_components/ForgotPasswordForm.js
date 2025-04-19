@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { useForgotPasswordMutation } from "@/redux/api/authApi";
 import { SuccessModal } from "@/utils/customModal";
 import { setToSessionStorage } from "@/utils/sessionStorage";
-import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

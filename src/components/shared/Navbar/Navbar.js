@@ -7,8 +7,6 @@ import logo from "/public/logos/logo-normal.svg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
-import userImg from "/public/images/navbar/user.png";
-// import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,8 +20,7 @@ import { History } from "lucide-react";
 import { LogOut } from "lucide-react";
 import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
-import { usePathname, useRouter } from "next/navigation";
-import { MessageCircleMore } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { logout, selectUser } from "@/redux/features/authSlice";
@@ -33,9 +30,9 @@ import { Badge } from "antd";
 import { useSocket } from "@/context/SocketContextApi";
 import { useGetProfileQuery } from "@/redux/api/userApi";
 import { transformNameInitials } from "@/utils/transformNameInitials";
-import * as NProgress from "nprogress";
 import { AlignJustify } from "lucide-react";
-import MobileSidebar from "./Components/MobileSidebar";
+import MobileSidebar from "@/components/MobileSidebar/MobileSidebar";
+import { useRouter } from "nextjs-toploader/app";
 
 // Links
 const LINKS = [
@@ -50,12 +47,11 @@ const LINKS = [
     label: "Custom Apparels",
     route: "/products",
   },
-  /* Note: Don't remove this link!! Client may need this in future */
-  // {
-  //   key: "shop",
-  //   label: "Shop",
-  //   route: "/shop",
-  // },
+  {
+    key: "shop",
+    label: "Shop",
+    route: "/shop",
+  },
   {
     key: "about",
     label: "About",
@@ -183,7 +179,6 @@ export default function Navbar() {
               {/* Message */}
               <button
                 onClick={() => {
-                  NProgress.start(); // to show top progress bar
                   router.push("/chat");
                   setShowMsgNotificationDot(false);
                 }}
@@ -241,15 +236,33 @@ export default function Navbar() {
               </div>
             </div>
           ) : (
-            <Button size="lg" className="primary-button" asChild>
-              <Link
-                href="/login"
-                className="group flex items-center gap-x-1 transition-all duration-200"
-              >
-                Sign In
-                <AnimatedArrow arrowSize={17} />
-              </Link>
-            </Button>
+            <div className="flex items-center gap-x-6">
+              <Button size="lg" variant="link" className="!px-0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 1024 1024"
+                  height={25}
+                  width={25}
+                  color="#000"
+                >
+                  <path
+                    id="SVGRepo_iconCarrier"
+                    d="M512 666.5 367.2 521.7l36.2-36.2 83 83V256h51.2v312.5l83-83 36.2 36.2zm-204.8 50.3V768h409.6v-51.2z"
+                  ></path>
+                </svg>
+                Catalog
+              </Button>
+
+              <Button size="lg" className="primary-button" asChild>
+                <Link
+                  href="/login"
+                  className="group flex items-center gap-x-1 transition-all duration-200"
+                >
+                  Sign In
+                  <AnimatedArrow arrowSize={17} />
+                </Link>
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -300,7 +313,6 @@ export default function Navbar() {
                   {/* Message */}
                   <button
                     onClick={() => {
-                      NProgress.start(); // to show top progress bar
                       router.push("/chat");
                       setShowMsgNotificationDot(false);
                     }}
@@ -395,6 +407,7 @@ export default function Navbar() {
         <MobileSidebar
           open={showMobileSidebar}
           setOpen={setShowMobileSidebar}
+          links={LINKS}
         />
       </>
     </header>

@@ -1,12 +1,8 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import userImg from "/public/images/user/Tom-Cruise-2013.webp";
-import { Edit2 } from "lucide-react";
-import { Edit } from "lucide-react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import PersonalInfoForm from "./PersonalInfoForm";
 import ChangePassForm from "./ChangePassForm";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import {
   useDeleteAccountMutation,
@@ -22,6 +18,7 @@ import { ConfirmModal, ErrorModal, SuccessModal } from "@/utils/customModal";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { errorToast } from "@/utils/customToast";
+import { logout } from "@/redux/features/authSlice";
 
 export default function ProfileContainer() {
   const [profilePicInput, setProfilePicInput] = useState(null);

@@ -1,4 +1,3 @@
-import { removeFromSessionStorage } from "@/utils/sessionStorage";
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 

@@ -19,13 +19,6 @@ import { CheckCheck } from "lucide-react";
 import { BellDot } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { CircleAlert } from "lucide-react";
 
 export default function NotificationContainer() {
   const query = {};
@@ -61,7 +54,7 @@ export default function NotificationContainer() {
   // Listen to new notification
   useEffect(() => {
     if (socket && userId) {
-      socket.on(`notification::${userId}`, (res) => {
+      socket.on(`notification::${userId}`, () => {
         refetch(); // refetch notification from api
       });
     }

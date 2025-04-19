@@ -1,20 +1,18 @@
 "use client";
 
 import EyeIconInverse from "@/components/EyeIconInverse/EyeIconInverse";
-import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useChangePasswordMutation } from "@/redux/api/userApi";
 import { logout } from "@/redux/features/authSlice";
 import { ConfirmModal } from "@/utils/customModal";
-import { errorToast, successToast } from "@/utils/customToast";
+import { errorToast } from "@/utils/customToast";
 import { Edit } from "lucide-react";
 import { Loader } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 export default function ChangePassForm() {

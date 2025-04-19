@@ -1,6 +1,5 @@
 "use client";
-import Image from "next/image";
-import userImg from "/public/images/home/testimonials/user.png";
+
 import {
   Carousel,
   CarouselContent,
@@ -16,18 +15,8 @@ import {
   transformNameInitials,
 } from "@/utils/transformNameInitials";
 
-const data = {
-  key: 1,
-  user: userImg,
-  name: "Christina L.",
-  occupation: "Manager",
-  rating: 4.5,
-  review:
-    "Great quality products - Flags, programs for exceptional capacities, birthday, and occasion welcome are largely still mainstream on paper.",
-};
-
 export default function TestimonialsSlider() {
-  const { data: reviewsRes, isLoading } = useGetAllReviewsQuery({
+  const { data: reviewsRes } = useGetAllReviewsQuery({
     sort: "-rating",
   });
   const reviews = reviewsRes?.data || [];

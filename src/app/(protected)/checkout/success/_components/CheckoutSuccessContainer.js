@@ -2,7 +2,7 @@
 
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import SuccessLottie from "@/components/SuccessLottie/SuccessLottie";
 import ConfettiLottie from "@/components/ConfettiLottie/ConfettiLottie";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";

@@ -2,7 +2,7 @@ import CustomStarRating from "@/components/CustomStarRating/CustomStarRating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import React, { useState } from "react";
 import UpdateReviewModal from "./UpdateReviewModal";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { transformNameInitials } from "@/utils/transformNameInitials";
 import { Edit } from "lucide-react";
 import { Trash } from "lucide-react";
@@ -10,15 +10,6 @@ import { useDeleteShopProductReviewMutation } from "@/redux/api/Shop Page Api/sh
 import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
 import { errorToast, successToast } from "@/utils/customToast";
 import { toast } from "sonner";
-
-// const review = {
-//   user: {
-//     name: "Cristiano Ronaldo",
-//     image: userImg,
-//   },
-//   rating: 5,
-//   comment: "This product is really good!",
-// };
 
 export default function ReviewCard({ review }) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);

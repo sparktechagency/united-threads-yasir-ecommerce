@@ -1,4 +1,3 @@
-import Image from "next/image";
 import updatePassGraphic from "/public/images/update password/Group 14582640.png";
 import UpdatePassForm from "./_components/UpdatePassForm";
 import { CustomImageWithBlur } from "@/components/CustomImageWithBlur/CustomImageWithBlur";

@@ -4,17 +4,13 @@ import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
-  CarouselDots,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
-import {
-  useGetAllCategoriesQuery,
-  useGetShopCategoriesQuery,
-} from "@/redux/api/Shop Page Api/shopApi";
+import { useGetShopCategoriesQuery } from "@/redux/api/Shop Page Api/shopApi";
 import { motion } from "framer-motion";
 
 // Motion Variants

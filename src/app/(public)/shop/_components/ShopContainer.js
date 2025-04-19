@@ -97,11 +97,10 @@ export default function ShopContainer() {
 
         {/* Sort by button */}
         <DropdownMenu>
-          {/* <div className="flex justify-end"> */}
           <DropdownMenuTrigger className="rounded-full border border-primary-black/75 p-2.5">
             <ArrowDownNarrowWide size={20} />
           </DropdownMenuTrigger>
-          {/* </div> */}
+
           <DropdownMenuContent
             className="rounded-lg border border-primary-black lg:w-[180px]"
             align="end"

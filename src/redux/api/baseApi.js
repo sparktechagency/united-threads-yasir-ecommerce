@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { tagTypesList } from "../tagtypes";
 import { getFromSessionStorage } from "@/utils/sessionStorage";
 import { getBackendBaseUrl } from "@/config/envConfig";
-import { logout } from "../features/authSlice";
+import { logout, setUser } from "../features/authSlice";
 
 const baseQuery = fetchBaseQuery({
   // baseUrl: "http://167.172.237.31:5000/api/v1",

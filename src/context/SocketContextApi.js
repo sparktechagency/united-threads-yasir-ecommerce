@@ -1,8 +1,7 @@
 import { getSocketEndpoint } from "@/config/envConfig";
 import { useGetCsrIdQuery } from "@/redux/api/userApi";
 import { selectToken } from "@/redux/features/authSlice";
-import { successToast } from "@/utils/customToast";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 

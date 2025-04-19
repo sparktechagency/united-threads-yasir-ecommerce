@@ -16,9 +16,8 @@ export default function Home() {
   return (
     <div className="relative z-10 space-y-32 overflow-hidden px-5 md:px-10 lg:mx-auto lg:w-[90%] lg:space-y-40 lg:px-0 2xl:w-3/4">
       <Hero />
-      {/* Note: Don't remove this sections!! Client may need this in future */}
-      {/* <Categories /> */}
-      {/* <Products /> */}
+      <Categories />
+      <Products />
       <Features />
       <Testimonials />
       {/* --------- Background Flowers ------------- */}

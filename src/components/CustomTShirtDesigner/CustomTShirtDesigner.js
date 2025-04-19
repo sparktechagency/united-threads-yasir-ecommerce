@@ -63,6 +63,7 @@ import { PlusCircle } from "lucide-react";
 import { ConfigProvider } from "antd";
 import SizeSelectComponent from "./_components/SizeSelectComponent";
 import { sizeSorter } from "@/utils/sizeSorter";
+import { message } from "antd";
 
 // Motion variants
 const fadeVariants = {
@@ -83,13 +84,6 @@ const fadeVariants = {
   },
 };
 
-const colorInputStyle = {
-  width: 64,
-  height: 22,
-  marginInlineEnd: 8,
-  verticalAlign: "top",
-};
-
 export default function CustomTShirtDesigner() {
   const {
     register,
@@ -108,7 +102,6 @@ export default function CustomTShirtDesigner() {
   const [activeObject, setActiveObject] = useState(null);
   const [overlayColor, setOverlayColor] = useState("419C");
   const [pantoneColorObject, setPantoneColorObject] = useState({});
-  const [sizeCollapsed, setSizeCollapsed] = useState(false);
   const [colorCollapsed, setColorCollapsed] = useState(false);
   const [pantoneColorCollapsed, setPantoneColorCollapsed] = useState(false);
   const productId = useParams()?.id;
@@ -403,7 +396,6 @@ export default function CustomTShirtDesigner() {
   const textBtnRef = useRef(null);
   const textStyleBoxRef = useRef(null);
   const uploadBtnRef = useRef(null);
-  const colorBtnRef = useRef(null);
   const aiGenerateBtnRef = useRef(null);
   const libraryBtnRef = useRef(null);
   const pantoneColorRef = useRef(null);
@@ -472,8 +464,12 @@ export default function CustomTShirtDesigner() {
   const base64ToBlob = (base64Data) => {
     const byteString = atob(base64Data.split(",")[1]);
     const mimeString = base64Data.split(",")[0].split(":")[1].split(";")[0];
+
+    // eslint-disable-next-line no-undef
     const ab = new ArrayBuffer(byteString.length);
+    // eslint-disable-next-line no-undef
     const ia = new Uint8Array(ab);
+
     for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i);
     }

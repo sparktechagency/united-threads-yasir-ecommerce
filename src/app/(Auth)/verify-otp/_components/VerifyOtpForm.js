@@ -20,7 +20,6 @@ import {
   setToSessionStorage,
 } from "@/utils/sessionStorage";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { RotateCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";

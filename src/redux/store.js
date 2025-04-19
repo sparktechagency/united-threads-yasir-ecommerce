@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { configureStore } from "@reduxjs/toolkit";
 import {
   FLUSH,
@@ -40,14 +41,6 @@ const persistedAuthReducer = persistReducer(
   },
   authSlice,
 );
-
-// const persistedSearchReducer = persistReducer(
-//   {
-//     key: "productSearch",
-//     storage,
-//   },
-//   productSearchSlice,
-// );
 
 export const store = configureStore({
   reducer: {

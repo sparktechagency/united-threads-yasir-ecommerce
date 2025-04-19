@@ -1,21 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Controller, useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import CountryStateCitySelector from "@/components/CountryStateCitySelector/CountryStateCitySelector";
-import { redirect, useRouter } from "next/navigation";
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
 } from "@/redux/api/userApi";
 import { toast } from "sonner";
 import { errorToast, successToast } from "@/utils/customToast";
-import { ErrorModal } from "@/utils/customModal";
 import { useCreateOrderMutation } from "@/redux/api/orderApi";
 import {
   getFromSessionStorage,
@@ -23,7 +21,7 @@ import {
 } from "@/utils/sessionStorage";
 import { useCreatePaymentMutation } from "@/redux/api/paymentApi";
 
-export default function BillingForm({ goToNextStep }) {
+export default function BillingForm() {
   const {
     register,
     handleSubmit,
@@ -33,7 +31,6 @@ export default function BillingForm({ goToNextStep }) {
   } = useForm();
 
   const [userAddress, setUserAddress] = useState({});
-  const router = useRouter();
   const [updateProfile] = useUpdateProfileMutation();
   const [createOrder] = useCreateOrderMutation();
   const [createPayment] = useCreatePaymentMutation();

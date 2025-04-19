@@ -7,7 +7,6 @@ import StarRatings from "react-star-ratings";
 import ReviewCard from "./ReviewCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Controller, useForm } from "react-hook-form";
-import { Loader } from "lucide-react";
 import {
   useCreateShopProductReviewMutation,
   useGetShopProductReviewsQuery,
@@ -16,11 +15,9 @@ import { useSelector } from "react-redux";
 import { selectUser } from "@/redux/features/authSlice";
 import { errorToast, successToast } from "@/utils/customToast";
 import CustomLoader from "@/components/CustomLoader/CustomLoader";
-import UpdateReviewModal from "./UpdateReviewModal";
 
 export default function RatingsReviews({ productId, isProductLoading }) {
   const {
-    register,
     handleSubmit,
     formState: { errors },
     control,
@@ -30,12 +27,12 @@ export default function RatingsReviews({ productId, isProductLoading }) {
   const [rating, setRating] = useState(0);
   const userId = useSelector(selectUser)?._id;
 
-
   // ================= Get product reviews =================
-  const { data: reviewsRes, isLoading: isReviewsLoading } =
-    useGetShopProductReviewsQuery({ product: productId }, { skip: !productId });
+  const { data: reviewsRes } = useGetShopProductReviewsQuery(
+    { product: productId },
+    { skip: !productId },
+  );
   const reviews = reviewsRes?.data || [];
-  const reviewsMeta = reviewsRes?.meta || {};
 
   // ================ Check if user already reviewed ============
   const { data: userReviewsRes, isLoading: isUserReviewsLoading } =
@@ -44,7 +41,6 @@ export default function RatingsReviews({ productId, isProductLoading }) {
       { skip: !userId || !productId },
     );
   const userReviews = userReviewsRes?.data || [];
-
 
   // =========== Create review handler =============
   const [createReview, { isLoading: isReviewing }] =
