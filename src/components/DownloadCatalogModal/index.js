@@ -15,6 +15,11 @@ import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
 import { Button } from "../ui/button";
 import { LucideDownload } from "lucide-react";
 import { useState } from "react";
+import { useCreateUserBeforeDownloadCatalogMutation } from "@/redux/api/catalogApi";
+import axios from "axios";
+import { getBackendBaseUrl } from "@/config/envConfig";
+import { Loader } from "lucide-react";
+import { toast } from "sonner";
 
 export default function DownloadCatalogModal({ open, setOpen }) {
   const {
@@ -22,34 +27,50 @@ export default function DownloadCatalogModal({ open, setOpen }) {
     handleSubmit,
     formState: { errors },
     control,
+    reset,
   } = useForm();
   const [isLoading, setIsLoading] = useState(false);
+  const [createUserBeforeDownloadCatalog] =
+    useCreateUserBeforeDownloadCatalogMutation();
 
   const onSubmit = async (data) => {
-    console.log(data);
-
     try {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
 
-      // Optional: check if the file actually exists before triggering download
-      const response = await fetch("/documents/TheUnitedThreadsCatalog.pdf");
+      // ======================= Get latest catalog from db =======================
+      const res = await axios.get(getBackendBaseUrl() + "/catalogue");
+      const catalog = res?.data?.data;
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch the PDF.");
+      if (!catalog || !catalog.pdf) {
+        return toast.error("Catalog download failed! Please try again later.");
       }
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
+      // ======================= Create the user =======================
+      const resCreateUser = await createUserBeforeDownloadCatalog({
+        ...data,
+        catalogue: catalog?._id,
+      }).unwrap();
 
+      if (!resCreateUser?.success) {
+        return toast.error(resCreateUser?.message);
+      }
+
+      // ======================= Download the PDF =======================
       const link = document.createElement("a");
-      link.href = url;
+      link.href = catalog?.pdf;
       link.download = "TheUnitedThreadsCatalog.pdf";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url); // Clean up
+
+      toast.success("Catalog downloaded successfully!");
+      reset();
+
+      // Close the modal
+      setOpen(false);
     } catch (error) {
       console.error("Download failed:", error);
+      toast.error("Catalog download failed! Please try again later.");
     } finally {
       setIsLoading(false); // Stop loading
     }
@@ -121,13 +142,13 @@ export default function DownloadCatalogModal({ open, setOpen }) {
             {/* Contact */}
             <div className="grid w-full items-center gap-1">
               <Label
-                htmlFor="contact"
+                htmlFor="phoneNumber"
                 className="mb-1 block font-semibold text-primary-black"
               >
                 Contact (Optional)
               </Label>
               <Controller
-                name="contact"
+                name="phoneNumber"
                 rules={{
                   required: {
                     value: false,
@@ -144,8 +165,8 @@ export default function DownloadCatalogModal({ open, setOpen }) {
                 )}
               />
 
-              {errors.contact && (
-                <p className="mt-1 text-danger">Contact is required</p>
+              {errors.phoneNumber && (
+                <p className="mt-1 text-danger">Phone Number is required</p>
               )}
             </div>
 
@@ -155,8 +176,14 @@ export default function DownloadCatalogModal({ open, setOpen }) {
               type="submit"
               disabled={isLoading}
             >
-              <LucideDownload size={20} className="mr-1" />
-              Download
+              {isLoading ? (
+                <Loader className="animate-spin" />
+              ) : (
+                <>
+                  <LucideDownload size={20} className="mr-1" />
+                  Download
+                </>
+              )}
             </Button>
           </form>
         </div>
