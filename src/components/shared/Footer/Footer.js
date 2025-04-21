@@ -68,7 +68,8 @@ export default function Footer() {
                 </Link>
 
                 <Link
-                  href="#"
+                  href="https://www.instagram.com/unitedthreads_2024"
+                  target="_blank"
                   className="rounded-full bg-primary-black p-[6px] text-primary-white"
                 >
                   <Instagram size={18} />
@@ -98,7 +99,10 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-y-4 text-primary-black lg:flex-row lg:gap-y-0">
           {/* left */}
           <div className="text-center font-medium">
-            <p>&copy; 2024 UnitedThreads. All rights reserved</p>
+            <p>
+              &copy; {new Date().getFullYear()} UnitedThreads. All rights
+              reserved
+            </p>
           </div>
 
           {/* right */}
