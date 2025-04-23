@@ -175,6 +175,38 @@ export default function DownloadCatalogModal({ open, setOpen }) {
                 <p className="mt-1 text-danger">Phone Number is required</p>
               )}
             </div>
+            {/* Company */}
+            <div className="grid w-full items-center gap-1">
+              <Label
+                htmlFor="company"
+                className="mb-1 block font-semibold text-primary-black"
+              >
+                Company Name (Optional)
+              </Label>
+              <Controller
+                name="company"
+                rules={{
+                  required: {
+                    value: false,
+                  },
+                }}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    value={field.value}
+                    onChange={field.onChange}
+                    id="company"
+                    name="company"
+                    placeholder="Enter your company name"
+                    className="rounded-xl border border-primary-black/50 bg-transparent text-primary-black outline-none"
+                  />
+                )}
+              />
+
+              {errors.phoneNumber && (
+                <p className="mt-1 text-danger">Company Name is required</p>
+              )}
+            </div>
 
             <Button
               className="primary-button !mt-8 w-full rounded-xl"
