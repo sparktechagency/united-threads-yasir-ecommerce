@@ -4,7 +4,7 @@ import bgFlowers from "/public/images/home/bg-flowers.png";
 // import Categories from "@/components/homeSections/Categories/Categories";
 import Features from "@/components/homeSections/Features/Features";
 import Testimonials from "@/components/homeSections/Testimonials/Testimonials";
-import Products from "@/components/homeSections/Products/Products";
+//import Products from "@/components/homeSections/Products/Products";
 
 export const metadata = {
   title: "Home | United Threads",
@@ -17,7 +17,7 @@ export default function Home() {
     <div className="relative z-10 space-y-32 overflow-hidden px-5 md:px-10 lg:mx-auto lg:w-[90%] lg:space-y-40 lg:px-0 2xl:w-3/4">
       <Hero />
       {/* <Categories /> */}
-      <Products />
+      {/*<Products />*/}
       <Features />
       <Testimonials />
       {/* --------- Background Flowers ------------- */}
