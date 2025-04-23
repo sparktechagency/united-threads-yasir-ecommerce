@@ -20,7 +20,7 @@ import { History } from "lucide-react";
 import { LogOut } from "lucide-react";
 import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { logout, selectUser } from "@/redux/features/authSlice";
@@ -139,6 +139,17 @@ export default function Navbar() {
       setShowMsgNotificationDot(false);
     }
   }, [pathName]);
+
+  // Check if download catalog is found in query
+  // if found, show download catalog modal and
+  // clear query once modal is closed
+  const isDownloadCatalogQueryFound =
+    JSON.parse(useSearchParams()?.get("downloadCatalog")) === true;
+  useEffect(() => {
+    if (isDownloadCatalogQueryFound) {
+      setShowDownloadCatalogModal(true);
+    }
+  }, [isDownloadCatalogQueryFound]);
 
   return (
     <header className="mb-10 mt-8 lg:mb-20">

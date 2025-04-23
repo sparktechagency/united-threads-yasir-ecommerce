@@ -20,6 +20,7 @@ import axios from "axios";
 import { getBackendBaseUrl } from "@/config/envConfig";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function DownloadCatalogModal({ open, setOpen }) {
   const {
@@ -32,6 +33,8 @@ export default function DownloadCatalogModal({ open, setOpen }) {
   const [isLoading, setIsLoading] = useState(false);
   const [createUserBeforeDownloadCatalog] =
     useCreateUserBeforeDownloadCatalogMutation();
+  const router = useRouter();
+  const currentPathname = usePathname();
 
   const onSubmit = async (data) => {
     try {
@@ -68,6 +71,9 @@ export default function DownloadCatalogModal({ open, setOpen }) {
 
       // Close the modal
       setOpen(false);
+
+      // Clear query params
+      router.push(currentPathname);
     } catch (error) {
       console.error("Download failed:", error);
       toast.error("Catalog download failed! Please try again later.");
@@ -192,7 +198,10 @@ export default function DownloadCatalogModal({ open, setOpen }) {
           <AlertDialogCancel
             htmlType="button"
             className="absolute right-0 top-0 rounded-full border-none shadow-none"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              router.replace(currentPathname);
+            }}
           >
             X
           </AlertDialogCancel>
