@@ -4,12 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { DownloadIcon } from "lucide-react";
 
-const MobileSidebar = ({
-  open,
-  setOpen,
-  setShowDownloadCatalogModal,
-  links,
-}) => {
+const MobileSidebar = ({ open, setOpen, links }) => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTitle className="sr-only">Open Mobile Navigation Menu</SheetTitle>
@@ -32,7 +27,6 @@ const MobileSidebar = ({
           size="sm"
           className="primary-button !mt-6 rounded-lg"
           onClick={() => {
-            setShowDownloadCatalogModal(true);
             setOpen(false);
           }}
         >

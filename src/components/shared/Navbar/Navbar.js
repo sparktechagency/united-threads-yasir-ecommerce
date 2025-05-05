@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { lazy, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "/public/logos/logo-normal.svg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ import { History } from "lucide-react";
 import { LogOut } from "lucide-react";
 import AnimateTextOnHover from "@/components/AnimateTextOnHover/AnimateTextOnHover";
 import AnimatedArrow from "@/components/AnimatedArrow/AnimatedArrow";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { logout, selectUser } from "@/redux/features/authSlice";
@@ -34,10 +34,9 @@ import { AlignJustify } from "lucide-react";
 import MobileSidebar from "@/components/MobileSidebar/MobileSidebar";
 import { useRouter } from "nextjs-toploader/app";
 import { UDownloadIcon } from "@/utils/svgIcons";
-
-const DownloadCatalogModal = lazy(
-  () => import("@/components/DownloadCatalogModal/index"),
-);
+import axios from "axios";
+import { getBackendBaseUrl } from "@/config/envConfig";
+import { Loader } from "lucide-react";
 
 // Links
 const LINKS = [
@@ -78,8 +77,7 @@ export default function Navbar() {
   const [showMsgNotificationDot, setShowMsgNotificationDot] = useState(false);
   const pathName = usePathname();
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-  const [showDownloadCatalogModal, setShowDownloadCatalogModal] =
-    useState(false);
+  const [isDownloadingCatalog, setIsDownloadingCatalog] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -140,16 +138,32 @@ export default function Navbar() {
     }
   }, [pathName]);
 
-  // Check if download catalog is found in query
-  // if found, show download catalog modal and
-  // clear query once modal is closed
-  const isDownloadCatalogQueryFound =
-    JSON.parse(useSearchParams()?.get("downloadCatalog")) === true;
-  useEffect(() => {
-    if (isDownloadCatalogQueryFound) {
-      setShowDownloadCatalogModal(true);
+  const downloadCatalog = async () => {
+    setIsDownloadingCatalog(true);
+    try {
+      // ======================= Get latest catalog from db =======================
+      const res = await axios.get(getBackendBaseUrl() + "/catalogue");
+      const catalog = res?.data?.data;
+
+      if (!catalog || !catalog.pdf) {
+        return toast.error("Catalog download failed! Please try again later.");
+      }
+
+      // ======================= Download the PDF =======================
+      const link = document.createElement("a");
+      link.href = catalog?.pdf;
+      link.download = "The United Threads Catalog.pdf";
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download failed:", error);
+      toast.error("Catalog download failed! Please try again later.");
+    } finally {
+      setIsDownloadingCatalog(false);
     }
-  }, [isDownloadCatalogQueryFound]);
+  };
 
   return (
     <header className="mb-10 mt-8 lg:mb-20">
@@ -259,10 +273,16 @@ export default function Navbar() {
                 size="lg"
                 variant="link"
                 className="!px-0"
-                onClick={() => setShowDownloadCatalogModal(true)}
+                onClick={downloadCatalog}
               >
-                <UDownloadIcon />
-                Catalog
+                {isDownloadingCatalog ? (
+                  <Loader className="animate-spin" size={16} />
+                ) : (
+                  <>
+                    <UDownloadIcon />
+                    Catalog
+                  </>
+                )}
               </Button>
 
               <Button size="lg" className="primary-button" asChild>
@@ -419,16 +439,9 @@ export default function Navbar() {
         <MobileSidebar
           open={showMobileSidebar}
           setOpen={setShowMobileSidebar}
-          setShowDownloadCatalogModal={setShowDownloadCatalogModal}
           links={LINKS}
         />
       </>
-
-      {/* Modals */}
-      <DownloadCatalogModal
-        open={showDownloadCatalogModal}
-        setOpen={setShowDownloadCatalogModal}
-      />
     </header>
   );
 }
